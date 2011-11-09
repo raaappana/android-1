@@ -15,7 +15,7 @@ public class Main extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
-        facebook.authorize(this, { "email", "offline_access", "publish_checkins"},
+        facebook.authorize(this, new String[] { "email", "offline_access", "publish_checkins"},
             new DialogListener() {
             @Override
             public void onComplete(Bundle values) {}
