@@ -13,7 +13,7 @@ public class Main extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
+        //setContentView(R.layout.main);
 
         facebook.authorize(this, new String[] { "email", "offline_access", "publish_checkins"},
             new DialogListener() {
