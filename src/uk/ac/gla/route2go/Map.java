@@ -33,7 +33,7 @@ public class Map extends MapActivity {
 		setContentView(R.layout.map);
 		// Context context = getApplicationContext();
 		DumbPath path = new DumbPath(this);
-		path.setStart("Glasgow Cathedral, G4 0QZ", "get on the bike");
+		path.setStart("Scotland Street School, Glasgow", "get on the bike");
 		path.setEnd("University of Glasgow, G12 8QQ", "set off foot");
 
 		MapView mapView = (MapView) findViewById(R.id.mapview);
@@ -120,10 +120,7 @@ public class Map extends MapActivity {
 				projection.toPixels(e.from.latlng, p1);
 				projection.toPixels(e.to.latlng, p2);
 
-				Path path = new Path();
-				path.moveTo(p2.x, p2.y);
-				path.lineTo(p1.x, p1.y);
-				canvas.drawPath(path, mPaint);
+				canvas.drawLine(p2.x, p2.y, p1.x, p1.y, mPaint);
 			}
 		}
 	}
