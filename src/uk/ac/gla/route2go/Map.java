@@ -6,7 +6,6 @@ import java.util.List;
 import uk.ac.gla.route2go.pathcalc.DumbPath;
 import uk.ac.gla.route2go.pathcalc.Edge;
 
-import com.google.android.maps.GeoPoint;
 import com.google.android.maps.ItemizedOverlay;
 import com.google.android.maps.MapActivity;
 import com.google.android.maps.MapView;
@@ -25,25 +24,30 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 public class Map extends MapActivity {
-	/** Called when the activity is first created. */
-
-	@Override
-	protected boolean isRouteDisplayed() {
-		return false;
-	}
+	private Projection projection;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
 		setContentView(R.layout.map);
 		// Context context = getApplicationContext();
 		DumbPath path = new DumbPath(this);
-		path.setStart("Glasgow Cathedral, G4 0QZ", "get on the bike");
+		path.setStart("Scotland Street School, Glasgow", "get on the bike");
 		path.setEnd("University of Glasgow, G12 8QQ", "set off foot");
 
 		MapView mapView = (MapView) findViewById(R.id.mapview);
+
 		mapView.setBuiltInZoomControls(true);
 
+		projection = mapView.getProjection();
+		System.out.println("Projection set:" + projection);
+		mapView.setBuiltInZoomControls(true);
+
+		draw_overlays(path, mapView);
+	}
+
+	private void draw_overlays(DumbPath path, MapView mapView) {
 		List<Overlay> mapOverlays = mapView.getOverlays();
 		Drawable drawable = this.getResources().getDrawable(
 				android.R.drawable.btn_star);
@@ -66,7 +70,6 @@ public class Map extends MapActivity {
 		private ArrayList<OverlayItem> mOverlays = new ArrayList<OverlayItem>();
 		Context mContext;
 		List<Edge> edges; // for drawing lines between the points
-		private Projection projection; // ditto
 
 		public RouteOverlay(Drawable defaultMarker, Context context,
 				List<Edge> edges) {
@@ -103,23 +106,27 @@ public class Map extends MapActivity {
 		@Override
 		public void draw(Canvas canvas, MapView mapView, boolean shadow) {
 			super.draw(canvas, mapView, shadow);
-			Paint mPaint = new Paint();
-			mPaint.setDither(true);
-			mPaint.setColor(Color.RED);
-			mPaint.setStrokeJoin(Paint.Join.ROUND);
-			mPaint.setStrokeCap(Paint.Cap.ROUND);
-			mPaint.setStrokeWidth(2);
 
 			for (Edge e : edges) {
+				Paint mPaint = new Paint();
+				mPaint.setDither(true);
+				mPaint.setColor(Color.RED);
+				mPaint.setStrokeJoin(Paint.Join.ROUND);
+				mPaint.setStrokeCap(Paint.Cap.ROUND);
+				mPaint.setStrokeWidth(2);
+
 				Point p1 = new Point(), p2 = new Point();
+
 				projection.toPixels(e.from.latlng, p1);
 				projection.toPixels(e.to.latlng, p2);
 
-				Path path = new Path();
-		        path.moveTo(p2.x, p2.y);
-		        path.lineTo(p1.x,p1.y);
-		        canvas.drawPath(path, mPaint);
+				canvas.drawLine(p2.x, p2.y, p1.x, p1.y, mPaint);
 			}
 		}
+	}
+
+	@Override
+	protected boolean isRouteDisplayed() {
+		return false;
 	}
 }

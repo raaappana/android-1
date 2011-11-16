@@ -3,8 +3,6 @@ package uk.ac.gla.route2go.pathcalc;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.android.maps.GeoPoint;
-
 import android.content.Context;
 
 public class DumbPath {

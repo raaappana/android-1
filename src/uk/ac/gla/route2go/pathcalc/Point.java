@@ -19,7 +19,6 @@ public class Point {
 	}
 	
 	Point(Context c, String addr, String comment) {
-		this.comment = comment;
 		Geocoder g = new Geocoder(c);
 		List<Address> address;
 		try {
@@ -33,6 +32,7 @@ public class Point {
 		// I would normally call the Point constructor here...
 		// Stupid java.
 		
+		this.comment = comment;
 		latlng = new GeoPoint(lat, lng); 
 	}
 }
