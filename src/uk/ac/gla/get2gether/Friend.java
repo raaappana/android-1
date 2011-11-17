@@ -17,7 +17,7 @@
  * limitations under the License.
  */
 
-package uk.ac.gla.route2go;
+package uk.ac.gla.get2gether;
 
 import android.graphics.Bitmap;
 

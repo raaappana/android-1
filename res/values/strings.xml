@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Route2Go</string>
+    <string name="app_name">get2gether</string>
+    <string name="fb_appid">134601229976419</string>
     <string name="hello">Welcome. Press Menu to login into Facebook...</string>
+
 </resources>

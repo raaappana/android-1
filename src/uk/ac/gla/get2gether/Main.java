@@ -1,4 +1,4 @@
-package uk.ac.gla.route2go;
+package uk.ac.gla.get2gether;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -63,7 +63,7 @@ public class Main extends Activity {
 		mSpinner.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		mSpinner.setMessage("Loading..");
 
-		facebook = new Facebook("134601229976419");
+		facebook = new Facebook(getResources().getString(R.string.fb_appid));
 		mAsyncRunner = new AsyncFacebookRunner(facebook);
 
 		/*facebook.authorize(this, PERMISSIONS, new DialogListener() {
@@ -319,7 +319,7 @@ public class Main extends Activity {
             // Only the original owner thread can touch its views
 			Main.this.runOnUiThread(new Runnable() {
 				public void run() {
-					mText.setText("Thanks for using Route2Go FB activity. Bye bye..");
+					mText.setText("Thanks for using get2gether FB activity. Bye bye..");
 					friends.clear();
 					friendsArrayAdapter.notifyDataSetChanged();
 				}
@@ -428,7 +428,12 @@ public class Main extends Activity {
 			mSpinner.show();
 			mAsyncRunner.request("me/friends", new FriendsRequestListener());
 			break;
-			
+
+        case R.id.showmap:
+            Intent in = new Intent(); 
+            in.setClass(this, Map.class); 
+            startActivity(in); 
+		    break;	
 		default:
 			return false;
 		}

@@ -1,10 +1,10 @@
-package uk.ac.gla.route2go;
+package uk.ac.gla.get2gether;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import uk.ac.gla.route2go.pathcalc.DumbPath;
-import uk.ac.gla.route2go.pathcalc.Edge;
+import uk.ac.gla.get2gether.pathcalc.DumbPath;
+import uk.ac.gla.get2gether.pathcalc.Edge;
 
 import com.google.android.maps.ItemizedOverlay;
 import com.google.android.maps.MapActivity;

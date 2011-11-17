@@ -1,4 +1,4 @@
-package uk.ac.gla.route2go.pathcalc;
+package uk.ac.gla.get2gether.pathcalc;
 
 import java.io.IOException;
 import java.util.List;
