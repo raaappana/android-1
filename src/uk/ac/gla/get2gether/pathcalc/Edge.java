@@ -1,7 +1,5 @@
 package uk.ac.gla.get2gether.pathcalc;
 
-import com.google.android.maps.GeoPoint;
-
 public class Edge {
 	public Point from, to;
 	public int time;

@@ -6,12 +6,15 @@ import java.util.List;
 import uk.ac.gla.get2gether.pathcalc.DumbPath;
 import uk.ac.gla.get2gether.pathcalc.Edge;
 
-import com.google.android.maps.ItemizedOverlay;
-import com.google.android.maps.MapActivity;
-import com.google.android.maps.MapView;
-import com.google.android.maps.Overlay;
-import com.google.android.maps.OverlayItem;
-import com.google.android.maps.Projection;
+
+import org.mapsforge.android.maps.ItemizedOverlay;
+import org.mapsforge.android.maps.MapActivity;
+import org.mapsforge.android.maps.MapView;
+import org.mapsforge.android.maps.MapViewMode;
+import org.mapsforge.android.maps.Overlay;
+import org.mapsforge.android.maps.OverlayItem;
+import org.mapsforge.android.maps.Projection;
+import org.mapsforge.android.maps.GeoPoint;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -38,12 +41,15 @@ public class Map extends MapActivity {
 
 		MapView mapView = (MapView) findViewById(R.id.mapview);
 
+		mapView.setMapViewMode(MapViewMode.MAPNIK_TILE_DOWNLOAD);
 		mapView.setBuiltInZoomControls(true);
 
+		mapView.getController().setCenter(path.getStart().latlng);
 		projection = mapView.getProjection();
 		System.out.println("Projection set:" + projection);
-		mapView.setBuiltInZoomControls(true);
 
+		mapView.setBuiltInZoomControls(true);
+		
 		draw_overlays(path, mapView);
 	}
 
@@ -104,9 +110,9 @@ public class Map extends MapActivity {
 		}
 
 		@Override
-		public void draw(Canvas canvas, MapView mapView, boolean shadow) {
-			super.draw(canvas, mapView, shadow);
-
+		public void drawOverlayBitmap(Canvas canvas, Point drawPosition, Projection projection, byte drawZoomLevel) {
+			super.drawOverlayBitmap(canvas, drawPosition, projection, drawZoomLevel);
+			
 			for (Edge e : edges) {
 				Paint mPaint = new Paint();
 				mPaint.setDither(true);
@@ -125,8 +131,4 @@ public class Map extends MapActivity {
 		}
 	}
 
-	@Override
-	protected boolean isRouteDisplayed() {
-		return false;
-	}
 }
