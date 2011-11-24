@@ -35,6 +35,9 @@ public class DumbPath {
 		end = new Point(context, addr, comment);
 	}
 
+	public Point getStart() { return start; }
+	public Point getEnd() { return end; }
+	
 	public DumbPath(Context c) {
 		context = c;
 	}
