@@ -14,14 +14,12 @@ import org.mapsforge.android.maps.MapViewMode;
 import org.mapsforge.android.maps.Overlay;
 import org.mapsforge.android.maps.OverlayItem;
 import org.mapsforge.android.maps.Projection;
-import org.mapsforge.android.maps.GeoPoint;
 
 import android.app.AlertDialog;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Path;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -72,7 +70,7 @@ public class Map extends MapActivity {
 		mapOverlays.add(itemizedoverlay);
 	}
 
-	private class RouteOverlay extends ItemizedOverlay {
+	private class RouteOverlay extends ItemizedOverlay<OverlayItem> {
 		private ArrayList<OverlayItem> mOverlays = new ArrayList<OverlayItem>();
 		Context mContext;
 		List<Edge> edges; // for drawing lines between the points
