@@ -24,6 +24,7 @@ public class Point {
 		try {
 			address = g.getFromLocationName(addr, 1);
 		} catch (IOException e) {
+			System.err.println(e.getMessage());
 			e.printStackTrace();
 			throw new RuntimeException("Could not fetch address");
 		}

@@ -13,11 +13,13 @@ public class DumbPath {
 	
 	public List<Edge> getShortestPath() {
 		// always go through home
-		Point home = new Point(55866706, -4260432, "M&P home");
+		//Point home = new Point(55866706, -4260432, "M&P home");
+		Point home = new Point(45518708, -12264346, "Virtual Home");
 		
 		edges = new ArrayList<Edge>();
-		edges.add(new Edge(start, home, 600, "bike"));
-		edges.add(new Edge(home, end, 400, "foot"));
+		//edges.add(new Edge(start, home, 600, "bike"));
+		//edges.add(new Edge(home, end, 400, "foot"));
+		edges.add(new Edge(start, end, 400, "foot"));
 		shortest_time = 1000;
 		
 		return edges;
