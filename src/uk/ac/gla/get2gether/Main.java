@@ -21,6 +21,7 @@ import android.view.MenuItem;
 import android.view.Window;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.facebook.android.AsyncFacebookRunner;
 import com.facebook.android.AsyncFacebookRunner.RequestListener;
@@ -66,23 +67,17 @@ public class Main extends Activity {
 		facebook = new Facebook(getResources().getString(R.string.fb_appid));
 		mAsyncRunner = new AsyncFacebookRunner(facebook);
 
-		/*facebook.authorize(this, PERMISSIONS, new DialogListener() {
-			@Override
-			public void onComplete(Bundle values) {
-			}
-
-			@Override
-			public void onFacebookError(FacebookError error) {
-			}
-
-			@Override
-			public void onError(DialogError e) {
-			}
-
-			@Override
-			public void onCancel() {
-			}
-		});*/
+		/*
+		 * facebook.authorize(this, PERMISSIONS, new DialogListener() {
+		 * 
+		 * @Override public void onComplete(Bundle values) { }
+		 * 
+		 * @Override public void onFacebookError(FacebookError error) { }
+		 * 
+		 * @Override public void onError(DialogError e) { }
+		 * 
+		 * @Override public void onCancel() { } });
+		 */
 	}
 
 	@Override
@@ -137,31 +132,6 @@ public class Main extends Activity {
 			}
 		}
 
-//		public void onFacebookError(FacebookError e) {
-//			// Ignore Facebook errors
-//			mSpinner.dismiss();
-//		}
-//
-//		public void onFileNotFoundException(FileNotFoundException e) {
-//			// Ignore File not found errors
-//			mSpinner.dismiss();
-//		}
-//
-//		public void onIOException(IOException e) {
-//			// Ignore IO Facebook errors
-//			mSpinner.dismiss();
-//		}
-//
-//		public void onMalformedURLException(MalformedURLException e) {
-//			// Ignore Malformed URL errors
-//			mSpinner.dismiss();
-//		}
-
-//		@Override
-//		public void onComplete(String response, Object state) {
-//			mSpinner.dismiss();
-//		}
-
 		@Override
 		public void onIOException(IOException e, Object state) {
 			mSpinner.dismiss();
@@ -193,130 +163,111 @@ public class Main extends Activity {
 			com.facebook.android.AsyncFacebookRunner.RequestListener {
 
 		/**
-         * Called when the wall post request has completed
-         */
-//		@Override
-//		public void onComplete(final String response) {
-//            Log.d("Facebook-Example", "Got response: " + response);
-//		}
+		 * Called when the wall post request has completed
+		 */
 		@Override
 		public void onComplete(String response, Object state) {
-			// TODO Auto-generated method stub
-			
 		}
 
 		@Override
 		public void onIOException(IOException e, Object state) {
-			// TODO Auto-generated method stub
-			
 		}
 
 		@Override
 		public void onFileNotFoundException(FileNotFoundException e,
 				Object state) {
-			// TODO Auto-generated method stub
-			
 		}
 
 		@Override
 		public void onMalformedURLException(MalformedURLException e,
 				Object state) {
-			// TODO Auto-generated method stub
-			
 		}
 
 		@Override
 		public void onFacebookError(FacebookError e, Object state) {
-			// TODO Auto-generated method stub
-			
 		}
-		
+
 	}
 
 	/**
-     * WallPostDialogListener implements a dialog lister/callback
-     */
-	public class WallPostDialogListener implements com.facebook.android.Facebook.DialogListener {
+	 * WallPostDialogListener implements a dialog lister/callback
+	 */
+	public class WallPostDialogListener implements
+			com.facebook.android.Facebook.DialogListener {
 
-		
 		/**
-         * Called when the dialog has completed successfully
-         */
+		 * Called when the dialog has completed successfully
+		 */
 		@Override
 		public void onComplete(Bundle values) {
 			final String postId = values.getString("post_id");
 			if (postId != null) {
-                Log.d("FB Sample App", "Dialog Success! post_id=" + postId);
+				Log.d("FB Sample App", "Dialog Success! post_id=" + postId);
 				mAsyncRunner.request(postId, new WallPostRequestListener());
 			} else {
-                Log.d("FB Sample App", "No wall post made");
+				Log.d("FB Sample App", "No wall post made");
 			}
-			
+
 		}
 
 		@Override
 		public void onFacebookError(FacebookError e) {
-			// TODO Auto-generated method stub
-			
 		}
 
 		@Override
 		public void onError(DialogError e) {
-			// TODO Auto-generated method stub
-			
 		}
 
 		@Override
 		public void onCancel() {
-			// TODO Auto-generated method stub
-			
 		}
-		
+
 	}
-	
-	public final class LoginDialogListener implements com.facebook.android.Facebook.DialogListener {
+
+	public final class LoginDialogListener implements
+			com.facebook.android.Facebook.DialogListener {
 
 		/**
-         * Called when the dialog has completed successfully
-         */
+		 * Called when the dialog has completed successfully
+		 */
 		@Override
 		public void onComplete(Bundle values) {
 			// Process onComplete
-            Log.d("FB Sample App", "LoginDialogListener.onComplete()");
-            // Dispatch on its own thread
-            mHandler.post(new Runnable() {
-            	public void run() {
-            		mText.setText("Facebook login successful. Press Menu...");
-            	}
-            });
+			Log.d("FB Sample App", "LoginDialogListener.onComplete()");
+			// Dispatch on its own thread
+			mHandler.post(new Runnable() {
+				public void run() {
+					mText.setText("Facebook login successful. Press Menu...");
+				}
+			});
 		}
 
 		@Override
 		public void onFacebookError(FacebookError e) {
-            // Process error
-            Log.d("FB Sample App", "LoginDialogListener.onFacebookError()");
+			// Process error
+			Log.d("FB Sample App", "LoginDialogListener.onFacebookError()");
 		}
 
 		@Override
 		public void onError(DialogError e) {
-            // Process error message
-            Log.d("FB Sample App", "LoginDialogListener.onError()");
+			// Process error message
+			Log.d("FB Sample App", "LoginDialogListener.onError()");
 		}
 
 		@Override
 		public void onCancel() {
-            // Process cancel message
-            Log.d("FB Sample App", "LoginDialogListener.onCancel()");
-		}		
-		
+			// Process cancel message
+			Log.d("FB Sample App", "LoginDialogListener.onCancel()");
+		}
+
 	}
-	
+
 	private class LogoutRequestListener implements RequestListener {
 
 		/** Called when the request completes w/o error */
 		@Override
 		public void onComplete(String response, Object state) {
-            // Only the original owner thread can touch its views
+			// Only the original owner thread can touch its views
 			Main.this.runOnUiThread(new Runnable() {
 				public void run() {
 					mText.setText("Thanks for using get2gether FB activity. Bye bye..");
@@ -324,104 +275,111 @@ public class Main extends Activity {
 					friendsArrayAdapter.notifyDataSetChanged();
 				}
 			});
-			
+
 			// Dispatch on its own thread
 			mHandler.post(new Runnable() {
 				public void run() {
 				}
 			});
-			
+
 		}
 
 		@Override
 		public void onIOException(IOException e, Object state) {
-			// TODO Auto-generated method stub
-			
 		}
 
 		@Override
 		public void onFileNotFoundException(FileNotFoundException e,
 				Object state) {
-			// TODO Auto-generated method stub
-			
 		}
 
 		@Override
 		public void onMalformedURLException(MalformedURLException e,
 				Object state) {
-			// TODO Auto-generated method stub
-			
 		}
 
 		@Override
 		public void onFacebookError(FacebookError e, Object state) {
-			// TODO Auto-generated method stub
-			
 		}
-		
+
 	}
-	
+
 	/**
-     * Invoked at the time to create the menu
-     * @param menu is the menu to create
-     */
+	 * Invoked at the time to create the menu
+	 * 
+	 * @param menu
+	 *            is the menu to create
+	 */
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.main_menu, menu);
 		return true;
 	}
-	
+
 	/**
-     * Invoked when preparing to display the menu
-     * @param menu is the menu to prepare
-     */
+	 * Invoked when preparing to display the menu
+	 * 
+	 * @param menu
+	 *            is the menu to prepare
+	 */
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		MenuItem loginItem = menu.findItem(R.id.login);
 		MenuItem postItem = menu.findItem(R.id.wallpost);
 		MenuItem getFriendItem = menu.findItem(R.id.getfriends);
-		
+		MenuItem sendRequestItem = menu.findItem(R.id.sendreq);
+		MenuItem createEventItem = menu.findItem(R.id.createev);
+
 		if (facebook.isSessionValid()) {
 			loginItem.setTitle("Logout");
 			postItem.setEnabled(true);
 			getFriendItem.setEnabled(true);
+			sendRequestItem.setEnabled(true);
+			createEventItem.setEnabled(false);
 		} else {
 			loginItem.setTitle("Login");
 			postItem.setEnabled(false);
 			getFriendItem.setEnabled(false);
+			sendRequestItem.setEnabled(false);
+			createEventItem.setEnabled(false);
 		}
-		
+
 		loginItem.setEnabled(true);
 		return super.onPrepareOptionsMenu(menu);
 	}
-	
+
 	/**
-     * Invoked when a menu item has been selected
-     * @param item is the selected menu items
-     */
+	 * Invoked when a menu item has been selected
+	 * 
+	 * @param item
+	 *            is the selected menu items
+	 */
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-			// Login/logout toggle
+		// Login/logout toggle
 		case R.id.login:
 			// Toggle the button state.
-            // If coming from login transition to logout.
+			// If coming from login transition to logout.
 			if (facebook.isSessionValid()) {
-				AsyncFacebookRunner asyncRunner = new AsyncFacebookRunner(facebook);
-				asyncRunner.logout(this.getBaseContext(), new LogoutRequestListener());
+				AsyncFacebookRunner asyncRunner = new AsyncFacebookRunner(
+						facebook);
+				asyncRunner.logout(this.getBaseContext(),
+						new LogoutRequestListener());
 			} else {
 				// Toggle the button state.
-                //  If coming from logout transition to login (authorize).
+				// If coming from logout transition to login (authorize).
 				facebook.authorize(this, PERMISSIONS, new LoginDialogListener());
 			}
 			break;
-			
+
 		// Wall Post
 		case R.id.wallpost: // Wall Post
-			facebook.dialog(Main.this, "stream.publish", new WallPostDialogListener());
+			facebook.dialog(Main.this, "stream.publish",
+					new WallPostDialogListener());
 			break;
-			
+
 		// Get Friend's List
 		case R.id.getfriends:
 			// Get the authenticated user's friends
@@ -429,16 +387,47 @@ public class Main extends Activity {
 			mAsyncRunner.request("me/friends", new FriendsRequestListener());
 			break;
 
-        case R.id.showmap:
-            Intent in = new Intent(); 
-            in.setClass(this, Map.class); 
-            startActivity(in); 
-		    break;	
+		case R.id.showmap:
+			Intent in = new Intent();
+			in.setClass(this, Map.class);
+			startActivity(in);
+			break;
+		case R.id.sendreq:
+			Bundle params = new Bundle();
+			params.putString("message", "Let's meet at Firwood Lake");
+			facebook.dialog(Main.this, "apprequests", params,
+					new AppRequestsListener());
+			break;
 		default:
 			return false;
 		}
 		return true;
 	}
+
+	public class AppRequestsListener extends BaseDialogListener {
+
+		@Override
+		public void onComplete(Bundle values) {
+			Toast toast = Toast.makeText(getApplicationContext(),
+					"App request sent", Toast.LENGTH_SHORT);
+			toast.show();
+		}
+
+		@Override
+		public void onFacebookError(FacebookError error) {
+			Toast.makeText(getApplicationContext(),
+					"Facebook Error: " + error.getMessage(), Toast.LENGTH_SHORT)
+					.show();
+		}
+		
+		@Override
+		public void onCancel() {
+			Toast toast = Toast.makeText(getApplicationContext(), "App request cancelled", Toast.LENGTH_SHORT);
+			toast.show();
+		}
+
+	}
+
 	
 	
 	
