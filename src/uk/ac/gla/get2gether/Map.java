@@ -52,14 +52,16 @@ public class Map extends MapActivity {
 
 		setContentView(R.layout.map);
 		// Context context = getApplicationContext();
+		
 		path = new DumbPath(this);
-		// path.setStart("Scotland Street School, Glasgow", "get on the bike");
-		// path.setEnd("University of Glasgow, G12 8QQ", "set off foot");
-		path.setStart("Laurelhurst Park, Portland", "get on the bike");
-		path.setEnd("Mount Tabor City Park, Portland", "set off foot");
-
+		//path.setStart("Laurelhurst Park, Portland", "get on the bike");
+		//path.setEnd("Mount Tabor City Park, Portland", "set off foot");
+		path.setStart(45522315, -122623650, "get on the bike");
+		path.setEnd(45511189,-122598960, "get off the bike");
+		
 		Runnable router = new Runnable() {
 			public void run() {
+
 				Planner planner = new Planner("spurga.numeris.lt:8080",
 						"opentripplanner-api-webapp/ws/plan");
 				PlanRequest req = new PlanRequest();
