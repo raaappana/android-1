@@ -54,10 +54,10 @@ public class Map extends MapActivity {
 		// Context context = getApplicationContext();
 		
 		path = new DumbPath(this);
-		//path.setStart("Laurelhurst Park, Portland", "get on the bike");
-		//path.setEnd("Mount Tabor City Park, Portland", "set off foot");
-		path.setStart(45522315, -122623650, "get on the bike");
-		path.setEnd(45511189,-122598960, "get off the bike");
+		path.setStart("Laurelhurst Park, Portland", "get on the bike");
+		path.setEnd("Mount Tabor City Park, Portland", "set off foot");
+		//path.setStart(45522315, -122623650, "get on the bike");
+		//path.setEnd(45511189,-122598960, "get off the bike");
 		
 		Runnable router = new Runnable() {
 			public void run() {
