@@ -54,8 +54,8 @@ public class Map extends MapActivity {
 		// Context context = getApplicationContext();
 		
 		path = new DumbPath(this);
-		path.setStart("Laurelhurst Park, Portland", "get on the bike");
-		path.setEnd("Mount Tabor City Park, Portland", "set off foot");
+		path.setStart("St Aloysius Church, Glasgow", "start of the journey");
+		path.setEnd("Boyd Orr Building", "arrival");
 		//path.setStart(45522315, -122623650, "get on the bike");
 		//path.setEnd(45511189,-122598960, "get off the bike");
 		
