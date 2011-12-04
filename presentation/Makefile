@@ -13,3 +13,7 @@ vc.tex: ../.git/logs/HEAD
 		\\gdef\\GITAbrHash{%h}\
 		\\gdef\\GITAuthorName{%an}"\
 		| sed 's/š/\\v{s}/g' | sed 's/ł/\\l\\ /g' >> vc.tex
+
+clean:
+	rm -f vc.tex
+	rm -f presentation.pdf
