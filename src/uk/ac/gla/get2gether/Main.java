@@ -34,13 +34,13 @@ public class Main extends Activity {
 
 	private static final String[] PERMISSIONS = new String[] { "email",
 			"offline_access", "publish_checkins", "publish_stream",
-			"read_stream", "offline_access" };
+			"read_stream", "offline_access", "user_events", "create_event" };
 	private TextView mText;
 	private ListView listView;
 	private FriendsArrayAdapter friendsArrayAdapter;
 	private final ArrayList<Friend> friends = new ArrayList<Friend>();
 	private ProgressDialog mSpinner;
-	private Facebook facebook;
+	private Facebook mFacebook;
 	private AsyncFacebookRunner mAsyncRunner;
 	private Handler mHandler = new Handler();
 
@@ -64,8 +64,8 @@ public class Main extends Activity {
 		mSpinner.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		mSpinner.setMessage("Loading..");
 
-		facebook = new Facebook(getResources().getString(R.string.fb_appid));
-		mAsyncRunner = new AsyncFacebookRunner(facebook);
+		mFacebook = new Facebook(getResources().getString(R.string.fb_appid));
+		mAsyncRunner = new AsyncFacebookRunner(mFacebook);
 
 		/*
 		 * facebook.authorize(this, PERMISSIONS, new DialogListener() {
@@ -84,7 +84,7 @@ public class Main extends Activity {
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		Log.d("FB Sample App", "onActivityResult(): " + requestCode);
-		facebook.authorizeCallback(requestCode, resultCode, data);
+		mFacebook.authorizeCallback(requestCode, resultCode, data);
 	}
 
 	public class FriendsRequestListener implements
@@ -331,12 +331,12 @@ public class Main extends Activity {
 		MenuItem sendRequestItem = menu.findItem(R.id.sendreq);
 		MenuItem createEventItem = menu.findItem(R.id.createev);
 
-		if (facebook.isSessionValid()) {
+		if (mFacebook.isSessionValid()) {
 			loginItem.setTitle("Logout");
 			postItem.setEnabled(true);
 			getFriendItem.setEnabled(true);
 			sendRequestItem.setEnabled(true);
-			createEventItem.setEnabled(false);
+			createEventItem.setEnabled(true);
 		} else {
 			loginItem.setTitle("Login");
 			postItem.setEnabled(false);
@@ -362,21 +362,21 @@ public class Main extends Activity {
 		case R.id.login:
 			// Toggle the button state.
 			// If coming from login transition to logout.
-			if (facebook.isSessionValid()) {
+			if (mFacebook.isSessionValid()) {
 				AsyncFacebookRunner asyncRunner = new AsyncFacebookRunner(
-						facebook);
+						mFacebook);
 				asyncRunner.logout(this.getBaseContext(),
 						new LogoutRequestListener());
 			} else {
 				// Toggle the button state.
 				// If coming from logout transition to login (authorize).
-				facebook.authorize(this, PERMISSIONS, new LoginDialogListener());
+				mFacebook.authorize(this, PERMISSIONS, new LoginDialogListener());
 			}
 			break;
 
 		// Wall Post
 		case R.id.wallpost: // Wall Post
-			facebook.dialog(Main.this, "stream.publish",
+			mFacebook.dialog(Main.this, "stream.publish",
 					new WallPostDialogListener());
 			break;
 
@@ -395,14 +395,70 @@ public class Main extends Activity {
 		case R.id.sendreq:
 			Bundle params = new Bundle();
 			params.putString("message", "Let's meet at Firwood Lake");
-			facebook.dialog(Main.this, "apprequests", params,
+			mFacebook.dialog(Main.this, "apprequests", params,
 					new AppRequestsListener());
 			break;
+		case R.id.createev:
+			Bundle eventParams = new Bundle();
+			eventParams.putString("name", "Firwood Lake meeting");
+			eventParams.putString("start_time", "2012-03-01T10:00:00");
+			eventParams.putString("end_time", "2012-03-01T12:00:00");
+//			mFacebook.request("me/events", eventParams, "POST");
+			mAsyncRunner.request("me/events", eventParams, "POST", new RequestListener() {
+				
+				@Override
+				public void onMalformedURLException(MalformedURLException e, Object state) {
+					Log.e("MALFORMED URL",""+e.getMessage());					
+				}
+				
+				@Override
+				public void onIOException(IOException e, Object state) {
+					Log.e("IOEX",""+e.getMessage());
+				}
+				
+				@Override
+				public void onFileNotFoundException(FileNotFoundException e, Object state) {
+					Log.e("FILENOTFOUNDEX",""+e.getMessage());
+				}
+				
+				@Override
+				public void onFacebookError(FacebookError e, Object state) {
+					Toast.makeText(getApplicationContext(),
+							"Facebook Error: " + e.getMessage(), Toast.LENGTH_SHORT)
+							.show();					
+				}
+				
+				@Override
+				public void onComplete(String response, Object state) {
+//					Toast toast = Toast.makeText(getApplicationContext(), "Event created", Toast.LENGTH_SHORT);
+//					toast.show();
+				}
+			}, new Object());
+//			try {
+//			JSONObject event = new JSONObject();
+//			Bundle bundle = new Bundle();
+//			bundle.putString("method","events.create");
+//			event.put("name", "Skylarking");
+////			event.put("location", "locationtest");
+//			event.put("start_time", "2011-05-14T10:13:00");
+//			event.put("end_time", "2011-05-15T10:20:00");
+////			event.put("privacy_type", "OPEN");
+//			bundle.putString("event_info",event.toString());
+//			mFacebook.request(bundle);
+//			} catch (MalformedURLException e) {
+//				
+//			} catch (IOException e) {
+//				
+//			} catch (JSONException e) {
+//				
+//			}
 		default:
 			return false;
 		}
 		return true;
 	}
+	
+	
 
 	public class AppRequestsListener extends BaseDialogListener {
 
