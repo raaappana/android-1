@@ -51,7 +51,7 @@ public class Map extends MapActivity {
 	private Thread router_t;
 	private ProgressDialog mSpinner;
 	private Object lock = new Object();
-	private MyView infoView;
+	//private MyView infoView;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -127,7 +127,7 @@ public class Map extends MapActivity {
 		// System.out.println("Projection set:" + projection);
 
 		mapView.setBuiltInZoomControls(true);
-		infoView = (MyView)findViewById(R.id.myview);
+		//infoView = (MyView)findViewById(R.id.myview);
 
 	}
 	
