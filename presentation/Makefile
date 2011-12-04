@@ -16,3 +16,9 @@ vc.tex: ../.git/logs/HEAD
 clean:
 	rm -f vc.tex
 	rm -f presentation.pdf
+	rm -f presentation.log
+	rm -f presentation.aux
+	rm -f presentation.out
+	rm -f presentation.snm
+	rm -f presentation.toc
+	rm -f presentation.nav
