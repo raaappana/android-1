@@ -3,4 +3,6 @@
     <item android:id="@+id/getfriends" android:icon="@drawable/ic_menu_allfriends" android:title="Get Friends"/>
     <item android:id="@+id/wallpost" android:icon="@drawable/ic_menu_share" android:title="Wall Post"/>
     <item android:id="@+id/showmap" android:icon="@drawable/ic_menu_mapmode" android:title="Show Map"/>
+    <item android:id="@+id/sendreq" android:title="Send Request" />
+    <item android:id="@+id/createev" android:title="Create Event" />
 </menu>

@@ -32,7 +32,14 @@ public class DumbPath {
 	public void setStart(String addr, String comment) {
 		start = new Point(context, addr, comment);
 	}
+	
+	public void setStart(int lat, int lng, String comment) {
+		start = new Point(lat, lng, comment);
+	}
 
+	public void setEnd(int lat, int lng, String comment) {
+		end = new Point(lat, lng, comment);
+	}
 	public void setEnd(String addr, String comment) {
 		end = new Point(context, addr, comment);
 	}
