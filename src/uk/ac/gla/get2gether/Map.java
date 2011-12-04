@@ -62,7 +62,7 @@ public class Map extends MapActivity {
 		Runnable router = new Runnable() {
 			public void run() {
 
-				Planner planner = new Planner("spurga.numeris.lt:8080",
+				Planner planner = new Planner("spurga.numeris.lt:8888",
 						"opentripplanner-api-webapp/ws/plan");
 				PlanRequest req = new PlanRequest();
 				req.setFrom(new Location(path.getStart().comment, path

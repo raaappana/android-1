@@ -26,7 +26,7 @@ public class Point {
 		Runnable decoder = new Runnable() {
 			public void run() {
 				List<Location> locs;
-				Geocoder g = new Geocoder("spurga.numeris.lt:8080",
+				Geocoder g = new Geocoder("spurga.numeris.lt:8888",
 						"opentripplanner-geocoder/geocode");
 				try {
 					GeocoderResult res = g.geodecode(ad_parm);
