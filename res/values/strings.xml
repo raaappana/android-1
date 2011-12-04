@@ -4,5 +4,9 @@
     <string name="fb_appid">134601229976419</string>
     <string name="hello">Welcome. Press Menu to login into Facebook...</string>
     <string name="calc_route">Calculate route</string>
-
+	<string name="route_info">View route info</string>
+	
+	<string name="newHello">MapOverlayDemo</string>
+	<string name="goLabel">Show the Map</string>
+	<string name="overlay_label">THIS IS WHAT YOU WANT</string>
 </resources>
