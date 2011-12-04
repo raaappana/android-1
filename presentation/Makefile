@@ -1,6 +1,5 @@
 all: presentation.pdf
-
-.PHONY: all
+.PHONY: all clean
 
 presentation.pdf: presentation.tex vc.tex
 	pdflatex presentation.tex
