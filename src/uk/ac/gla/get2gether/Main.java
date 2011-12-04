@@ -83,7 +83,7 @@ public class Main extends Activity {
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		Log.d("FB Sample App", "onActivityResult(): " + requestCode);
+		Log.d("get2gether FB", "onActivityResult(): " + requestCode);
 		facebook.authorizeCallback(requestCode, resultCode, data);
 	}
 
@@ -128,7 +128,7 @@ public class Main extends Activity {
 					}
 				});
 			} catch (JSONException e) {
-				Log.w("Facebook-Example", "JSON Error in response");
+				Log.w("get2gether FB", "JSON Error in response");
 			}
 		}
 
@@ -202,10 +202,10 @@ public class Main extends Activity {
 		public void onComplete(Bundle values) {
 			final String postId = values.getString("post_id");
 			if (postId != null) {
-				Log.d("FB Sample App", "Dialog Success! post_id=" + postId);
+				Log.d("get2gether FB", "Dialog Success! post_id=" + postId);
 				mAsyncRunner.request(postId, new WallPostRequestListener());
 			} else {
-				Log.d("FB Sample App", "No wall post made");
+				Log.d("get2gether FB", "No wall post made");
 			}
 
 		}
@@ -233,7 +233,7 @@ public class Main extends Activity {
 		@Override
 		public void onComplete(Bundle values) {
 			// Process onComplete
-			Log.d("FB Sample App", "LoginDialogListener.onComplete()");
+			Log.d("get2gether FB", "LoginDialogListener.onComplete()");
 			// Dispatch on its own thread
 			mHandler.post(new Runnable() {
 				public void run() {
@@ -245,19 +245,19 @@ public class Main extends Activity {
 		@Override
 		public void onFacebookError(FacebookError e) {
 			// Process error
-			Log.d("FB Sample App", "LoginDialogListener.onFacebookError()");
+			Log.d("get2gether FB", "LoginDialogListener.onFacebookError()");
 		}
 
 		@Override
 		public void onError(DialogError e) {
 			// Process error message
-			Log.d("FB Sample App", "LoginDialogListener.onError()");
+			Log.d("get2gether FB", "LoginDialogListener.onError()");
 		}
 
 		@Override
 		public void onCancel() {
 			// Process cancel message
-			Log.d("FB Sample App", "LoginDialogListener.onCancel()");
+			Log.d("get2gether FB", "LoginDialogListener.onCancel()");
 		}
 
 	}
