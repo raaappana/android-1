@@ -13,11 +13,4 @@
 		/>
 	 
  	</RelativeLayout>
- 	
- 	<uk.ac.gla.get2gether.MyView
- 	    android:id="@+id/myview"
- 	    android:layout_width="wrap_content"
- 	    android:layout_height="wrap_content"
- 	    android:visibility="gone"
- 	    />
  </FrameLayout>
