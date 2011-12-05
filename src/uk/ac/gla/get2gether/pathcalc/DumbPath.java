@@ -13,9 +13,7 @@ public class DumbPath {
 	
 	public List<Edge> getShortestPath() {
 		// always go through home
-		//Point home = new Point(55866706, -4260432, "M&P home");
-		Point home = new Point(45518708, -12264346, "Virtual Home");
-		
+		Point home = new Point(55866706, -4260432, "M&P home");		
 		edges = new ArrayList<Edge>();
 		//edges.add(new Edge(start, home, 600, "bike"));
 		//edges.add(new Edge(home, end, 400, "foot"));
@@ -32,7 +30,14 @@ public class DumbPath {
 	public void setStart(String addr, String comment) {
 		start = new Point(context, addr, comment);
 	}
+	
+	public void setStart(int lat, int lng, String comment) {
+		start = new Point(lat, lng, comment);
+	}
 
+	public void setEnd(int lat, int lng, String comment) {
+		end = new Point(lat, lng, comment);
+	}
 	public void setEnd(String addr, String comment) {
 		end = new Point(context, addr, comment);
 	}

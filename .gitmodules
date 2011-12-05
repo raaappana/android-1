@@ -1,0 +1,6 @@
+[submodule "libs/facebook-sdk"]
+	path = libs/facebook-sdk
+	url = git://github.com/facebook/facebook-android-sdk.git
+[submodule "libs/otp-java-client"]
+	path = libs/otp-java-client
+	url = git://github.com/woodypl/otp-java-client.git

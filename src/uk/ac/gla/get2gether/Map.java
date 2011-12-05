@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import org.idansof.otp.client.Itinerary;
 import org.idansof.otp.client.Leg;
@@ -21,22 +22,31 @@ import org.mapsforge.android.maps.OverlayItem;
 import org.mapsforge.android.maps.Projection;
 import org.xmlpull.v1.XmlPullParserException;
 
+import com.facebook.android.R.menu;
+
 import uk.ac.gla.get2gether.pathcalc.DumbPath;
 import uk.ac.gla.get2gether.pathcalc.Edge;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.CountDownTimer;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
+import android.view.View;
 import android.view.Window;
+import android.widget.Button;
+import android.widget.Toast;
 
 public class Map extends MapActivity {
 	private Projection projection;
@@ -45,6 +55,11 @@ public class Map extends MapActivity {
 	private Thread router_t;
 	private ProgressDialog mSpinner;
 	private Object lock = new Object();
+	private Itinerary itinerary = null;
+
+	private boolean isRouteCalcDone = false;
+
+	// private MyView infoView;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -52,16 +67,17 @@ public class Map extends MapActivity {
 
 		setContentView(R.layout.map);
 		// Context context = getApplicationContext();
-		path = new DumbPath(this);
-		// path.setStart("Scotland Street School, Glasgow", "get on the bike");
-		// path.setEnd("University of Glasgow, G12 8QQ", "set off foot");
-		path.setStart("Laurelhurst Park, Portland", "get on the bike");
-		path.setEnd("Mount Tabor City Park, Portland", "set off foot");
 
+		path = new DumbPath(this);
+		path.setStart("St Aloysius Church, Glasgow", "start of the journey");
+		path.setEnd("Boyd Orr Building", "arrival");
+		// path.setStart(45522315, -122623650, "get on the bike");
+		// path.setEnd(45511189,-122598960, "get off the bike");
 		Runnable router = new Runnable() {
 			public void run() {
-				Planner planner = new Planner("spurga.numeris.lt:8080",
-						"opentripplanner-api-webapp/ws/plan");
+
+				Planner planner = new Planner("spurga.numeris.lt:8888",
+						"opentripplanner-api-webapp/ws/plan", Locale.US);
 				PlanRequest req = new PlanRequest();
 				req.setFrom(new Location(path.getStart().comment, path
 						.getStart().latlng.getLatitude(),
@@ -76,8 +92,10 @@ public class Map extends MapActivity {
 				try {
 					plan = planner.generatePlan(req).getTripPlan();
 					List<Itinerary> its = plan.getItineraries();
+					itinerary = its.get(0);
+
 					geometry = new ArrayList<Location>();
-					for (Leg l : its.get(0).getLegs()) {
+					for (Leg l : itinerary.getLegs()) {
 						// nodes.add(new OverlayItem(new
 						// GeoPoint(l.getFrom().getLatitude(),
 						// l.getFrom().getLongitude()), "from",
@@ -119,9 +137,10 @@ public class Map extends MapActivity {
 		// System.out.println("Projection set:" + projection);
 
 		mapView.setBuiltInZoomControls(true);
+		// infoView = (MyView)findViewById(R.id.myview);
 
 	}
-	
+
 	private void draw_overlays(DumbPath path, MapView mapView) {
 		List<Overlay> mapOverlays = mapView.getOverlays();
 		Drawable dest_icon = this.getResources().getDrawable(
@@ -232,16 +251,17 @@ public class Map extends MapActivity {
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		MenuItem calcrouteItem = menu.findItem(R.id.calc_route);
-
+		MenuItem routeInfoMenuItem = menu.findItem(R.id.route_info);
+		routeInfoMenuItem.setEnabled(isRouteCalcDone);
 		return super.onPrepareOptionsMenu(menu);
 	}
 
-	
 	private void onRouteCalcFinished() {
 		mSpinner.dismiss();
+		isRouteCalcDone = true;
 		draw_overlays(path, (MapView) findViewById(R.id.mapview));
 	}
-	
+
 	/**
 	 * Invoked when a menu item has been selected
 	 * 
@@ -255,10 +275,35 @@ public class Map extends MapActivity {
 			router_t.start();
 			mSpinner.show();
 			break;
+		case R.id.route_info:
+			/*
+			 * infoView.layout(10, 10, infoView.getWidth(),
+			 * infoView.getHeight()); infoView.setVisibility(View.VISIBLE);
+			 * infoView.invalidate();
+			 */
+			final Toast tag = Toast
+					.makeText(
+							getBaseContext(),
+							String.format(
+									"Time remaining: %.1f minutes\nWalking distance remaining: %.1f metres",
+									itinerary.getDuration() / 60000.0,
+									itinerary.getWalkDistance()),
+							Toast.LENGTH_LONG);
+			tag.setGravity(Gravity.TOP | Gravity.RIGHT, 0, 0);
+			tag.show();
+			new CountDownTimer(9000, 1000) {
+				public void onTick(long millisUntilFinished) {
+					tag.show();
+				}
+
+				public void onFinish() {
+					tag.show();
+				}
+			}.start();
+			break;
 		default:
 			return false;
 		}
 		return true;
 	}
-
 }

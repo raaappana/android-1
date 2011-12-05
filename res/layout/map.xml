@@ -1,8 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<org.mapsforge.android.maps.MapView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/mapview"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:clickable="true"
-/> 
+    android:layout_height="fill_parent">
+	<RelativeLayout
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+		<org.mapsforge.android.maps.MapView
+	    android:id="@+id/mapview"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:clickable="true"
+		/>
+	 
+ 	</RelativeLayout>
+ </FrameLayout>
