@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import org.idansof.otp.client.Itinerary;
 import org.idansof.otp.client.Leg;
@@ -76,7 +77,7 @@ public class Map extends MapActivity {
 			public void run() {
 
 				Planner planner = new Planner("spurga.numeris.lt:8888",
-						"opentripplanner-api-webapp/ws/plan");
+						"opentripplanner-api-webapp/ws/plan", Locale.US);
 				PlanRequest req = new PlanRequest();
 				req.setFrom(new Location(path.getStart().comment, path
 						.getStart().latlng.getLatitude(),
