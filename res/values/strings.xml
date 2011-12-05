@@ -8,5 +8,5 @@
 	
 	<string name="newHello">MapOverlayDemo</string>
 	<string name="goLabel">Show the Map</string>
-	<string name="overlay_label">THIS IS WHAT YOU WANT</string>
+	<string name="set_locations">Set locations</string>
 </resources>

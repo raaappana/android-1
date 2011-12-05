@@ -39,13 +39,16 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 public class Map extends MapActivity {
@@ -59,7 +62,7 @@ public class Map extends MapActivity {
 
 	private boolean isRouteCalcDone = false;
 
-	// private MyView infoView;
+	private View infoView;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -137,7 +140,7 @@ public class Map extends MapActivity {
 		// System.out.println("Projection set:" + projection);
 
 		mapView.setBuiltInZoomControls(true);
-		// infoView = (MyView)findViewById(R.id.myview);
+		//infoView = (LocationView)findViewById(R.id.location_view);
 
 	}
 
@@ -252,6 +255,7 @@ public class Map extends MapActivity {
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		MenuItem calcrouteItem = menu.findItem(R.id.calc_route);
 		MenuItem routeInfoMenuItem = menu.findItem(R.id.route_info);
+		MenuItem inputLocationItem = menu.findItem(R.id.edit_view);
 		routeInfoMenuItem.setEnabled(isRouteCalcDone);
 		return super.onPrepareOptionsMenu(menu);
 	}
@@ -301,6 +305,11 @@ public class Map extends MapActivity {
 				}
 			}.start();
 			break;
+		case R.id.edit_view:
+			ViewGroup parent = (ViewGroup) findViewById(R.id.edit_view);
+			infoView = LayoutInflater.from(getBaseContext()).inflate(R.layout.editloc, null);
+			parent.addView(infoView);
+			//findViewById(R.id.edit_view).setVisibility(View.VISIBLE);
 		default:
 			return false;
 		}
