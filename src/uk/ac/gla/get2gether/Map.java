@@ -22,8 +22,6 @@ import org.mapsforge.android.maps.OverlayItem;
 import org.mapsforge.android.maps.Projection;
 import org.xmlpull.v1.XmlPullParserException;
 
-import com.facebook.android.R.menu;
-
 import uk.ac.gla.get2gether.pathcalc.DumbPath;
 import uk.ac.gla.get2gether.pathcalc.Edge;
 import android.app.Activity;
@@ -45,9 +43,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnFocusChangeListener;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -67,18 +68,28 @@ public class Map extends MapActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
 		setContentView(R.layout.map);
 		// Context context = getApplicationContext();
+		MapView mapView = (MapView) findViewById(R.id.mapview);
+		mSpinner = new ProgressDialog(mapView.getContext());
+		mSpinner.requestWindowFeature(Window.FEATURE_NO_TITLE);
+		mSpinner.setMessage("Loading..");
 
-		path = new DumbPath(this);
-		path.setStart("St Aloysius Church, Glasgow", "start of the journey");
-		path.setEnd("Boyd Orr Building", "arrival");
+		if (path == null)
+			 path = new DumbPath(this);
 		// path.setStart(45522315, -122623650, "get on the bike");
 		// path.setEnd(45511189,-122598960, "get off the bike");
+		// mSpinner.show();
+
+		// mSpinner.dismiss();
+
 		Runnable router = new Runnable() {
 			public void run() {
-
+				if (path.getStart() == null)
+					path.setStart("St Aloysius Church, Glasgow",
+							"start of the journey");
+				if (path.getEnd() == null)
+					path.setEnd("Boyd Orr Building", "arrival");
 				Planner planner = new Planner("spurga.numeris.lt:8888",
 						"opentripplanner-api-webapp/ws/plan", Locale.US);
 				PlanRequest req = new PlanRequest();
@@ -127,20 +138,17 @@ public class Map extends MapActivity {
 
 		router_t = new Thread(router);
 
-		MapView mapView = (MapView) findViewById(R.id.mapview);
-
-		mSpinner = new ProgressDialog(mapView.getContext());
-		mSpinner.requestWindowFeature(Window.FEATURE_NO_TITLE);
-		mSpinner.setMessage("Loading..");
-
 		mapView.setMapViewMode(MapViewMode.MAPNIK_TILE_DOWNLOAD);
+		//mapView.mapView.setMapViewMode(MapViewMode.CANVAS_RENDERER);
+		//mapView.setMapFile("/sdcard/great_britain-0.2.4.map");
 		mapView.setBuiltInZoomControls(true);
-		mapView.getController().setCenter(path.getStart().latlng);
+		GeoPoint gla = new GeoPoint(55.866521, -4.261803);
+		mapView.getController().setCenter(gla);
 		projection = mapView.getProjection();
 		// System.out.println("Projection set:" + projection);
 
 		mapView.setBuiltInZoomControls(true);
-		//infoView = (LocationView)findViewById(R.id.location_view);
+		// infoView = (LocationView)findViewById(R.id.location_view);
 
 	}
 
@@ -255,9 +263,31 @@ public class Map extends MapActivity {
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		MenuItem calcrouteItem = menu.findItem(R.id.calc_route);
 		MenuItem routeInfoMenuItem = menu.findItem(R.id.route_info);
-		MenuItem inputLocationItem = menu.findItem(R.id.edit_view);
+		MenuItem inputLocationItem = menu.findItem(R.id.input_locations);
 		routeInfoMenuItem.setEnabled(isRouteCalcDone);
 		return super.onPrepareOptionsMenu(menu);
+	}
+
+	public void restoreMap(View view) {
+		// setContentView(R.layout.map);
+		// MapView mapView = (MapView) findViewById(R.id.mapview);
+		onCreate(null);
+	}
+
+	public void onSetLocation(View view) {
+		final EditText start = (EditText) findViewById(R.id.start_entry);
+		final EditText end = (EditText) findViewById(R.id.end_entry);
+		mSpinner.show();
+		path.setStart(start.getText().toString(), "start");
+		path.setEnd(end.getText().toString(), "end");
+		mSpinner.dismiss();
+		restoreMap(view);
+	}
+
+	@Override
+	public void onBackPressed() {
+		// do not exit if not mapview
+		super.onBackPressed();
 	}
 
 	private void onRouteCalcFinished() {
@@ -305,11 +335,8 @@ public class Map extends MapActivity {
 				}
 			}.start();
 			break;
-		case R.id.edit_view:
-			ViewGroup parent = (ViewGroup) findViewById(R.id.edit_view);
-			infoView = LayoutInflater.from(getBaseContext()).inflate(R.layout.editloc, null);
-			parent.addView(infoView);
-			//findViewById(R.id.edit_view).setVisibility(View.VISIBLE);
+		case R.id.input_locations:
+			setContentView(R.layout.editloc);
 		default:
 			return false;
 		}

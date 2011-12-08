@@ -38,8 +38,10 @@ public class Point {
 				} catch (IOException e) {
 					System.err.println(e.getMessage());
 					e.printStackTrace();
+	
 					throw new RuntimeException("Could not decode address");
 				} catch (XmlPullParserException e) {
+					
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
