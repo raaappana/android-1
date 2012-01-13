@@ -9,4 +9,10 @@
 	<string name="newHello">MapOverlayDemo</string>
 	<string name="goLabel">Show the Map</string>
 	<string name="set_locations">Set locations</string>
+	<string name="arrange">Arrange a meet-up</string>
+	<string name="entername">Name:</string>
+	<string name="enterlocation">Location:</string>
+	<string name="enterdate">Date:</string>
+	<string name="entertime">Time:</string>
+	<string name="arrange_button_tag">Arrange I say</string>
 </resources>

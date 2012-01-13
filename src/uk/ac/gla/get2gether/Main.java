@@ -18,9 +18,15 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.Window;
+import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.facebook.android.AsyncFacebookRunner;
@@ -370,7 +376,8 @@ public class Main extends Activity {
 			} else {
 				// Toggle the button state.
 				// If coming from logout transition to login (authorize).
-				mFacebook.authorize(this, PERMISSIONS, new LoginDialogListener());
+				mFacebook.authorize(this, PERMISSIONS,
+						new LoginDialogListener());
 			}
 			break;
 
@@ -399,66 +406,103 @@ public class Main extends Activity {
 					new AppRequestsListener());
 			break;
 		case R.id.createev:
-			Bundle eventParams = new Bundle();
-			eventParams.putString("name", "Firwood Lake meeting");
-			eventParams.putString("start_time", "2012-03-01T10:00:00");
-			eventParams.putString("end_time", "2012-03-01T12:00:00");
-//			mFacebook.request("me/events", eventParams, "POST");
-			mAsyncRunner.request("me/events", eventParams, "POST", new RequestListener() {
-				
+			setContentView(R.layout.create_event);
+			final EditText name = (EditText) findViewById(R.id.meetup_name);
+			final DatePicker datePicker = (DatePicker) findViewById(R.id.datePicker);
+			final TimePicker timePicker = (TimePicker) findViewById(R.id.timePicker);
+			Button arrange = (Button) findViewById(R.id.arrange_button);
+			arrange.setOnClickListener(new OnClickListener() {
+
 				@Override
-				public void onMalformedURLException(MalformedURLException e, Object state) {
-					Log.e("MALFORMED URL",""+e.getMessage());					
+				public void onClick(View v) {
+					Bundle eventParams = new Bundle();
+					eventParams.putString("name", name.getEditableText().toString());
+					eventParams.putString(
+							"start_time",
+							getDateTimeString(datePicker.getYear(),
+									datePicker.getMonth() + 1,
+									datePicker.getDayOfMonth(),
+									timePicker.getCurrentHour(),
+									timePicker.getCurrentMinute()));
+					System.out.println(getDateTimeString(datePicker.getYear(),
+							datePicker.getMonth(), datePicker.getDayOfMonth(),
+							timePicker.getCurrentHour(),
+							timePicker.getCurrentMinute()));
+					eventParams.putString(
+							"end_time",
+							getDateTimeString(datePicker.getYear(),
+									datePicker.getMonth() + 1,
+									datePicker.getDayOfMonth(),
+									timePicker.getCurrentHour() + 1,
+									timePicker.getCurrentMinute()));
+					mAsyncRunner.request("me/events", eventParams, "POST",
+							new RequestListener() {
+
+								@Override
+								public void onMalformedURLException(
+										MalformedURLException e, Object state) {
+									Log.e("MALFORMED URL", "" + e.getMessage());
+								}
+
+								@Override
+								public void onIOException(IOException e,
+										Object state) {
+									Log.e("IOEX", "" + e.getMessage());
+								}
+
+								@Override
+								public void onFileNotFoundException(
+										FileNotFoundException e, Object state) {
+									Log.e("FILENOTFOUNDEX", "" + e.getMessage());
+								}
+
+								@Override
+								public void onFacebookError(FacebookError e,
+										Object state) {
+									Toast.makeText(
+											getApplicationContext(),
+											"Facebook Error: " + e.getMessage(),
+											Toast.LENGTH_SHORT).show();
+								}
+
+								@Override
+								public void onComplete(String response,
+										Object state) {
+									// Toast toast =
+									// Toast.makeText(getApplicationContext(),
+									// "Event created", Toast.LENGTH_SHORT);
+									// toast.show();
+								}
+							}, new Object());
+					
+//					setContentView(R.id)
+					
 				}
-				
-				@Override
-				public void onIOException(IOException e, Object state) {
-					Log.e("IOEX",""+e.getMessage());
-				}
-				
-				@Override
-				public void onFileNotFoundException(FileNotFoundException e, Object state) {
-					Log.e("FILENOTFOUNDEX",""+e.getMessage());
-				}
-				
-				@Override
-				public void onFacebookError(FacebookError e, Object state) {
-					Toast.makeText(getApplicationContext(),
-							"Facebook Error: " + e.getMessage(), Toast.LENGTH_SHORT)
-							.show();					
-				}
-				
-				@Override
-				public void onComplete(String response, Object state) {
-//					Toast toast = Toast.makeText(getApplicationContext(), "Event created", Toast.LENGTH_SHORT);
-//					toast.show();
-				}
-			}, new Object());
-//			try {
-//			JSONObject event = new JSONObject();
-//			Bundle bundle = new Bundle();
-//			bundle.putString("method","events.create");
-//			event.put("name", "Skylarking");
-////			event.put("location", "locationtest");
-//			event.put("start_time", "2011-05-14T10:13:00");
-//			event.put("end_time", "2011-05-15T10:20:00");
-////			event.put("privacy_type", "OPEN");
-//			bundle.putString("event_info",event.toString());
-//			mFacebook.request(bundle);
-//			} catch (MalformedURLException e) {
-//				
-//			} catch (IOException e) {
-//				
-//			} catch (JSONException e) {
-//				
-//			}
+			});
 		default:
 			return false;
 		}
 		return true;
 	}
-	
-	
+
+	/**
+	 * @return the ISO-8601 formated date/time, used in FB events
+	 */
+	private String getDateTimeString(int year, int month, int day, int hour,
+			int minute) {
+		String s = Integer.toString(year) + "-" + addLeadingZeros(month) + "-"
+				+ addLeadingZeros(day) + "T" + addLeadingZeros(hour) + ":"
+				+ addLeadingZeros(minute) + ":00";
+		Log.i("DATE/TIME STRING", s);
+		return s;
+	}
+
+	private String addLeadingZeros(int i) {
+		if (i > 10)
+			return Integer.toString(i);
+		else
+			return "0" + i;
+	}
 
 	public class AppRequestsListener extends BaseDialogListener {
 
@@ -475,19 +519,14 @@ public class Main extends Activity {
 					"Facebook Error: " + error.getMessage(), Toast.LENGTH_SHORT)
 					.show();
 		}
-		
+
 		@Override
 		public void onCancel() {
-			Toast toast = Toast.makeText(getApplicationContext(), "App request cancelled", Toast.LENGTH_SHORT);
+			Toast toast = Toast.makeText(getApplicationContext(),
+					"App request cancelled", Toast.LENGTH_SHORT);
 			toast.show();
 		}
 
 	}
 
-	
-	
-	
-	
-	
-	
 }
