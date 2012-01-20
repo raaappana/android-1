@@ -21,6 +21,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -33,7 +35,6 @@ import com.facebook.android.AsyncFacebookRunner;
 import com.facebook.android.AsyncFacebookRunner.RequestListener;
 import com.facebook.android.DialogError;
 import com.facebook.android.Facebook;
-import com.facebook.android.Facebook.DialogListener;
 import com.facebook.android.FacebookError;
 
 public class Main extends Activity {
@@ -49,6 +50,7 @@ public class Main extends Activity {
 	private Facebook mFacebook;
 	private AsyncFacebookRunner mAsyncRunner;
 	private Handler mHandler = new Handler();
+	private String lastEventID;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -61,8 +63,8 @@ public class Main extends Activity {
 		// Setup the ListView Adapter that is loaded when selecting
 		// "get friends"
 		listView = (ListView) findViewById(R.id.friendsview);
-		friendsArrayAdapter = new FriendsArrayAdapter(this, R.layout.rowlayout,
-				friends);
+//		friendsArrayAdapter = new FriendsArrayAdapter(this, R.layout.rowlayout,
+//				friends);
 		listView.setAdapter(friendsArrayAdapter);
 
 		// Define a spinner used when loading the friends over the network
@@ -72,6 +74,10 @@ public class Main extends Activity {
 
 		mFacebook = new Facebook(getResources().getString(R.string.fb_appid));
 		mAsyncRunner = new AsyncFacebookRunner(mFacebook);
+		
+//		Utility.setResources(getResources());
+//		mFacebook = Utility.getFacebook();
+//		mAsyncRunner = Utility.getAsyncRunner();
 
 		/*
 		 * facebook.authorize(this, PERMISSIONS, new DialogListener() {
@@ -89,7 +95,7 @@ public class Main extends Activity {
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		Log.d("get2gether FB", "onActivityResult(): " + requestCode);
+		Log.d("get2gether Main", "onActivityResult(): " + requestCode);
 		mFacebook.authorizeCallback(requestCode, resultCode, data);
 	}
 
@@ -124,13 +130,58 @@ public class Main extends Activity {
 					f.name = name;
 					friends.add(f);
 				}
+				
+//				setContentView(R.layout.main);
 
 				Main.this.runOnUiThread(new Runnable() {
 					public void run() {
+						Log.i("FriendsRequestListener", "run() is running");
 						friendsArrayAdapter = new FriendsArrayAdapter(
 								Main.this, R.layout.rowlayout, friends);
 						listView.setAdapter(friendsArrayAdapter);
 						friendsArrayAdapter.notifyDataSetChanged();
+						listView.setOnItemClickListener(new OnItemClickListener() {
+
+							@Override
+							public void onItemClick(AdapterView<?> arg0,
+									View v, int position, long arg3) {
+								Bundle params = new Bundle();
+								mAsyncRunner.request("/" + lastEventID + "/invited/" + friends.get(position).id, params, "POST", new RequestListener() {
+									
+									@Override
+									public void onMalformedURLException(MalformedURLException e, Object state) {
+										// TODO Auto-generated method stub
+										
+									}
+									
+									@Override
+									public void onIOException(IOException e, Object state) {
+										// TODO Auto-generated method stub
+										
+									}
+									
+									@Override
+									public void onFileNotFoundException(FileNotFoundException e, Object state) {
+										// TODO Auto-generated method stub
+										
+									}
+									
+									@Override
+									public void onFacebookError(FacebookError e, Object state) {
+										// TODO Auto-generated method stub
+										
+									}
+									
+									@Override
+									public void onComplete(String response, Object state) {
+										// TODO Auto-generated method stub
+										
+									}
+								}, new Object());
+
+							}
+
+						});
 					}
 				});
 			} catch (JSONException e) {
@@ -406,6 +457,9 @@ public class Main extends Activity {
 					new AppRequestsListener());
 			break;
 		case R.id.createev:
+//			Intent intent = new Intent();
+//			intent.pu
+			
 			setContentView(R.layout.create_event);
 			final EditText name = (EditText) findViewById(R.id.meetup_name);
 			final DatePicker datePicker = (DatePicker) findViewById(R.id.datePicker);
@@ -416,7 +470,8 @@ public class Main extends Activity {
 				@Override
 				public void onClick(View v) {
 					Bundle eventParams = new Bundle();
-					eventParams.putString("name", name.getEditableText().toString());
+					eventParams.putString("name", name.getEditableText()
+							.toString());
 					eventParams.putString(
 							"start_time",
 							getDateTimeString(datePicker.getYear(),
@@ -424,17 +479,13 @@ public class Main extends Activity {
 									datePicker.getDayOfMonth(),
 									timePicker.getCurrentHour(),
 									timePicker.getCurrentMinute()));
-					System.out.println(getDateTimeString(datePicker.getYear(),
-							datePicker.getMonth(), datePicker.getDayOfMonth(),
-							timePicker.getCurrentHour(),
-							timePicker.getCurrentMinute()));
-					eventParams.putString(
-							"end_time",
-							getDateTimeString(datePicker.getYear(),
-									datePicker.getMonth() + 1,
-									datePicker.getDayOfMonth(),
-									timePicker.getCurrentHour() + 1,
-									timePicker.getCurrentMinute()));
+					// eventParams.putString(
+					// "end_time",
+					// getDateTimeString(datePicker.getYear(),
+					// datePicker.getMonth() + 1,
+					// datePicker.getDayOfMonth(),
+					// timePicker.getCurrentHour() + 1,
+					// timePicker.getCurrentMinute()));
 					mAsyncRunner.request("me/events", eventParams, "POST",
 							new RequestListener() {
 
@@ -468,17 +519,28 @@ public class Main extends Activity {
 								@Override
 								public void onComplete(String response,
 										Object state) {
+
+									try {
+										JSONObject jo = new JSONObject(response);
+										lastEventID = jo.getString("id");
+										Log.i("LAST EVENT ID", lastEventID);
+									} catch (JSONException e) {
+										e.printStackTrace();
+									}
 									// Toast toast =
 									// Toast.makeText(getApplicationContext(),
 									// "Event created", Toast.LENGTH_SHORT);
 									// toast.show();
+//									mSpinner.show();
+									mAsyncRunner.request("me/friends", new FriendsRequestListener());
 								}
 							}, new Object());
-					
-//					setContentView(R.id)
-					
 				}
 			});
+			//setContentView(R.layout.main);
+//			mSpinner.show();
+//			mAsyncRunner.request("me/friends", new FriendsRequestListener());
+			break;
 		default:
 			return false;
 		}
