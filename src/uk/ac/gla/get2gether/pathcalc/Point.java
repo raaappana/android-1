@@ -26,8 +26,8 @@ public class Point {
 		Runnable decoder = new Runnable() {
 			public void run() {
 				List<Location> locs;
-				Geocoder g = new Geocoder("dcs.gla.ac.uk:80",
-						"L311D/opentripplanner-geocoder/geocode");
+				Geocoder g = new Geocoder("dcs.gla.ac.uk",
+						"L311_D/opentripplanner-geocoder/geocode");
 				try {
 					GeocoderResult res = g.geodecode(ad_parm);
 					locs = res.getLocations();

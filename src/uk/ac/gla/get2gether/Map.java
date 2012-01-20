@@ -93,8 +93,8 @@ public class Map extends MapActivity {
 							"start of the journey");
 				if (path.getEnd() == null)
 					path.setEnd("Boyd Orr Building", "arrival");
-				Planner planner = new Planner("get2gether.dns0.eu",
-						"L311D/opentripplanner-api-webapp/ws/plan", Locale.US);
+				Planner planner = new Planner("dcs.gla.ac.uk",
+						"L311_D/opentripplanner-api-webapp/ws/plan", Locale.US);
 				PlanRequest req = new PlanRequest();
 				req.setFrom(new Location(path.getStart().comment, path
 						.getStart().latlng.getLatitude(),
@@ -133,7 +133,7 @@ public class Map extends MapActivity {
 		//Center the map on Glasgow
 		GeoPoint gla = new GeoPoint(55.866521, -4.261803);
 		mapView.getController().setCenter(gla);
-		projection = mapView.getProjection();
+		//projection = mapView.getProjection();
 		
 		
 		mapView.setBuiltInZoomControls(true);
@@ -156,7 +156,7 @@ public class Map extends MapActivity {
         circleOverlayOutline.setStyle(Paint.Style.STROKE);
         circleOverlayOutline.setColor(Color.BLUE);
         circleOverlayOutline.setAlpha(128);
-        circleOverlayOutline.setStrokeWidth(2);
+        circleOverlayOutline.setStrokeWidth(4);
 		
         circleOverlay = new ArrayCircleOverlay(this.circleOverlayFill, this.circleOverlayOutline, this);
         
@@ -284,7 +284,7 @@ public class Map extends MapActivity {
 			mPaint.setColor(Color.RED);
 			mPaint.setStrokeJoin(Paint.Join.ROUND);
 			mPaint.setStrokeCap(Paint.Cap.SQUARE);
-			mPaint.setStrokeWidth(2);
+			mPaint.setStrokeWidth(4);
 
 			for (Leg leg : legs) {
 				List<Location> geometry = leg.getGeometry();
@@ -296,7 +296,7 @@ public class Map extends MapActivity {
 					mPaint.setColor(Color.BLUE);
 					break;
 				case SUBWAY:
-					mPaint.setColor(Color.GREEN);
+					mPaint.setColor(Color.rgb(255, 165, 0));
 					break;
 				}
 				for(int i = 0; i + 1 < geometry.size(); i++) {
