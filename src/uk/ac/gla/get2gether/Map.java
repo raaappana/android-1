@@ -90,8 +90,8 @@ public class Map extends MapActivity {
 							"start of the journey");
 				if (path.getEnd() == null)
 					path.setEnd("Boyd Orr Building", "arrival");
-				Planner planner = new Planner("spurga.numeris.lt:8888",
-						"opentripplanner-api-webapp/ws/plan", Locale.US);
+				Planner planner = new Planner("dcs.gla.ac.uk:80",
+						"L311D/opentripplanner-api-webapp/ws/plan", Locale.US);
 				PlanRequest req = new PlanRequest();
 				req.setFrom(new Location(path.getStart().comment, path
 						.getStart().latlng.getLatitude(),
