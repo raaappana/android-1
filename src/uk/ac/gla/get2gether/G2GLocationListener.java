@@ -2,6 +2,7 @@ package uk.ac.gla.get2gether;
 
 import org.mapsforge.android.maps.GeoPoint;
 
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.os.Bundle;
@@ -17,12 +18,13 @@ public class G2GLocationListener implements LocationListener {
 	
 	@Override
 	public void onLocationChanged(Location l) {
-		System.out.println("Location data updated");
 		GeoPoint point = new GeoPoint(l.getLatitude(), l.getLongitude());
         map.overlayCircle.setCircleData(point, l.getAccuracy());
         map.overlayItem.setPoint(point);
+        map.circleOverlayFill.setColor(Color.BLUE);
         map.circleOverlay.requestRedraw();
         map.itemizedOverlay.requestRedraw();
+        map.currentLocation = l;
 
 	}
 
