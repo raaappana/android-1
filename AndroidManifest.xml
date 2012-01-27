@@ -24,6 +24,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
                 </intent-filter>
         </activity>
+        <activity android:name="CreateEvent" android:theme="@android:style/Theme.NoTitleBar" android:label="CreateFBEvent"></activity>
+        <activity android:theme="@android:style/Theme.NoTitleBar" android:name="InviteFriendsActivity" android:label="InviteFriends"></activity>
     </application>
 
 </manifest> 

@@ -50,7 +50,9 @@ public class Main extends Activity {
 	private Facebook mFacebook;
 	private AsyncFacebookRunner mAsyncRunner;
 	private Handler mHandler = new Handler();
-	private String lastEventID;
+	private String eventID;
+	private final int INVITE_FRIENDS = 65;
+	private final int CREATE_EVENT = 99;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -63,8 +65,8 @@ public class Main extends Activity {
 		// Setup the ListView Adapter that is loaded when selecting
 		// "get friends"
 		listView = (ListView) findViewById(R.id.friendsview);
-//		friendsArrayAdapter = new FriendsArrayAdapter(this, R.layout.rowlayout,
-//				friends);
+		friendsArrayAdapter = new FriendsArrayAdapter(this, R.layout.rowlayout,
+				friends);
 		listView.setAdapter(friendsArrayAdapter);
 
 		// Define a spinner used when loading the friends over the network
@@ -72,12 +74,12 @@ public class Main extends Activity {
 		mSpinner.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		mSpinner.setMessage("Loading..");
 
-		mFacebook = new Facebook(getResources().getString(R.string.fb_appid));
-		mAsyncRunner = new AsyncFacebookRunner(mFacebook);
+//		mFacebook = new Facebook(getResources().getString(R.string.fb_appid));
+//		mAsyncRunner = new AsyncFacebookRunner(mFacebook);
 		
-//		Utility.setResources(getResources());
-//		mFacebook = Utility.getFacebook();
-//		mAsyncRunner = Utility.getAsyncRunner();
+		Utility.setResources(getResources());
+		mFacebook = Utility.getFacebook();
+		mAsyncRunner = Utility.getAsyncRunner();
 
 		/*
 		 * facebook.authorize(this, PERMISSIONS, new DialogListener() {
@@ -97,6 +99,48 @@ public class Main extends Activity {
 		super.onActivityResult(requestCode, resultCode, data);
 		Log.d("get2gether Main", "onActivityResult(): " + requestCode);
 		mFacebook.authorizeCallback(requestCode, resultCode, data);
+		if (requestCode == INVITE_FRIENDS) {
+			String friendID = data.getStringExtra("friendid");
+			Bundle params = new Bundle();
+			mAsyncRunner.request("/" + eventID + "/invited/" + friendID, params, "POST", new RequestListener(){
+
+				@Override
+				public void onComplete(String arg0, Object arg1) {
+					Log.i("Inviting response", arg0);
+				}
+
+				@Override
+				public void onFacebookError(FacebookError arg0, Object arg1) {
+					// TODO Auto-generated method stub
+					
+				}
+
+				@Override
+				public void onFileNotFoundException(FileNotFoundException arg0,
+						Object arg1) {
+					// TODO Auto-generated method stub
+					
+				}
+
+				@Override
+				public void onIOException(IOException arg0, Object arg1) {
+					// TODO Auto-generated method stub
+					
+				}
+
+				@Override
+				public void onMalformedURLException(MalformedURLException arg0,
+						Object arg1) {
+					// TODO Auto-generated method stub
+					
+				}
+				
+			}, new Object());
+		}
+		else if (requestCode == CREATE_EVENT) {
+			eventID = data.getStringExtra("eventid");
+			mAsyncRunner.request("me/friends", new FriendsRequestListener());
+		}
 	}
 
 	public class FriendsRequestListener implements
@@ -108,85 +152,93 @@ public class Main extends Activity {
 		 */
 		@Override
 		public void onComplete(final String response, Object state) {
-			mSpinner.dismiss();
-			try {
-				// process the response here: executed in background thread
-				Log.d("Facebook-Example-Friends Request", "response.length(): "
-						+ response.length());
-				Log.d("Facebook-Example-Friends Request", "Response: "
-						+ response);
-
-				final JSONObject json = new JSONObject(response);
-				JSONArray jsonAr = json.getJSONArray("data");
-				int len = (jsonAr != null ? jsonAr.length() : 0);
-				Log.d("Facebook-Example-Friends Request", "d.length(): " + len);
-
-				for (int i = 0; i < len; i++) {
-					JSONObject jsonObj = jsonAr.getJSONObject(i);
-					String name = jsonObj.getString("name");
-					String id = jsonObj.getString("id");
-					Friend f = new Friend();
-					f.id = id;
-					f.name = name;
-					friends.add(f);
-				}
-				
-//				setContentView(R.layout.main);
-
-				Main.this.runOnUiThread(new Runnable() {
-					public void run() {
-						Log.i("FriendsRequestListener", "run() is running");
-						friendsArrayAdapter = new FriendsArrayAdapter(
-								Main.this, R.layout.rowlayout, friends);
-						listView.setAdapter(friendsArrayAdapter);
-						friendsArrayAdapter.notifyDataSetChanged();
-						listView.setOnItemClickListener(new OnItemClickListener() {
-
-							@Override
-							public void onItemClick(AdapterView<?> arg0,
-									View v, int position, long arg3) {
-								Bundle params = new Bundle();
-								mAsyncRunner.request("/" + lastEventID + "/invited/" + friends.get(position).id, params, "POST", new RequestListener() {
-									
-									@Override
-									public void onMalformedURLException(MalformedURLException e, Object state) {
-										// TODO Auto-generated method stub
-										
-									}
-									
-									@Override
-									public void onIOException(IOException e, Object state) {
-										// TODO Auto-generated method stub
-										
-									}
-									
-									@Override
-									public void onFileNotFoundException(FileNotFoundException e, Object state) {
-										// TODO Auto-generated method stub
-										
-									}
-									
-									@Override
-									public void onFacebookError(FacebookError e, Object state) {
-										// TODO Auto-generated method stub
-										
-									}
-									
-									@Override
-									public void onComplete(String response, Object state) {
-										// TODO Auto-generated method stub
-										
-									}
-								}, new Object());
-
-							}
-
-						});
-					}
-				});
-			} catch (JSONException e) {
-				Log.w("get2gether FB", "JSON Error in response");
-			}
+			
+			Intent intent = new Intent();
+			intent.putExtra("response", response);
+//			intent.putExtra("eventid", lastEventID);
+			intent.setClass(Main.this, InviteFriendsActivity.class);
+			startActivityForResult(intent, INVITE_FRIENDS);
+			
+			
+//			mSpinner.dismiss();
+//			try {
+//				// process the response here: executed in background thread
+//				Log.d("Facebook-Example-Friends Request", "response.length(): "
+//						+ response.length());
+//				Log.d("Facebook-Example-Friends Request", "Response: "
+//						+ response);
+//
+//				final JSONObject json = new JSONObject(response);
+//				JSONArray jsonAr = json.getJSONArray("data");
+//				int len = (jsonAr != null ? jsonAr.length() : 0);
+//				Log.d("Facebook-Example-Friends Request", "d.length(): " + len);
+//
+//				for (int i = 0; i < len; i++) {
+//					JSONObject jsonObj = jsonAr.getJSONObject(i);
+//					String name = jsonObj.getString("name");
+//					String id = jsonObj.getString("id");
+//					Friend f = new Friend();
+//					f.id = id;
+//					f.name = name;
+//					friends.add(f);
+//				}
+//				
+////				setContentView(R.layout.main);
+//
+//				Main.this.runOnUiThread(new Runnable() {
+//					public void run() {
+//						Log.i("FriendsRequestListener", "run() is running");
+//						friendsArrayAdapter = new FriendsArrayAdapter(
+//								Main.this, R.layout.rowlayout, friends);
+//						listView.setAdapter(friendsArrayAdapter);
+//						friendsArrayAdapter.notifyDataSetChanged();
+//						listView.setOnItemClickListener(new OnItemClickListener() {
+//
+//							@Override
+//							public void onItemClick(AdapterView<?> arg0,
+//									View v, int position, long arg3) {
+//								Bundle params = new Bundle();
+//								mAsyncRunner.request("/" + lastEventID + "/invited/" + friends.get(position).id, params, "POST", new RequestListener() {
+//									
+//									@Override
+//									public void onMalformedURLException(MalformedURLException e, Object state) {
+//										// TODO Auto-generated method stub
+//										
+//									}
+//									
+//									@Override
+//									public void onIOException(IOException e, Object state) {
+//										// TODO Auto-generated method stub
+//										
+//									}
+//									
+//									@Override
+//									public void onFileNotFoundException(FileNotFoundException e, Object state) {
+//										// TODO Auto-generated method stub
+//										
+//									}
+//									
+//									@Override
+//									public void onFacebookError(FacebookError e, Object state) {
+//										// TODO Auto-generated method stub
+//										
+//									}
+//									
+//									@Override
+//									public void onComplete(String response, Object state) {
+//										
+//										
+//									}
+//								}, new Object());
+//
+//							}
+//
+//						});
+//					}
+//				});
+//			} catch (JSONException e) {
+//				Log.w("get2gether FB", "JSON Error in response");
+//			}
 		}
 
 		@Override
@@ -457,90 +509,91 @@ public class Main extends Activity {
 					new AppRequestsListener());
 			break;
 		case R.id.createev:
-//			Intent intent = new Intent();
-//			intent.pu
-			
-			setContentView(R.layout.create_event);
-			final EditText name = (EditText) findViewById(R.id.meetup_name);
-			final DatePicker datePicker = (DatePicker) findViewById(R.id.datePicker);
-			final TimePicker timePicker = (TimePicker) findViewById(R.id.timePicker);
-			Button arrange = (Button) findViewById(R.id.arrange_button);
-			arrange.setOnClickListener(new OnClickListener() {
-
-				@Override
-				public void onClick(View v) {
-					Bundle eventParams = new Bundle();
-					eventParams.putString("name", name.getEditableText()
-							.toString());
-					eventParams.putString(
-							"start_time",
-							getDateTimeString(datePicker.getYear(),
-									datePicker.getMonth() + 1,
-									datePicker.getDayOfMonth(),
-									timePicker.getCurrentHour(),
-									timePicker.getCurrentMinute()));
-					// eventParams.putString(
-					// "end_time",
-					// getDateTimeString(datePicker.getYear(),
-					// datePicker.getMonth() + 1,
-					// datePicker.getDayOfMonth(),
-					// timePicker.getCurrentHour() + 1,
-					// timePicker.getCurrentMinute()));
-					mAsyncRunner.request("me/events", eventParams, "POST",
-							new RequestListener() {
-
-								@Override
-								public void onMalformedURLException(
-										MalformedURLException e, Object state) {
-									Log.e("MALFORMED URL", "" + e.getMessage());
-								}
-
-								@Override
-								public void onIOException(IOException e,
-										Object state) {
-									Log.e("IOEX", "" + e.getMessage());
-								}
-
-								@Override
-								public void onFileNotFoundException(
-										FileNotFoundException e, Object state) {
-									Log.e("FILENOTFOUNDEX", "" + e.getMessage());
-								}
-
-								@Override
-								public void onFacebookError(FacebookError e,
-										Object state) {
-									Toast.makeText(
-											getApplicationContext(),
-											"Facebook Error: " + e.getMessage(),
-											Toast.LENGTH_SHORT).show();
-								}
-
-								@Override
-								public void onComplete(String response,
-										Object state) {
-
-									try {
-										JSONObject jo = new JSONObject(response);
-										lastEventID = jo.getString("id");
-										Log.i("LAST EVENT ID", lastEventID);
-									} catch (JSONException e) {
-										e.printStackTrace();
-									}
-									// Toast toast =
-									// Toast.makeText(getApplicationContext(),
-									// "Event created", Toast.LENGTH_SHORT);
-									// toast.show();
-//									mSpinner.show();
-									mAsyncRunner.request("me/friends", new FriendsRequestListener());
-								}
-							}, new Object());
-				}
-			});
-			//setContentView(R.layout.main);
-//			mSpinner.show();
-//			mAsyncRunner.request("me/friends", new FriendsRequestListener());
+			Intent intent = new Intent();
+			intent.setClass(this, CreateEvent.class);
+			startActivityForResult(intent, CREATE_EVENT);
 			break;
+//			setContentView(R.layout.create_event);
+//			final EditText name = (EditText) findViewById(R.id.meetup_name);
+//			final DatePicker datePicker = (DatePicker) findViewById(R.id.datePicker);
+//			final TimePicker timePicker = (TimePicker) findViewById(R.id.timePicker);
+//			Button arrange = (Button) findViewById(R.id.arrange_button);
+//			arrange.setOnClickListener(new OnClickListener() {
+//
+//				@Override
+//				public void onClick(View v) {
+//					Bundle eventParams = new Bundle();
+//					eventParams.putString("name", name.getEditableText()
+//							.toString());
+//					eventParams.putString(
+//							"start_time",
+//							getDateTimeString(datePicker.getYear(),
+//									datePicker.getMonth() + 1,
+//									datePicker.getDayOfMonth(),
+//									timePicker.getCurrentHour(),
+//									timePicker.getCurrentMinute()));
+//					// eventParams.putString(
+//					// "end_time",
+//					// getDateTimeString(datePicker.getYear(),
+//					// datePicker.getMonth() + 1,
+//					// datePicker.getDayOfMonth(),
+//					// timePicker.getCurrentHour() + 1,
+//					// timePicker.getCurrentMinute()));
+//					mAsyncRunner.request("me/events", eventParams, "POST",
+//							new RequestListener() {
+//
+//								@Override
+//								public void onMalformedURLException(
+//										MalformedURLException e, Object state) {
+//									Log.e("MALFORMED URL", "" + e.getMessage());
+//								}
+//
+//								@Override
+//								public void onIOException(IOException e,
+//										Object state) {
+//									Log.e("IOEX", "" + e.getMessage());
+//								}
+//
+//								@Override
+//								public void onFileNotFoundException(
+//										FileNotFoundException e, Object state) {
+//									Log.e("FILENOTFOUNDEX", "" + e.getMessage());
+//								}
+//
+//								@Override
+//								public void onFacebookError(FacebookError e,
+//										Object state) {
+//									Toast.makeText(
+//											getApplicationContext(),
+//											"Facebook Error: " + e.getMessage(),
+//											Toast.LENGTH_SHORT).show();
+//								}
+//
+//								@Override
+//								public void onComplete(String response,
+//										Object state) {
+//
+//									try {
+//										JSONObject jo = new JSONObject(response);
+//										lastEventID = jo.getString("id");
+//										Log.i("LAST EVENT ID", lastEventID);
+//									} catch (JSONException e) {
+//										e.printStackTrace();
+//									}
+//									// Toast toast =
+//									// Toast.makeText(getApplicationContext(),
+//									// "Event created", Toast.LENGTH_SHORT);
+//									// toast.show();
+////									mSpinner.show();
+//									mAsyncRunner.request("me/friends", new FriendsRequestListener());
+//								}
+//							}, new Object());
+//				}
+//			});
+//			//setContentView(R.layout.main);
+////			mSpinner.show();
+////			mAsyncRunner.request("me/friends", new FriendsRequestListener());
+//			break;
 		default:
 			return false;
 		}
