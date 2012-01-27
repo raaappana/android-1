@@ -439,6 +439,7 @@ public class Main extends Activity {
 		MenuItem getFriendItem = menu.findItem(R.id.getfriends);
 		MenuItem sendRequestItem = menu.findItem(R.id.sendreq);
 		MenuItem createEventItem = menu.findItem(R.id.createev);
+		MenuItem manageEventItem = menu.findItem(R.id.createev);
 
 		if (mFacebook.isSessionValid()) {
 			loginItem.setTitle("Logout");
