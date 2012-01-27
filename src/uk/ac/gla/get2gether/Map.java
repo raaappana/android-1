@@ -39,6 +39,7 @@ import android.location.Criteria;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Looper;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -68,8 +69,9 @@ public class Map extends MapActivity {
 	G2GItemizedOverlay itemizedOverlay;
 	OverlayCircle overlayCircle;
 	OverlayItem overlayItem;
-    private Paint circleOverlayFill;
+    Paint circleOverlayFill;
     private Paint circleOverlayOutline;
+    android.location.Location currentLocation = null; //coupled to listener!
     
     
 	@Override
@@ -88,9 +90,13 @@ public class Map extends MapActivity {
 
 		router = new Runnable() {
 			public void run() {
-				if (path.getStart() == null)
+				if (currentLocation == null)
 					path.setStart("St Aloysius Church, Glasgow",
 							"start of the journey");
+				else {
+					GeoPoint p = new GeoPoint(currentLocation.getLatitude(), currentLocation.getLongitude());
+					path.setStart(p.getLatitudeE6(), p.getLongitudeE6(), "current location");
+				}
 				if (path.getEnd() == null)
 					path.setEnd("Boyd Orr Building", "arrival");
 				Planner planner = new Planner("dcs.gla.ac.uk",
@@ -164,20 +170,40 @@ public class Map extends MapActivity {
         circleOverlay.addCircle(this.overlayCircle);
         mapView.getOverlays().add(this.circleOverlay);
         
-        //Get location service
+        //Get location service   
+        for (String provider : this.locationManager.getProviders(true)) {
+            android.location.Location cursor = this.locationManager.getLastKnownLocation(provider);
+            if (currentLocation == null || cursor.getAccuracy() < currentLocation.getAccuracy()) {
+                    currentLocation = cursor;
+            }
+        }
+        if (currentLocation != null) {
+            	GeoPoint point = new GeoPoint(currentLocation.getLatitude(), currentLocation.getLongitude());
+            	mapView.getController().setCenter(point); //re-center if possible
+            	showToast("Last location acquired!");
+                overlayCircle.setCircleData(point, currentLocation.getAccuracy());
+                circleOverlayFill.setColor(Color.YELLOW);
+                overlayItem.setPoint(point);
+                circleOverlay.requestRedraw();
+                itemizedOverlay.requestRedraw();            	
+        } else {
+            	showToast("Last location unknown, sorry!");
+        }
+
         Criteria criteria = new Criteria();
         criteria.setAccuracy(Criteria.ACCURACY_FINE);
+        
         String bestProvider = locationManager.getBestProvider(criteria, true);
         if (bestProvider == null) {
-        	System.err.println("Location service not available");
+        	showToast("Location service not available");
         	return;
         }
-        	
+        
         locationListener = new G2GLocationListener(this);
         //locationListener.setCenterAtFirstFix(centerAtFirstFix);
         locationManager.requestLocationUpdates(bestProvider, 1000, 0, locationListener);
 
-	}
+}
 	
 	void launchDestinationDialog(final GeoPoint p) {
 		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -416,4 +442,19 @@ public class Map extends MapActivity {
 		}
 		return true;
 	}
+	
+    void showToast(final String text) {
+        if (Looper.getMainLooper().getThread() == Thread.currentThread()) {
+                Toast toast = Toast.makeText(this, text, Toast.LENGTH_LONG);
+                toast.show();
+        } else {
+                runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                                Toast toast = Toast.makeText(Map.this, text, Toast.LENGTH_LONG);
+                                toast.show();
+                        }
+                });
+        }
+}
 }
