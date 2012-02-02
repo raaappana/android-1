@@ -13,9 +13,10 @@ public class OTP {
 
 	public static List<Location> geocode(final String address) {
 
-		class decoder implements Runnable {
+		class Decoder extends Thread {
 			List<Location> locs;
-			public void run(){
+
+			public void run() {
 				Geocoder g = new Geocoder(host,
 						"L311_D/opentripplanner-geocoder/geocode");
 				try {
@@ -31,12 +32,11 @@ public class OTP {
 				}
 			}
 		}
-		
-		decoder d = new decoder();
-		Thread t = new Thread(d);
-		t.start();
+
+		Decoder d = new Decoder();
+		d.start();
 		try {
-			t.join();
+			d.join();
 		} catch (InterruptedException e) {
 			System.err.println("Geocoding thread interrupted - WTF?!");
 			e.printStackTrace();
