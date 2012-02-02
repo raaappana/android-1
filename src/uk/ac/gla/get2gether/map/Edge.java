@@ -1,4 +1,4 @@
-package uk.ac.gla.get2gether.pathcalc;
+package uk.ac.gla.get2gether.map;
 
 public class Edge {
 	public Point from, to;
