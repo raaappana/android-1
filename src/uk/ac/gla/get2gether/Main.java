@@ -3,14 +3,8 @@ package uk.ac.gla.get2gether;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.util.ArrayList;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -18,17 +12,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.Window;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.Button;
-import android.widget.DatePicker;
-import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.facebook.android.AsyncFacebookRunner;
@@ -43,10 +27,6 @@ public class Main extends Activity {
 			"offline_access", "publish_checkins", "publish_stream",
 			"read_stream", "offline_access", "user_events", "create_event" };
 	private TextView mText;
-	private ListView listView;
-	private FriendsArrayAdapter friendsArrayAdapter;
-	private final ArrayList<Friend> friends = new ArrayList<Friend>();
-	private ProgressDialog mSpinner;
 	private Facebook mFacebook;
 	private AsyncFacebookRunner mAsyncRunner;
 	private Handler mHandler = new Handler();
@@ -57,49 +37,38 @@ public class Main extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		Log.i("Main Activity", "Started");
 		setContentView(R.layout.main);
 
 		// Get the status text line resource
 		mText = (TextView) Main.this.findViewById(R.id.txt);
 
-		// Setup the ListView Adapter that is loaded when selecting
-		// "get friends"
-		listView = (ListView) findViewById(R.id.friendsview);
-		friendsArrayAdapter = new FriendsArrayAdapter(this, R.layout.rowlayout,
-				friends);
-		listView.setAdapter(friendsArrayAdapter);
-
 		// Define a spinner used when loading the friends over the network
-		mSpinner = new ProgressDialog(listView.getContext());
-		mSpinner.requestWindowFeature(Window.FEATURE_NO_TITLE);
-		mSpinner.setMessage("Loading..");
+//		mSpinner = new ProgressDialog(listView.getContext());
+//		mSpinner.requestWindowFeature(Window.FEATURE_NO_TITLE);
+//		mSpinner.setMessage("Loading..");
 
-//		mFacebook = new Facebook(getResources().getString(R.string.fb_appid));
-//		mAsyncRunner = new AsyncFacebookRunner(mFacebook);
-		
 		Utility.setResources(getResources());
 		mFacebook = Utility.getFacebook();
 		mAsyncRunner = Utility.getAsyncRunner();
-
-		/*
-		 * facebook.authorize(this, PERMISSIONS, new DialogListener() {
-		 * 
-		 * @Override public void onComplete(Bundle values) { }
-		 * 
-		 * @Override public void onFacebookError(FacebookError error) { }
-		 * 
-		 * @Override public void onError(DialogError e) { }
-		 * 
-		 * @Override public void onCancel() { } });
-		 */
 	}
 
+	/**
+	 * Code to be executed when control returns to this Activity
+	 * @param requestCode the code which identifies the Activity which was performed prior to returning here
+	 * @param resultCode code identifying whether the previous Activity was performed successfully
+	 * @param data data passed from the previous Activity
+	 */
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		Log.d("get2gether Main", "onActivityResult(): " + requestCode);
+		
+		// The following method has to be called when returning to the Activity
+		// (it's a bit vague what it does but it's in the Facebook specs)
 		mFacebook.authorizeCallback(requestCode, resultCode, data);
 		if (requestCode == INVITE_FRIENDS) {
+			Log.i("Main Activity", "InviteFriends Activity returned");
 			String friendID = data.getStringExtra("friendid");
 			Bundle params = new Bundle();
 			mAsyncRunner.request("/" + eventID + "/invited/" + friendID, params, "POST", new RequestListener(){
@@ -138,6 +107,7 @@ public class Main extends Activity {
 			}, new Object());
 		}
 		else if (requestCode == CREATE_EVENT) {
+			Log.i("Main Activity", "CreateEvent Activity returned");
 			eventID = data.getStringExtra("eventid");
 			mAsyncRunner.request("me/friends", new FriendsRequestListener());
 		}
@@ -155,118 +125,38 @@ public class Main extends Activity {
 			
 			Intent intent = new Intent();
 			intent.putExtra("response", response);
-//			intent.putExtra("eventid", lastEventID);
 			intent.setClass(Main.this, InviteFriendsActivity.class);
-			startActivityForResult(intent, INVITE_FRIENDS);
-			
-			
-//			mSpinner.dismiss();
-//			try {
-//				// process the response here: executed in background thread
-//				Log.d("Facebook-Example-Friends Request", "response.length(): "
-//						+ response.length());
-//				Log.d("Facebook-Example-Friends Request", "Response: "
-//						+ response);
-//
-//				final JSONObject json = new JSONObject(response);
-//				JSONArray jsonAr = json.getJSONArray("data");
-//				int len = (jsonAr != null ? jsonAr.length() : 0);
-//				Log.d("Facebook-Example-Friends Request", "d.length(): " + len);
-//
-//				for (int i = 0; i < len; i++) {
-//					JSONObject jsonObj = jsonAr.getJSONObject(i);
-//					String name = jsonObj.getString("name");
-//					String id = jsonObj.getString("id");
-//					Friend f = new Friend();
-//					f.id = id;
-//					f.name = name;
-//					friends.add(f);
-//				}
-//				
-////				setContentView(R.layout.main);
-//
-//				Main.this.runOnUiThread(new Runnable() {
-//					public void run() {
-//						Log.i("FriendsRequestListener", "run() is running");
-//						friendsArrayAdapter = new FriendsArrayAdapter(
-//								Main.this, R.layout.rowlayout, friends);
-//						listView.setAdapter(friendsArrayAdapter);
-//						friendsArrayAdapter.notifyDataSetChanged();
-//						listView.setOnItemClickListener(new OnItemClickListener() {
-//
-//							@Override
-//							public void onItemClick(AdapterView<?> arg0,
-//									View v, int position, long arg3) {
-//								Bundle params = new Bundle();
-//								mAsyncRunner.request("/" + lastEventID + "/invited/" + friends.get(position).id, params, "POST", new RequestListener() {
-//									
-//									@Override
-//									public void onMalformedURLException(MalformedURLException e, Object state) {
-//										// TODO Auto-generated method stub
-//										
-//									}
-//									
-//									@Override
-//									public void onIOException(IOException e, Object state) {
-//										// TODO Auto-generated method stub
-//										
-//									}
-//									
-//									@Override
-//									public void onFileNotFoundException(FileNotFoundException e, Object state) {
-//										// TODO Auto-generated method stub
-//										
-//									}
-//									
-//									@Override
-//									public void onFacebookError(FacebookError e, Object state) {
-//										// TODO Auto-generated method stub
-//										
-//									}
-//									
-//									@Override
-//									public void onComplete(String response, Object state) {
-//										
-//										
-//									}
-//								}, new Object());
-//
-//							}
-//
-//						});
-//					}
-//				});
-//			} catch (JSONException e) {
-//				Log.w("get2gether FB", "JSON Error in response");
-//			}
+			startActivityForResult(intent, INVITE_FRIENDS);	
 		}
 
 		@Override
 		public void onIOException(IOException e, Object state) {
-			mSpinner.dismiss();
+			
 		}
 
 		@Override
 		public void onFileNotFoundException(FileNotFoundException e,
 				Object state) {
-			mSpinner.dismiss();
+			
 		}
 
 		@Override
 		public void onMalformedURLException(MalformedURLException e,
 				Object state) {
-			mSpinner.dismiss();
+			
 		}
 
 		@Override
 		public void onFacebookError(FacebookError e, Object state) {
-			mSpinner.dismiss();
+			
 		}
 	}
 
 	/**
 	 * WallPostRequestListener implements a request lister/callback for
 	 * "wall post requests"
+	 * 
+	 * WE PROBABLY WON'T NEED THIS
 	 */
 	public class WallPostRequestListener implements
 			com.facebook.android.AsyncFacebookRunner.RequestListener {
@@ -300,6 +190,8 @@ public class Main extends Activity {
 
 	/**
 	 * WallPostDialogListener implements a dialog lister/callback
+	 * 
+	 * NEITHER THIS
 	 */
 	public class WallPostDialogListener implements
 			com.facebook.android.Facebook.DialogListener {
@@ -380,8 +272,6 @@ public class Main extends Activity {
 			Main.this.runOnUiThread(new Runnable() {
 				public void run() {
 					mText.setText("Thanks for using get2gether FB activity. Bye bye..");
-					friends.clear();
-					friendsArrayAdapter.notifyDataSetChanged();
 				}
 			});
 
@@ -439,7 +329,7 @@ public class Main extends Activity {
 		MenuItem getFriendItem = menu.findItem(R.id.getfriends);
 		MenuItem sendRequestItem = menu.findItem(R.id.sendreq);
 		MenuItem createEventItem = menu.findItem(R.id.createev);
-		MenuItem manageEventItem = menu.findItem(R.id.createev);
+		MenuItem manageEventItem = menu.findItem(R.id.manageev);
 
 		if (mFacebook.isSessionValid()) {
 			loginItem.setTitle("Logout");
@@ -447,12 +337,14 @@ public class Main extends Activity {
 			getFriendItem.setEnabled(true);
 			sendRequestItem.setEnabled(true);
 			createEventItem.setEnabled(true);
+			manageEventItem.setEnabled(true);
 		} else {
 			loginItem.setTitle("Login");
 			postItem.setEnabled(false);
 			getFriendItem.setEnabled(false);
 			sendRequestItem.setEnabled(false);
 			createEventItem.setEnabled(false);
+			manageEventItem.setEnabled(false);
 		}
 
 		loginItem.setEnabled(true);
@@ -494,7 +386,6 @@ public class Main extends Activity {
 		// Get Friend's List
 		case R.id.getfriends:
 			// Get the authenticated user's friends
-			mSpinner.show();
 			mAsyncRunner.request("me/friends", new FriendsRequestListener());
 			break;
 
@@ -512,114 +403,67 @@ public class Main extends Activity {
 		case R.id.createev:
 			Intent intent = new Intent();
 			intent.setClass(this, CreateEvent.class);
+			Log.i("Main Activity", "Starting CreateEvent Activity");
 			startActivityForResult(intent, CREATE_EVENT);
 			break;
-//			setContentView(R.layout.create_event);
-//			final EditText name = (EditText) findViewById(R.id.meetup_name);
-//			final DatePicker datePicker = (DatePicker) findViewById(R.id.datePicker);
-//			final TimePicker timePicker = (TimePicker) findViewById(R.id.timePicker);
-//			Button arrange = (Button) findViewById(R.id.arrange_button);
-//			arrange.setOnClickListener(new OnClickListener() {
-//
-//				@Override
-//				public void onClick(View v) {
-//					Bundle eventParams = new Bundle();
-//					eventParams.putString("name", name.getEditableText()
-//							.toString());
-//					eventParams.putString(
-//							"start_time",
-//							getDateTimeString(datePicker.getYear(),
-//									datePicker.getMonth() + 1,
-//									datePicker.getDayOfMonth(),
-//									timePicker.getCurrentHour(),
-//									timePicker.getCurrentMinute()));
-//					// eventParams.putString(
-//					// "end_time",
-//					// getDateTimeString(datePicker.getYear(),
-//					// datePicker.getMonth() + 1,
-//					// datePicker.getDayOfMonth(),
-//					// timePicker.getCurrentHour() + 1,
-//					// timePicker.getCurrentMinute()));
-//					mAsyncRunner.request("me/events", eventParams, "POST",
-//							new RequestListener() {
-//
-//								@Override
-//								public void onMalformedURLException(
-//										MalformedURLException e, Object state) {
-//									Log.e("MALFORMED URL", "" + e.getMessage());
-//								}
-//
-//								@Override
-//								public void onIOException(IOException e,
-//										Object state) {
-//									Log.e("IOEX", "" + e.getMessage());
-//								}
-//
-//								@Override
-//								public void onFileNotFoundException(
-//										FileNotFoundException e, Object state) {
-//									Log.e("FILENOTFOUNDEX", "" + e.getMessage());
-//								}
-//
-//								@Override
-//								public void onFacebookError(FacebookError e,
-//										Object state) {
-//									Toast.makeText(
-//											getApplicationContext(),
-//											"Facebook Error: " + e.getMessage(),
-//											Toast.LENGTH_SHORT).show();
-//								}
-//
-//								@Override
-//								public void onComplete(String response,
-//										Object state) {
-//
-//									try {
-//										JSONObject jo = new JSONObject(response);
-//										lastEventID = jo.getString("id");
-//										Log.i("LAST EVENT ID", lastEventID);
-//									} catch (JSONException e) {
-//										e.printStackTrace();
-//									}
-//									// Toast toast =
-//									// Toast.makeText(getApplicationContext(),
-//									// "Event created", Toast.LENGTH_SHORT);
-//									// toast.show();
-////									mSpinner.show();
-//									mAsyncRunner.request("me/friends", new FriendsRequestListener());
-//								}
-//							}, new Object());
-//				}
-//			});
-//			//setContentView(R.layout.main);
-////			mSpinner.show();
-////			mAsyncRunner.request("me/friends", new FriendsRequestListener());
-//			break;
+		case R.id.manageev :
+			mAsyncRunner.request("me/events", new EventRequestListener());
+			break;
 		default:
 			return false;
 		}
 		return true;
 	}
+	
+	
+	/**
+	 * 
+	 * @author dNd
+	 *
+	 * This class will be used for getting a list of compatible events
+	 */
+	private class EventRequestListener implements RequestListener {
+
+		@Override
+		public void onComplete(String arg0, Object arg1) {
+			
+			
+		}
+
+		@Override
+		public void onFacebookError(FacebookError arg0, Object arg1) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void onFileNotFoundException(FileNotFoundException arg0,
+				Object arg1) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void onIOException(IOException arg0, Object arg1) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void onMalformedURLException(MalformedURLException arg0,
+				Object arg1) {
+			// TODO Auto-generated method stub
+			
+		}
+		
+	}
 
 	/**
-	 * @return the ISO-8601 formated date/time, used in FB events
+	 * 
+	 * @author dNd
+	 *
+	 * NOT SURE IF WE'RE IMPLEMENTING THIS
 	 */
-	private String getDateTimeString(int year, int month, int day, int hour,
-			int minute) {
-		String s = Integer.toString(year) + "-" + addLeadingZeros(month) + "-"
-				+ addLeadingZeros(day) + "T" + addLeadingZeros(hour) + ":"
-				+ addLeadingZeros(minute) + ":00";
-		Log.i("DATE/TIME STRING", s);
-		return s;
-	}
-
-	private String addLeadingZeros(int i) {
-		if (i > 10)
-			return Integer.toString(i);
-		else
-			return "0" + i;
-	}
-
 	public class AppRequestsListener extends BaseDialogListener {
 
 		@Override

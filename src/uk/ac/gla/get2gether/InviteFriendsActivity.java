@@ -1,8 +1,5 @@
 package uk.ac.gla.get2gether;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 
 import org.json.JSONArray;
@@ -18,25 +15,20 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
-import com.facebook.android.AsyncFacebookRunner;
-import com.facebook.android.AsyncFacebookRunner.RequestListener;
-import com.facebook.android.FacebookError;
-
 public class InviteFriendsActivity extends Activity {
 	
 	private FriendsArrayAdapter friendsArrayAdapter;
 	private ListView listView;
 	private ArrayList<Friend> friends;
-	private AsyncFacebookRunner mAsyncRunner;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		Log.i("InviteFriends Activity", "Started");
 		
 		setContentView(R.layout.invite_friends);
 		String response = getIntent().getStringExtra("response");
 		friends = new ArrayList<Friend>();
-		mAsyncRunner = Utility.getAsyncRunner();
 		listView = (ListView) findViewById(R.id.addfriendsview);
 		Log.i("InviteFriendsActivity response", response);
 		
@@ -74,41 +66,8 @@ public class InviteFriendsActivity extends Activity {
 				Intent i = new Intent();
 				i.putExtra("friendid", friends.get(position).id);
 				setResult(Activity.RESULT_OK, i);
+				Log.i("InviteFriends Activity", "Finished");
 				finish();
-//				Bundle params = new Bundle();
-//				mAsyncRunner.request("/" + lastEventID + "/invited/" + friends.get(position).id, params, "POST", new RequestListener() {
-//					
-//					@Override
-//					public void onMalformedURLException(MalformedURLException e, Object state) {
-//						// TODO Auto-generated method stub
-//						
-//					}
-//					
-//					@Override
-//					public void onIOException(IOException e, Object state) {
-//						// TODO Auto-generated method stub
-//						
-//					}
-//					
-//					@Override
-//					public void onFileNotFoundException(FileNotFoundException e, Object state) {
-//						// TODO Auto-generated method stub
-//						
-//					}
-//					
-//					@Override
-//					public void onFacebookError(FacebookError e, Object state) {
-//						// TODO Auto-generated method stub
-//						
-//					}
-//					
-//					@Override
-//					public void onComplete(String response, Object state) {
-//						
-//						
-//					}
-//				}, new Object());
-
 			}
 
 		});}catch (JSONException e) {
