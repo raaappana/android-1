@@ -11,6 +11,10 @@ public class Utility extends Activity{
 	private static Resources res;
 	private static Facebook mFacebook;
 	private static AsyncFacebookRunner mAsyncRunner;
+
+	public final static int MAIN_CODE = 12;
+	public final static int INVITE_FRIENDS_CODE = 65;
+	public final static int CREATE_EVENT_CODE = 99;
 	
 	public static void setResources(Resources r) {
 		res = r;

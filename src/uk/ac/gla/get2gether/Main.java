@@ -31,8 +31,6 @@ public class Main extends Activity {
 	private AsyncFacebookRunner mAsyncRunner;
 	private Handler mHandler = new Handler();
 	private String eventID;
-	private final int INVITE_FRIENDS = 65;
-	private final int CREATE_EVENT = 99;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -67,88 +65,8 @@ public class Main extends Activity {
 		// The following method has to be called when returning to the Activity
 		// (it's a bit vague what it does but it's in the Facebook specs)
 		mFacebook.authorizeCallback(requestCode, resultCode, data);
-		if (requestCode == INVITE_FRIENDS) {
-			Log.i("Main Activity", "InviteFriends Activity returned");
-			String friendID = data.getStringExtra("friendid");
-			Bundle params = new Bundle();
-			mAsyncRunner.request("/" + eventID + "/invited/" + friendID, params, "POST", new RequestListener(){
-
-				@Override
-				public void onComplete(String arg0, Object arg1) {
-					Log.i("Inviting response", arg0);
-				}
-
-				@Override
-				public void onFacebookError(FacebookError arg0, Object arg1) {
-					// TODO Auto-generated method stub
-					
-				}
-
-				@Override
-				public void onFileNotFoundException(FileNotFoundException arg0,
-						Object arg1) {
-					// TODO Auto-generated method stub
-					
-				}
-
-				@Override
-				public void onIOException(IOException arg0, Object arg1) {
-					// TODO Auto-generated method stub
-					
-				}
-
-				@Override
-				public void onMalformedURLException(MalformedURLException arg0,
-						Object arg1) {
-					// TODO Auto-generated method stub
-					
-				}
-				
-			}, new Object());
-		}
-		else if (requestCode == CREATE_EVENT) {
+		if (requestCode == Utility.CREATE_EVENT_CODE) {
 			Log.i("Main Activity", "CreateEvent Activity returned");
-			eventID = data.getStringExtra("eventid");
-			mAsyncRunner.request("me/friends", new FriendsRequestListener());
-		}
-	}
-
-	public class FriendsRequestListener implements
-			com.facebook.android.AsyncFacebookRunner.RequestListener {
-
-		/**
-		 * Called when the request to get friends has been completed. Retrieve
-		 * and parse and display the JSON stream.
-		 */
-		@Override
-		public void onComplete(final String response, Object state) {
-			
-			Intent intent = new Intent();
-			intent.putExtra("response", response);
-			intent.setClass(Main.this, InviteFriendsActivity.class);
-			startActivityForResult(intent, INVITE_FRIENDS);	
-		}
-
-		@Override
-		public void onIOException(IOException e, Object state) {
-			
-		}
-
-		@Override
-		public void onFileNotFoundException(FileNotFoundException e,
-				Object state) {
-			
-		}
-
-		@Override
-		public void onMalformedURLException(MalformedURLException e,
-				Object state) {
-			
-		}
-
-		@Override
-		public void onFacebookError(FacebookError e, Object state) {
-			
 		}
 	}
 
@@ -384,10 +302,10 @@ public class Main extends Activity {
 			break;
 
 		// Get Friend's List
-		case R.id.getfriends:
-			// Get the authenticated user's friends
-			mAsyncRunner.request("me/friends", new FriendsRequestListener());
-			break;
+//		case R.id.getfriends:
+//			// Get the authenticated user's friends
+//			mAsyncRunner.request("me/friends", new FriendsRequestListener());
+//			break;
 
 		case R.id.showmap:
 			Intent in = new Intent();
@@ -404,7 +322,7 @@ public class Main extends Activity {
 			Intent intent = new Intent();
 			intent.setClass(this, CreateEvent.class);
 			Log.i("Main Activity", "Starting CreateEvent Activity");
-			startActivityForResult(intent, CREATE_EVENT);
+			startActivityForResult(intent, Utility.CREATE_EVENT_CODE);
 			break;
 		case R.id.manageev :
 			mAsyncRunner.request("me/events", new EventRequestListener());

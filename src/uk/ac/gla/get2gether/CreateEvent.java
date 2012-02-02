@@ -27,15 +27,26 @@ public class CreateEvent extends Activity {
 
 	private String eventID;
 	private AsyncFacebookRunner mAsyncRunner;
+	private Intent intentForInviteFriends;
+	
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == Utility.INVITE_FRIENDS_CODE) {
+			Log.i("CreateEvent Activity", "InviteFriends Activity returned");
+			Log.i("CreateEvent Activity", "Finished");
+			finish();
+		}
+	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		Log.i("CreateEvent Activity", "Started");
 		setContentView(R.layout.create_event);
-		
+
 		mAsyncRunner = Utility.getAsyncRunner();
-		
+		intentForInviteFriends = new Intent();
+
 		final EditText name = (EditText) findViewById(R.id.meetup_name);
 		final DatePicker datePicker = (DatePicker) findViewById(R.id.datePicker);
 		final TimePicker timePicker = (TimePicker) findViewById(R.id.timePicker);
@@ -89,12 +100,15 @@ public class CreateEvent extends Activity {
 									JSONObject jo = new JSONObject(response);
 									eventID = jo.getString("id");
 									Log.i("LAST EVENT ID", eventID);
-									
-									Intent i = new Intent();
-									i.putExtra("eventid", eventID);
-									setResult(Activity.RESULT_OK, i);
-									Log.i("CreateEvent Activity", "Finished");
-									finish();
+
+//									Intent i = new Intent();
+									intentForInviteFriends.putExtra("eventid", eventID);
+//									setResult(Activity.RESULT_OK, i);
+
+									mAsyncRunner.request("me/friends",
+											new FriendsRequestListener());
+//									Log.i("CreateEvent Activity", "Finished");
+//									finish();
 								} catch (JSONException e) {
 									e.printStackTrace();
 								}
@@ -104,15 +118,53 @@ public class CreateEvent extends Activity {
 		});
 
 	}
-	
+
+	public class FriendsRequestListener implements
+			com.facebook.android.AsyncFacebookRunner.RequestListener {
+
+		/**
+		 * Called when the request to get friends has been completed. Retrieve
+		 * and parse and display the JSON stream.
+		 */
+		@Override
+		public void onComplete(final String response, Object state) {
+
+//			Intent intent = new Intent();
+			intentForInviteFriends.putExtra("friendsresponse", response);
+			intentForInviteFriends.setClass(CreateEvent.this, InviteFriendsActivity.class);
+			startActivityForResult(intentForInviteFriends, Utility.INVITE_FRIENDS_CODE);
+		}
+
+		@Override
+		public void onIOException(IOException e, Object state) {
+
+		}
+
+		@Override
+		public void onFileNotFoundException(FileNotFoundException e,
+				Object state) {
+
+		}
+
+		@Override
+		public void onMalformedURLException(MalformedURLException e,
+				Object state) {
+
+		}
+
+		@Override
+		public void onFacebookError(FacebookError e, Object state) {
+
+		}
+	}
+
 	/**
 	 * @return the ISO-8601 formated date/time, used in FB events
 	 */
-	private String getDateTimeString(int year, int month, int day,
-			int hour, int minute) {
-		String s = Integer.toString(year) + "-"
-				+ addLeadingZeros(month) + "-" + addLeadingZeros(day)
-				+ "T" + addLeadingZeros(hour) + ":"
+	private String getDateTimeString(int year, int month, int day, int hour,
+			int minute) {
+		String s = Integer.toString(year) + "-" + addLeadingZeros(month) + "-"
+				+ addLeadingZeros(day) + "T" + addLeadingZeros(hour) + ":"
 				+ addLeadingZeros(minute) + ":00";
 		Log.i("DATE/TIME STRING", s);
 		return s;
