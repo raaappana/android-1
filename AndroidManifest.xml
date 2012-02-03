@@ -26,6 +26,7 @@
         </activity>
         <activity android:name="CreateEvent" android:theme="@android:style/Theme.NoTitleBar" android:label="CreateFBEvent"></activity>
         <activity android:theme="@android:style/Theme.NoTitleBar" android:name=".InviteFriendsActivity" android:label="InviteFriends"></activity>
+        <activity android:name=".map.WalkSteps"></activity>
     </application>
 
 </manifest> 
