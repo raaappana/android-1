@@ -24,8 +24,8 @@ import org.mapsforge.android.maps.OverlayItem;
 import org.mapsforge.android.maps.Projection;
 import org.xmlpull.v1.XmlPullParserException;
 
-import uk.ac.gla.get2gether.pathcalc.DumbPath;
-import uk.ac.gla.get2gether.pathcalc.Edge;
+import uk.ac.gla.get2gether.map.DumbPath;
+import uk.ac.gla.get2gether.map.Edge;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;

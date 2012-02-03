@@ -35,7 +35,7 @@ import android.widget.TextView;
 public class FriendsArrayAdapter extends ArrayAdapter<Friend> {
     private final Activity context;
     private final ArrayList<Friend> friends;
-    private int resourceId;
+    private int resourceId;	
 
     /**
      * Constructor

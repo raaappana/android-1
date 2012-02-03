@@ -1,19 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/create_event_layout"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:gravity="center"
     android:orientation="vertical" >
-
-    <ScrollView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
-
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="vertical" >
 
             <TextView
                 android:id="@+id/arrange"
@@ -49,6 +40,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
+            <Button
+                android:id="@+id/search_location_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/search_location_button_tag" />
+
             <TextView
                 android:id="@+id/enter_date"
                 android:layout_width="fill_parent"
@@ -80,7 +77,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/arrange_button_tag" />
-        </LinearLayout>
-    </ScrollView>
+        
 
 </LinearLayout>

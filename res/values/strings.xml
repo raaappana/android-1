@@ -15,4 +15,5 @@
 	<string name="enterdate">Date:</string>
 	<string name="entertime">Time:</string>
 	<string name="arrange_button_tag">Arrange I say</string>
+	<string name="search_location_button_tag">Search Location</string>
 </resources>
