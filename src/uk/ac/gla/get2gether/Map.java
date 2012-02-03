@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Observable;
+import java.util.Observer;
 
 import org.idansof.otp.client.Itinerary;
 import org.idansof.otp.client.Leg;
@@ -12,6 +14,7 @@ import org.idansof.otp.client.Location;
 import org.idansof.otp.client.PlanRequest;
 import org.idansof.otp.client.Planner;
 import org.idansof.otp.client.TripPlan;
+import org.idansof.otp.client.WalkStep;
 import org.mapsforge.android.maps.ArrayCircleOverlay;
 import org.mapsforge.android.maps.GeoPoint;
 import org.mapsforge.android.maps.ItemizedOverlay;
@@ -24,12 +27,11 @@ import org.mapsforge.android.maps.OverlayItem;
 import org.mapsforge.android.maps.Projection;
 import org.xmlpull.v1.XmlPullParserException;
 
-import uk.ac.gla.get2gether.pathcalc.DumbPath;
-import uk.ac.gla.get2gether.pathcalc.Edge;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -49,31 +51,31 @@ import android.view.Window;
 import android.widget.EditText;
 import android.widget.Toast;
 
-public class Map extends MapActivity {
+import uk.ac.gla.get2gether.map.OTP;
+import uk.ac.gla.get2gether.map.WalkSteps;
 
-	
-	//Route calculation
-	private Runnable router;
-	private DumbPath path;
-	private List<Leg> legs;
+public class Map extends MapActivity implements Observer {
+
+	// Route calculation
+	// private DumbPath path;
 	private ProgressDialog mSpinner;
-	private Itinerary itinerary = null;
-	private boolean isRouteCalcDone = false;
+	public static Itinerary itinerary = null; //Android Tutorial recommended :)
+	private boolean routeCalcDone = false;
 
 	private View infoView;
-	
-	//Current location stuff
+
+	// Current location stuff
 	private LocationManager locationManager;
 	private G2GLocationListener locationListener;
 	ArrayCircleOverlay circleOverlay;
 	G2GItemizedOverlay itemizedOverlay;
 	OverlayCircle overlayCircle;
 	OverlayItem overlayItem;
-    Paint circleOverlayFill;
-    private Paint circleOverlayOutline;
-    android.location.Location currentLocation = null; //coupled to listener!
-    
-    
+	Paint circleOverlayFill;
+	private Paint circleOverlayOutline;
+	android.location.Location currentLocation = null; // coupled to listener!
+	private Location start, end;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -85,160 +87,138 @@ public class Map extends MapActivity {
 		mSpinner.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		mSpinner.setMessage("Loading..");
 
-		if (path == null)
-			 path = new DumbPath(this);
-
-		router = new Runnable() {
-			public void run() {
-				if (currentLocation == null)
-					path.setStart("St Aloysius Church, Glasgow",
-							"start of the journey");
-				else {
-					GeoPoint p = new GeoPoint(currentLocation.getLatitude(), currentLocation.getLongitude());
-					path.setStart(p.getLatitudeE6(), p.getLongitudeE6(), "current location");
-				}
-				if (path.getEnd() == null)
-					path.setEnd("Boyd Orr Building", "arrival");
-				Planner planner = new Planner("dcs.gla.ac.uk",
-						"L311_D/opentripplanner-api-webapp/ws/plan", Locale.US);
-				PlanRequest req = new PlanRequest();
-				req.setFrom(new Location(path.getStart().comment, path
-						.getStart().latlng.getLatitude(),
-						path.getStart().latlng.getLongitude()));
-				req.setTo(new Location(path.getEnd().comment,
-						path.getEnd().latlng.getLatitude(),
-						path.getEnd().latlng.getLongitude()));
-				req.setDate(new Date(System.currentTimeMillis()));
-
-				TripPlan plan = null;
-
-				try {
-					plan = planner.generatePlan(req).getTripPlan();
-					List<Itinerary> its = plan.getItineraries();
-					itinerary = its.get(0);
-					legs = itinerary.getLegs();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (XmlPullParserException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (java.text.ParseException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				onRouteCalcFinished();
-			}
-		};
+		if (currentLocation != null)
+			start = new Location(currentLocation.getProvider(),
+					currentLocation.getLatitude(),
+					currentLocation.getLongitude());
+		else
+			start = new Location("fallback starting point", 55.866521,
+					-4.261803);
 
 		mapView.setMapViewMode(MapViewMode.MAPNIK_TILE_DOWNLOAD);
-		//mapView.mapView.setMapViewMode(MapViewMode.CANVAS_RENDERER);
-		//mapView.setMapFile("/sdcard/great_britain-0.2.4.map");
+		// mapView.mapView.setMapViewMode(MapViewMode.CANVAS_RENDERER);
+		// mapView.setMapFile("/sdcard/great_britain-0.2.4.map");
 		mapView.setBuiltInZoomControls(true);
-		
-		//Center the map on Glasgow
+
+		// Center the map on Glasgow
 		GeoPoint gla = new GeoPoint(55.866521, -4.261803);
 		mapView.getController().setCenter(gla);
-		//projection = mapView.getProjection();
-		
-		
+		// projection = mapView.getProjection();
+
 		mapView.setBuiltInZoomControls(true);
 		// infoView = (LocationView)findViewById(R.id.location_view);
-		
-		//Current location marker
-        itemizedOverlay = new G2GItemizedOverlay(null, this);
-        overlayItem = new OverlayItem();
-        overlayItem.setMarker(ItemizedOverlay.boundCenter(getResources().getDrawable(R.drawable.my_location)));
-        itemizedOverlay.addItem(overlayItem);
-        mapView.getOverlays().add(itemizedOverlay);
-		
-        //Current location accuracy radius
-        circleOverlayFill = new Paint(Paint.ANTI_ALIAS_FLAG);
-        circleOverlayFill.setStyle(Paint.Style.FILL);
-        circleOverlayFill.setColor(Color.BLUE);
-        circleOverlayFill.setAlpha(48);
 
-        circleOverlayOutline = new Paint(Paint.ANTI_ALIAS_FLAG);
-        circleOverlayOutline.setStyle(Paint.Style.STROKE);
-        circleOverlayOutline.setColor(Color.BLUE);
-        circleOverlayOutline.setAlpha(128);
-        circleOverlayOutline.setStrokeWidth(4);
-		
-        circleOverlay = new ArrayCircleOverlay(this.circleOverlayFill, this.circleOverlayOutline, this);
-        
-        overlayCircle = new OverlayCircle();
-        circleOverlay.addCircle(this.overlayCircle);
-        mapView.getOverlays().add(this.circleOverlay);
-        
-        //Get location service   
-        for (String provider : this.locationManager.getProviders(true)) {
-            android.location.Location cursor = this.locationManager.getLastKnownLocation(provider);
-            if (currentLocation == null || cursor.getAccuracy() < currentLocation.getAccuracy()) {
-                    currentLocation = cursor;
-            }
-        }
-        if (currentLocation != null) {
-            	GeoPoint point = new GeoPoint(currentLocation.getLatitude(), currentLocation.getLongitude());
-            	mapView.getController().setCenter(point); //re-center if possible
-            	showToast("Last location acquired!");
-                overlayCircle.setCircleData(point, currentLocation.getAccuracy());
-                circleOverlayFill.setColor(Color.YELLOW);
-                overlayItem.setPoint(point);
-                circleOverlay.requestRedraw();
-                itemizedOverlay.requestRedraw();            	
-        } else {
-            	showToast("Last location unknown, sorry!");
-        }
+		// Current location marker
+		itemizedOverlay = new G2GItemizedOverlay(null, this);
+		overlayItem = new OverlayItem();
+		overlayItem.setMarker(ItemizedOverlay.boundCenter(getResources()
+				.getDrawable(R.drawable.my_location)));
+		itemizedOverlay.addItem(overlayItem);
+		mapView.getOverlays().add(itemizedOverlay);
 
-        Criteria criteria = new Criteria();
-        criteria.setAccuracy(Criteria.ACCURACY_FINE);
-        
-        String bestProvider = locationManager.getBestProvider(criteria, true);
-        if (bestProvider == null) {
-        	showToast("Location service not available");
-        	return;
-        }
-        
-        locationListener = new G2GLocationListener(this);
-        //locationListener.setCenterAtFirstFix(centerAtFirstFix);
-        locationManager.requestLocationUpdates(bestProvider, 1000, 0, locationListener);
+		// Current location accuracy radius
+		circleOverlayFill = new Paint(Paint.ANTI_ALIAS_FLAG);
+		circleOverlayFill.setStyle(Paint.Style.FILL);
+		circleOverlayFill.setColor(Color.BLUE);
+		circleOverlayFill.setAlpha(48);
 
-}
-	
+		circleOverlayOutline = new Paint(Paint.ANTI_ALIAS_FLAG);
+		circleOverlayOutline.setStyle(Paint.Style.STROKE);
+		circleOverlayOutline.setColor(Color.BLUE);
+		circleOverlayOutline.setAlpha(128);
+		circleOverlayOutline.setStrokeWidth(4);
+
+		circleOverlay = new ArrayCircleOverlay(this.circleOverlayFill,
+				this.circleOverlayOutline, this);
+
+		overlayCircle = new OverlayCircle();
+		circleOverlay.addCircle(this.overlayCircle);
+		mapView.getOverlays().add(this.circleOverlay);
+
+		// Get location service
+		for (String provider : this.locationManager.getProviders(true)) {
+			android.location.Location cursor = this.locationManager
+					.getLastKnownLocation(provider);
+			if (currentLocation == null
+					|| cursor.getAccuracy() < currentLocation.getAccuracy()) {
+				currentLocation = cursor;
+			}
+		}
+		if (currentLocation != null) {
+			GeoPoint point = new GeoPoint(currentLocation.getLatitude(),
+					currentLocation.getLongitude());
+			mapView.getController().setCenter(point); // re-center if possible
+			showToast("Last location acquired!");
+			overlayCircle.setCircleData(point, currentLocation.getAccuracy());
+			circleOverlayFill.setColor(Color.BLUE);
+			overlayItem.setPoint(point);
+			circleOverlay.requestRedraw();
+			itemizedOverlay.requestRedraw();
+		} else {
+			showToast("Last location unknown, sorry!");
+		}
+
+		Criteria criteria = new Criteria();
+		criteria.setAccuracy(Criteria.ACCURACY_FINE);
+
+		String bestProvider = locationManager.getBestProvider(criteria, true);
+		if (bestProvider == null) {
+			showToast("Location service not available");
+			return;
+		}
+
+		locationListener = new G2GLocationListener(this);
+		// locationListener.setCenterAtFirstFix(centerAtFirstFix);
+		locationManager.requestLocationUpdates(bestProvider, 1000, 0,
+				locationListener);
+
+	}
+
 	void launchDestinationDialog(final GeoPoint p) {
 		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setMessage("Navigate to the chosen location?")
-		       .setCancelable(false)
-		       .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-		           public void onClick(DialogInterface dialog, int id) {
-		                setDestination(p);
-		                startRouting();
-		           }
-		       })
-		       .setNegativeButton("No", new DialogInterface.OnClickListener() {
-		           public void onClick(DialogInterface dialog, int id) {
-		                dialog.cancel();
-		           }
-		       });
+				.setCancelable(false)
+				.setPositiveButton("Yes",
+						new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog, int id) {
+								setDestination(p);
+								startRouting();
+							}
+						})
+				.setNegativeButton("No", new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) {
+						dialog.cancel();
+					}
+				});
 		runOnUiThread(new Runnable() {
-		    public void run() {
-		    	AlertDialog alert = builder.create();
-		    	alert.show();
-		    }
+			public void run() {
+				AlertDialog alert = builder.create();
+				alert.show();
+			}
 		});
 	}
-	
-    private void setDestination(GeoPoint p) {
-    	path.setEnd(p.getLatitudeE6(), p.getLongitudeE6(), "chosen place");
-    }
-    
-    private void startRouting() {
-		Thread router_t = new Thread(router);
-    	router_t.start();
-    	mSpinner.show();
-    }
-	
-	private void draw_overlays(DumbPath path, MapView mapView) {
+
+	private void setDestination(GeoPoint p) {
+		end = new Location("Destination", p.getLatitude(), p.getLongitude());
+	}
+
+	private void startRouting() {
+		mSpinner.show();
+		OTP.route(start, end, new Date(System.currentTimeMillis()), this);
+	}
+
+	public void update(Observable caller, Object ob) {
+		if (ob instanceof List<?>) {
+			Object o = ((List<?>) ob).get(0);
+			if (o instanceof Itinerary)
+				itinerary = (Itinerary)o;
+		}
+		mSpinner.dismiss();
+		routeCalcDone = true;
+		draw_overlays((MapView) findViewById(R.id.mapview));
+	}
+
+	private void draw_overlays(MapView mapView) {
 		List<Overlay> mapOverlays = mapView.getOverlays();
 		Drawable dest_icon = this.getResources().getDrawable(
 				R.drawable.ic_menu_flag_red);
@@ -246,18 +226,17 @@ public class Map extends MapActivity {
 		Drawable src_icon = this.getResources().getDrawable(
 				R.drawable.ic_menu_flag_green);
 
-		List<Edge> edges = path.getShortestPath();
+		// List<Edge> edges = path.getShortestPath();
 
-		RouteOverlay itemizedoverlay = new RouteOverlay(dest_icon, this, edges);
+		RouteOverlay itemizedoverlay = new RouteOverlay(dest_icon, this);
 		ItemizedOverlay.boundCenterBottom(src_icon);
-		
-		for (Edge e : edges) {
-			itemizedoverlay.addOverlay(new OverlayItem(e.from.latlng, "y1",
-					e.from.comment, src_icon));
-		}
-		Edge lastEdge = edges.get(edges.size() - 1);
-		itemizedoverlay.addOverlay(new OverlayItem(lastEdge.to.latlng, "y1",
-				lastEdge.to.comment));
+		/*
+		 * for (Edge e : edges) { itemizedoverlay.addOverlay(new
+		 * OverlayItem(e.from.latlng, "y1", e.from.comment, src_icon)); } Edge
+		 * lastEdge = edges.get(edges.size() - 1);
+		 * itemizedoverlay.addOverlay(new OverlayItem(lastEdge.to.latlng, "y1",
+		 * lastEdge.to.comment));
+		 */
 
 		mapOverlays.add(itemizedoverlay);
 	}
@@ -265,12 +244,9 @@ public class Map extends MapActivity {
 	private class RouteOverlay extends ItemizedOverlay<OverlayItem> {
 		private ArrayList<OverlayItem> mOverlays = new ArrayList<OverlayItem>();
 		Context mContext;
-		List<Edge> edges; // for drawing lines between the points
 
-		public RouteOverlay(Drawable defaultMarker, Context context,
-				List<Edge> edges) {
+		public RouteOverlay(Drawable defaultMarker, Context context) {
 			super(boundCenterBottom(defaultMarker));
-			this.edges = edges;
 			mContext = context;
 		}
 
@@ -311,10 +287,12 @@ public class Map extends MapActivity {
 			mPaint.setStrokeJoin(Paint.Join.ROUND);
 			mPaint.setStrokeCap(Paint.Cap.SQUARE);
 			mPaint.setStrokeWidth(4);
+			
 
-			for (Leg leg : legs) {
+			for (Leg leg : itinerary.getLegs()) {
+				
 				List<Location> geometry = leg.getGeometry();
-				switch(leg.getMode()) {
+				switch (leg.getMode()) {
 				case WALK:
 					mPaint.setColor(Color.RED);
 					break;
@@ -325,14 +303,15 @@ public class Map extends MapActivity {
 					mPaint.setColor(Color.rgb(255, 165, 0));
 					break;
 				}
-				for(int i = 0; i + 1 < geometry.size(); i++) {
+				for (int i = 0; i + 1 < geometry.size(); i++) {
 					Point p1 = new Point(), p2 = new Point();
-					projection.toPixels(new GeoPoint(geometry.get(i).getLatitude(),
-							geometry.get(i).getLongitude()), p1);
 					projection
-							.toPixels(new GeoPoint(geometry.get(i + 1)
-									.getLatitude(), geometry.get(i + 1)
-									.getLongitude()), p2);
+							.toPixels(new GeoPoint(geometry.get(i)
+									.getLatitude(), geometry.get(i)
+									.getLongitude()), p1);
+					projection.toPixels(
+							new GeoPoint(geometry.get(i + 1).getLatitude(),
+									geometry.get(i + 1).getLongitude()), p2);
 					canvas.drawLine(p2.x, p2.y, p1.x, p1.y, mPaint);
 				}
 			}
@@ -361,10 +340,12 @@ public class Map extends MapActivity {
 	 */
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
-		MenuItem calcrouteItem = menu.findItem(R.id.calc_route);
+		//MenuItem calcrouteItem = menu.findItem(R.id.calc_route);
 		MenuItem routeInfoMenuItem = menu.findItem(R.id.route_info);
-		MenuItem inputLocationItem = menu.findItem(R.id.input_locations);
-		routeInfoMenuItem.setEnabled(isRouteCalcDone);
+		//MenuItem inputLocationItem = menu.findItem(R.id.input_locations);
+		MenuItem walkStepsItem = menu.findItem(R.id.walk_steps);
+		routeInfoMenuItem.setEnabled(routeCalcDone);
+		walkStepsItem.setEnabled(routeCalcDone);
 		return super.onPrepareOptionsMenu(menu);
 	}
 
@@ -378,8 +359,8 @@ public class Map extends MapActivity {
 		final EditText start = (EditText) findViewById(R.id.start_entry);
 		final EditText end = (EditText) findViewById(R.id.end_entry);
 		mSpinner.show();
-		path.setStart(start.getText().toString(), "start");
-		path.setEnd(end.getText().toString(), "end");
+		// path.setStart(start.getText().toString(), "start");
+		// path.setEnd(end.getText().toString(), "end");
 		mSpinner.dismiss();
 		restoreMap(view);
 	}
@@ -388,12 +369,6 @@ public class Map extends MapActivity {
 	public void onBackPressed() {
 		// do not exit if not mapview
 		super.onBackPressed();
-	}
-
-	private void onRouteCalcFinished() {
-		mSpinner.dismiss();
-		isRouteCalcDone = true;
-		draw_overlays(path, (MapView) findViewById(R.id.mapview));
 	}
 
 	/**
@@ -406,8 +381,12 @@ public class Map extends MapActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.calc_route:
-			new Thread(router).start();
-			mSpinner.show();
+			startRouting();
+			break;
+		case R.id.walk_steps:
+			Intent in = new Intent();
+			in.setClass(this, WalkSteps.class);
+			startActivity(in);
 			break;
 		case R.id.route_info:
 			/*
@@ -442,19 +421,20 @@ public class Map extends MapActivity {
 		}
 		return true;
 	}
-	
-    void showToast(final String text) {
-        if (Looper.getMainLooper().getThread() == Thread.currentThread()) {
-                Toast toast = Toast.makeText(this, text, Toast.LENGTH_LONG);
-                toast.show();
-        } else {
-                runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                                Toast toast = Toast.makeText(Map.this, text, Toast.LENGTH_LONG);
-                                toast.show();
-                        }
-                });
-        }
-}
+
+	void showToast(final String text) {
+		if (Looper.getMainLooper().getThread() == Thread.currentThread()) {
+			Toast toast = Toast.makeText(this, text, Toast.LENGTH_LONG);
+			toast.show();
+		} else {
+			runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					Toast toast = Toast.makeText(Map.this, text,
+							Toast.LENGTH_LONG);
+					toast.show();
+				}
+			});
+		}
+	}
 }
