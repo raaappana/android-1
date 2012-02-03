@@ -6,6 +6,16 @@
     android:gravity="center"
     android:orientation="vertical" >
 
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical" >
+
             <TextView
                 android:id="@+id/arrange"
                 android:layout_width="fill_parent"
@@ -77,6 +87,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/arrange_button_tag" />
-        
+        </LinearLayout>
+    </ScrollView>
 
 </LinearLayout>

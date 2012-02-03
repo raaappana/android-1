@@ -261,7 +261,7 @@ public class Main extends Activity {
 			postItem.setEnabled(false);
 			getFriendItem.setEnabled(false);
 			sendRequestItem.setEnabled(false);
-			createEventItem.setEnabled(false);
+			createEventItem.setEnabled(true);
 			manageEventItem.setEnabled(false);
 		}
 

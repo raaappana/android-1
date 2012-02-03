@@ -13,7 +13,10 @@ import org.json.JSONObject;
 import uk.ac.gla.get2gether.map.OTP;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -22,6 +25,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.view.View.OnCreateContextMenuListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -43,6 +47,8 @@ public class CreateEvent extends Activity {
 	private Intent intentForInviteFriends;
 	private PopupWindow popup;
 	private EditText locationName;
+	private Location selectedLocation;
+	private final int ADDRESS_DIALOG = 33;
 	
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -66,7 +72,7 @@ public class CreateEvent extends Activity {
 		
 		locationName = (EditText) findViewById(R.id.meetup_location);
 		Button searchLocationButton = (Button) findViewById(R.id.search_location_button);
-		searchLocationButton.setOnClickListener(new SearchButtonListener());
+		searchLocationButton.setOnClickListener(new SearchButtonListener()); // Send Location to another activity (less coupling)
 		
 		final DatePicker datePicker = (DatePicker) findViewById(R.id.datePicker);
 		final TimePicker timePicker = (TimePicker) findViewById(R.id.timePicker);
@@ -74,6 +80,10 @@ public class CreateEvent extends Activity {
 		arrange.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				if (selectedLocation == null) {
+					Toast.makeText(CreateEvent.this, "You haven't selected any address, sorry..", Toast.LENGTH_SHORT).show();
+					return;
+				}
 				Bundle eventParams = new Bundle();
 				eventParams
 						.putString("name", name.getEditableText().toString());
@@ -124,6 +134,8 @@ public class CreateEvent extends Activity {
 //									Intent i = new Intent();
 									intentForInviteFriends.putExtra("eventid", eventID);
 //									setResult(Activity.RESULT_OK, i);
+									
+//									mAsyncRunner.request(parameters, listener)
 
 									mAsyncRunner.request("me/friends",
 											new FriendsRequestListener());
@@ -158,21 +170,69 @@ public class CreateEvent extends Activity {
 			return "0" + i;
 	}
 	
+	protected Dialog onCreateDialog(int id) {
+		if (id == ADDRESS_DIALOG) {
+			AlertDialog.Builder builder = new AlertDialog.Builder(CreateEvent.this);
+			builder.setTitle("Select Address");
+			final ArrayList<Location> locationList = new ArrayList<Location>(OTP.geocode(locationName.getEditableText().toString()));
+			Log.i("Search button clicked", locationList.toString());
+			LocationArrayAdapter locationArrayAdapter = new LocationArrayAdapter(CreateEvent.this, R.layout.rowlayout, locationList);
+			builder.setSingleChoiceItems(locationArrayAdapter, -1, new DialogInterface.OnClickListener() {
+				
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					Log.i("Selected address", Integer.toString(which));
+					selectedLocation = locationList.get(which);
+					locationName.setText(selectedLocation.getAddress().toString());
+					dismissDialog(ADDRESS_DIALOG);
+					removeDialog(ADDRESS_DIALOG);
+				}
+			});
+			return builder.create();
+		}
+		return null;
+	}
+	
+	protected void onPrepareDialog(int id, Dialog dialog) {
+		if (id == ADDRESS_DIALOG) {
+//			dialog.
+		}
+	}
+	
 	private class SearchButtonListener implements OnClickListener {
 
 		@Override
 		public void onClick(View v) {
-			LayoutInflater inflater = (LayoutInflater) CreateEvent.this.getSystemService(LAYOUT_INFLATER_SERVICE);
-			ArrayList<Location> locationList = new ArrayList<Location>(OTP.geocode(locationName.getEditableText().toString()));
-			Log.i("Search button clicked", locationList.toString());
-			LocationArrayAdapter locationArrayAdapter = new LocationArrayAdapter(CreateEvent.this, R.layout.rowlayout, locationList);
-			View popupView = inflater.inflate(R.layout.location_search, null, false);
-			ListView locationsView = (ListView) popupView.findViewById(R.id.location_list);
-			locationsView.setAdapter(locationArrayAdapter);
-			locationArrayAdapter.notifyDataSetChanged();
-			popup = new PopupWindow(popupView, 100, 100, true);
-			popup.setFocusable(true);
-			popup.showAtLocation(CreateEvent.this.findViewById(R.id.create_event_layout), Gravity.CENTER, 0, 0);
+			showDialog(ADDRESS_DIALOG);
+//			AlertDialog.Builder builder = new AlertDialog.Builder(CreateEvent.this);
+//			builder.setTitle("Select Address");
+//			final ArrayList<Location> locationList = new ArrayList<Location>(OTP.geocode(locationName.getEditableText().toString()));
+//			Log.i("Search button clicked", locationList.toString());
+//			LocationArrayAdapter locationArrayAdapter = new LocationArrayAdapter(CreateEvent.this, R.layout.rowlayout, locationList);
+//			builder.setSingleChoiceItems(locationArrayAdapter, -1, new DialogInterface.OnClickListener() {
+//				
+//				@Override
+//				public void onClick(DialogInterface dialog, int which) {
+//					Log.i("Selected address", Integer.toString(which));
+//					selectedLocation = locationList.get(which);
+//					locationName.setText(selectedLocation.getAddress().toString());
+//				}
+//			});
+//			AlertDialog alert = builder.create()
+//					;
+//			alert.show();
+			
+//			LayoutInflater inflater = (LayoutInflater) CreateEvent.this.getSystemService(LAYOUT_INFLATER_SERVICE);
+//			Log.i("Search button clicked", locationList.toString());
+//			View popupView = inflater.inflate(R.layout.location_search, null, false);
+//			ListView locationsView = (ListView) popupView.findViewById(R.id.location_list);
+//			locationsView.setAdapter(locationArrayAdapter);
+//			locationArrayAdapter.notifyDataSetChanged();
+//			popup = new PopupWindow(popupView, 400, 500, true);
+//			popup.setAnimationStyle(-1);
+//			popup.setFocusable(true);
+//			popup.showAtLocation(CreateEvent.this.findViewById(R.id.create_event_layout), Gravity.CENTER, 0, 0);
+//			popup.update();
 		}
 		
 	}
