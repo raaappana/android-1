@@ -18,4 +18,5 @@
 	<string name="search_location_button_tag">Search Location</string>
 	<string name="dismiss_tag">Dismiss</string>
 	<string name="select_address_header">Select Address</string>
+	<string name="widget_text">Hello Widget!</string>
 </resources>
