@@ -244,7 +244,7 @@ public class Main extends Activity {
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		MenuItem loginItem = menu.findItem(R.id.login);
 		MenuItem postItem = menu.findItem(R.id.wallpost);
-		MenuItem getFriendItem = menu.findItem(R.id.getfriends);
+		MenuItem getEventsItem = menu.findItem(R.id.getevents_menuitem);
 		MenuItem sendRequestItem = menu.findItem(R.id.sendreq);
 		MenuItem createEventItem = menu.findItem(R.id.createev);
 		MenuItem manageEventItem = menu.findItem(R.id.manageev);
@@ -252,16 +252,16 @@ public class Main extends Activity {
 		if (mFacebook.isSessionValid()) {
 			loginItem.setTitle("Logout");
 			postItem.setEnabled(true);
-			getFriendItem.setEnabled(true);
+			getEventsItem.setEnabled(true);
 			sendRequestItem.setEnabled(true);
 			createEventItem.setEnabled(true);
 			manageEventItem.setEnabled(true);
 		} else {
 			loginItem.setTitle("Login");
 			postItem.setEnabled(false);
-			getFriendItem.setEnabled(false);
+			getEventsItem.setEnabled(false);
 			sendRequestItem.setEnabled(false);
-			createEventItem.setEnabled(true);
+			createEventItem.setEnabled(false);
 			manageEventItem.setEnabled(false);
 		}
 
@@ -301,11 +301,12 @@ public class Main extends Activity {
 					new WallPostDialogListener());
 			break;
 
-		// Get Friend's List
-//		case R.id.getfriends:
-//			// Get the authenticated user's friends
-//			mAsyncRunner.request("me/friends", new FriendsRequestListener());
-//			break;
+		// Get Events List
+		case R.id.getevents_menuitem:
+			Intent i = new Intent();
+			i.setClass(this, GetEvents.class);
+			startActivity(i);
+			break;
 
 		case R.id.showmap:
 			Intent in = new Intent();

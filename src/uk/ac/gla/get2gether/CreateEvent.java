@@ -26,6 +26,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.view.View.OnCreateContextMenuListener;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -48,6 +49,7 @@ public class CreateEvent extends Activity {
 	private PopupWindow popup;
 	private EditText locationName;
 	private Location selectedLocation;
+	private TextView address;
 	private final int ADDRESS_DIALOG = 33;
 	
 	@Override
@@ -73,6 +75,7 @@ public class CreateEvent extends Activity {
 		locationName = (EditText) findViewById(R.id.meetup_location);
 		Button searchLocationButton = (Button) findViewById(R.id.search_location_button);
 		searchLocationButton.setOnClickListener(new SearchButtonListener()); // Send Location to another activity (less coupling)
+		address = (TextView) findViewById(R.id.address);
 		
 		final DatePicker datePicker = (DatePicker) findViewById(R.id.datePicker);
 		final TimePicker timePicker = (TimePicker) findViewById(R.id.timePicker);
@@ -94,6 +97,23 @@ public class CreateEvent extends Activity {
 								datePicker.getDayOfMonth(),
 								timePicker.getCurrentHour(),
 								timePicker.getCurrentMinute()));
+//				eventParams.putString("latitude", Double.toString(selectedLocation.getLatitude()));
+//				eventParams.putString("longitude ", Double.toString(selectedLocation.getLongitude()));
+				eventParams.putString("location", locationName.getEditableText().toString());
+				
+				// 1st way
+				Bundle locationParam = new Bundle();
+				locationParam.putString("latitude", Double.toString(selectedLocation.getLatitude()));
+				locationParam.putString("longitude ", Double.toString(selectedLocation.getLongitude()));
+				eventParams.putBundle("venue", locationParam);
+				
+				// 2nd way
+				eventParams.putString("latitude", Double.toString(selectedLocation.getLatitude()));
+				eventParams.putString("longitude ", Double.toString(selectedLocation.getLongitude()));
+				
+				
+				
+				Log.i("Event longitude-latitude", Double.toString(selectedLocation.getLatitude()) + ", " + Double.toString(selectedLocation.getLongitude()));
 				mAsyncRunner.request("me/events", eventParams, "POST",
 						new RequestListener() {
 
@@ -129,9 +149,10 @@ public class CreateEvent extends Activity {
 								try {
 									JSONObject jo = new JSONObject(response);
 									eventID = jo.getString("id");
-									Log.i("LAST EVENT ID", eventID);
+									Log.i("EVENT ID", eventID);
 
 //									Intent i = new Intent();
+									// putting the eventid in the intent to pass to inviteFriends
 									intentForInviteFriends.putExtra("eventid", eventID);
 //									setResult(Activity.RESULT_OK, i);
 									
@@ -183,7 +204,8 @@ public class CreateEvent extends Activity {
 				public void onClick(DialogInterface dialog, int which) {
 					Log.i("Selected address", Integer.toString(which));
 					selectedLocation = locationList.get(which);
-					locationName.setText(selectedLocation.getAddress().toString());
+					address.setText(selectedLocation.getAddress().toString());
+//					locationName.setText(selectedLocation.getAddress().toString());
 					dismissDialog(ADDRESS_DIALOG);
 					removeDialog(ADDRESS_DIALOG);
 				}
@@ -203,6 +225,8 @@ public class CreateEvent extends Activity {
 
 		@Override
 		public void onClick(View v) {
+			InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+			imm.hideSoftInputFromWindow(locationName.getWindowToken(), 0);
 			showDialog(ADDRESS_DIALOG);
 //			AlertDialog.Builder builder = new AlertDialog.Builder(CreateEvent.this);
 //			builder.setTitle("Select Address");
@@ -274,11 +298,53 @@ public class CreateEvent extends Activity {
 		 */
 		@Override
 		public void onComplete(final String response, Object state) {
-
-//			Intent intent = new Intent();
+			// putting the friends JSON object in the intent to pass to inviteFriends
 			intentForInviteFriends.putExtra("friendsresponse", response);
 			intentForInviteFriends.setClass(CreateEvent.this, InviteFriendsActivity.class);
 			startActivityForResult(intentForInviteFriends, Utility.INVITE_FRIENDS_CODE);
+			
+//			Bundle locationParam = new Bundle();
+//			locationParam.putString("latitude", Double.toString(selectedLocation.getLatitude()));
+//			locationParam.putString("longitude ", Double.toString(selectedLocation.getLongitude()));
+//			Bundle venueParam = new Bundle();
+//			venueParam.putBundle("venue", locationParam);
+//			
+//			mAsyncRunner.request("/" + eventID, venueParam, "POST", new RequestListener() {
+//				
+//				@Override
+//				public void onMalformedURLException(MalformedURLException e, Object state) {
+//					// TODO Auto-generated method stub
+//					
+//				}
+//				
+//				@Override
+//				public void onIOException(IOException e, Object state) {
+//					// TODO Auto-generated method stub
+//					
+//				}
+//				
+//				@Override
+//				public void onFileNotFoundException(FileNotFoundException e, Object state) {
+//					// TODO Auto-generated method stub
+//					
+//				}
+//				
+//				@Override
+//				public void onFacebookError(FacebookError e, Object state) {
+//					// TODO Auto-generated method stub
+//					
+//				}
+//				
+//				@Override
+//				public void onComplete(String response, Object state) {
+//					Log.i("Location edit response", response);
+//					intentForInviteFriends.setClass(CreateEvent.this, InviteFriendsActivity.class);
+//					startActivityForResult(intentForInviteFriends, Utility.INVITE_FRIENDS_CODE);
+//					
+//				}
+//			}, new Object());
+
+//			Intent intent = new Intent();
 		}
 
 		@Override

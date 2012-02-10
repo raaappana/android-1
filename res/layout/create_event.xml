@@ -57,6 +57,14 @@
                 android:text="@string/search_location_button_tag" />
 
             <TextView
+                android:id="@+id/address"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:text="@string/address"
+                android:textSize="15dp" />
+
+            <TextView
                 android:id="@+id/enter_date"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
