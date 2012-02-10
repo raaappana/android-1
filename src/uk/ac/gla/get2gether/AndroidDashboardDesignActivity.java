@@ -1,6 +1,9 @@
 package uk.ac.gla.get2gether;
 
 
+import com.facebook.android.AsyncFacebookRunner;
+import com.facebook.android.Facebook;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;

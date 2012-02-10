@@ -20,4 +20,6 @@
 	<string name="select_address_header">Select Address</string>
 	<string name="widget_text">Hello Widget!</string>
 	<string name="address">(Search for address)</string>
+	
+	<string name="fb_login">Welcome to Facebook</string>
 </resources>

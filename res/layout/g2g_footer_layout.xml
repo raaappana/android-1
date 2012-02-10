@@ -1,6 +1,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     style="@style/FooterBar" >
-	<TextView android:text="Our app yeah"
+	<TextView 
+     		android:id="@+id/g2g_footer"
+	    	android:text="@string/fb_login"
 	    	android:layout_width="fill_parent"
 	    	android:layout_height="wrap_content"
 	    	android:textColor="#606060"
