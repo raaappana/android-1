@@ -4,20 +4,21 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 
-import uk.ac.gla.get2gether.Main.LoginDialogListener;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 
 import com.facebook.android.AsyncFacebookRunner;
+import com.facebook.android.AsyncFacebookRunner.RequestListener;
 import com.facebook.android.DialogError;
 import com.facebook.android.Facebook;
 import com.facebook.android.FacebookError;
-import com.facebook.android.AsyncFacebookRunner.RequestListener;
 
 public class G2G_Activity extends Activity {
 
@@ -75,6 +76,8 @@ public class G2G_Activity extends Activity {
 		Utility.setResources(getResources());
 		mFacebook = Utility.getFacebook();
 		asyncRunner = Utility.getAsyncRunner();
+		
+		// Login/logout button functionality
 //		if (mFacebook.isSessionValid()) {
 //			// asyncRunner = new AsyncFacebookRunner(
 //			// mFacebook);
@@ -85,6 +88,16 @@ public class G2G_Activity extends Activity {
 			// If coming from logout transition to login (authorize).
 			mFacebook.authorize(this, PERMISSIONS, new LoginDialogListener());
 //		}
+			
+		btn_events.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Intent i = new Intent();
+				i.setClass(G2G_Activity.this, GetEvents.class);
+				startActivity(i);
+			}
+		});
 
 		/**
 		 * Handling all button click events
