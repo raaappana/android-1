@@ -55,7 +55,7 @@ public class G2G_Activity extends Activity {
 		Log.i("G2G_Activity", "Started");
 
 		mHandler = new Handler();
-		footer = (TextView) findViewById(R.string.fb_login);
+		footer = (TextView) findViewById(R.id.g2g_footer);
 
 		/**
 		 * Creating all buttons instances
