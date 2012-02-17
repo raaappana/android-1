@@ -21,5 +21,5 @@
 	<string name="widget_text">Hello Widget!</string>
 	<string name="address">(Search for address)</string>
 	
-	<string name="fb_login">Welcome to Facebook</string>
+	<string name="fb_login">You need to log in to Facebook!</string>
 </resources>

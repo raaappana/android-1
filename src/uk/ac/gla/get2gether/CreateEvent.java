@@ -49,6 +49,7 @@ public class CreateEvent extends Activity {
 	private PopupWindow popup;
 	private EditText locationName;
 	private Location selectedLocation;
+	private ArrayList<Location> locationList;
 	private TextView address;
 	private final int ADDRESS_DIALOG = 33;
 	
@@ -195,7 +196,7 @@ public class CreateEvent extends Activity {
 		if (id == ADDRESS_DIALOG) {
 			AlertDialog.Builder builder = new AlertDialog.Builder(CreateEvent.this);
 			builder.setTitle("Select Address");
-			final ArrayList<Location> locationList = new ArrayList<Location>(OTP.geocode(locationName.getEditableText().toString()));
+			locationList = new ArrayList<Location>(OTP.geocode(locationName.getEditableText().toString()));
 			Log.i("Search button clicked", locationList.toString());
 			LocationArrayAdapter locationArrayAdapter = new LocationArrayAdapter(CreateEvent.this, R.layout.rowlayout, locationList);
 			builder.setSingleChoiceItems(locationArrayAdapter, -1, new DialogInterface.OnClickListener() {
@@ -227,6 +228,9 @@ public class CreateEvent extends Activity {
 		public void onClick(View v) {
 			InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
 			imm.hideSoftInputFromWindow(locationName.getWindowToken(), 0);
+			
+			// remove the previous dialog instance in case it exists
+			removeDialog(ADDRESS_DIALOG);
 			showDialog(ADDRESS_DIALOG);
 //			AlertDialog.Builder builder = new AlertDialog.Builder(CreateEvent.this);
 //			builder.setTitle("Select Address");
@@ -262,8 +266,8 @@ public class CreateEvent extends Activity {
 	}
 	
 	private class LocationArrayAdapter extends ArrayAdapter<Location> {
-		private final Activity context;
-	    private final ArrayList<Location> locationList;
+		private Activity context;
+	    private ArrayList<Location> locationList;
 	    private int resourceId;	
 	    
 		public LocationArrayAdapter(Activity context, int textViewResourceId,
