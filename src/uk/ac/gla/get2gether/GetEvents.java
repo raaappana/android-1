@@ -41,8 +41,11 @@ public class GetEvents extends Activity {
 		mAsyncRunner = Utility.getAsyncRunner();
 //		events = new ArrayList<Event>();
 //		listView = (ListView) findViewById(R.id.geteventsview);
+		
+		Bundle params = new Bundle();
+		params.putString("fields", "location,description,name,id,start_time");
 
-		mAsyncRunner.request("me/events", new RequestListener() {
+		mAsyncRunner.request("me/events", params, new RequestListener() {
 
 			@Override
 			public void onMalformedURLException(MalformedURLException e,
@@ -91,12 +94,14 @@ public class GetEvents extends Activity {
 							Log.d("Facebook Events Request", "d.length(): " + len);
 
 							for (int i = 0; i < len; i++) {
-								Event e = new Event();
 								JSONObject jsonObj = jsonAr.getJSONObject(i);
+								if (!jsonObj.has("description") || !jsonObj.getString("description").trim().startsWith(getResources().getString(R.string.event_desc).trim()) ||!jsonObj.has("location"))
+									continue;
+								Event e = new Event();
+								e.description = jsonObj.getString("description");
 								e.id = jsonObj.getString("id");
 								// It's not sure that an event has a location name
-								if (jsonObj.has("location")) 
-									e.locationName = jsonObj.getString("location");
+								e.locationName = jsonObj.getString("location");
 								e.name = jsonObj.getString("name");
 								e.start_time = jsonObj.getString("start_time");
 								events.add(e);
@@ -155,13 +160,13 @@ public class GetEvents extends Activity {
 		 */
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
+			Event e = events.get(position);			
 			View rowView = convertView;
 			if (rowView == null) {
 				LayoutInflater vi = (LayoutInflater) context
 						.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 				rowView = vi.inflate(resourceId, null);
 			}
-			Event e = events.get(position);
 			TextView dateTxt = (TextView) rowView.findViewById(R.id.daterow);
 			dateTxt.setText(e.start_time);
 			TextView nameTxt = (TextView) rowView.findViewById(R.id.namerow);

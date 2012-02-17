@@ -22,4 +22,6 @@
 	<string name="address">(Search for address)</string>
 	
 	<string name="fb_login">You need to log in to Facebook!</string>
+	<string name="event_desc">get2gether Event</string>
+	<string name="select_friends_button_tag">Select</string>
 </resources>
