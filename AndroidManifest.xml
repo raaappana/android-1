@@ -43,7 +43,9 @@
             </intent-filter>
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/hello_widget_provider" />
         </receiver>
-        <activity android:name=".GetEvents" android:theme="@android:style/Theme.NoTitleBar" android:label="Get Events"></activity>
+        
+	<activity android:name=".GetEvents" android:theme="@android:style/Theme.NoTitleBar" android:label="Get Events"></activity>
+        <activity android:name="XMPPActivity"></activity>
     </application>
 
 </manifest> 

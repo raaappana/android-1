@@ -27,11 +27,13 @@ import org.mapsforge.android.maps.OverlayItem;
 import org.mapsforge.android.maps.Projection;
 import org.xmlpull.v1.XmlPullParserException;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -75,6 +77,7 @@ public class Map extends MapActivity implements Observer {
 	private Paint circleOverlayOutline;
 	android.location.Location currentLocation = null; // coupled to listener!
 	private Location start, end;
+	private RouteOverlay itemizedoverlay;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -213,6 +216,15 @@ public class Map extends MapActivity implements Observer {
 			if (o instanceof Itinerary)
 				itinerary = (Itinerary)o;
 		}
+	    SharedPreferences settings = getSharedPreferences("get2gether", 0);
+	    SharedPreferences.Editor editor = settings.edit();
+	    
+	    editor.putInt("startLatitude", (int) (start.getLatitude() * 1e6));
+	    editor.putInt("startLongitude", (int) (start.getLongitude() * 1e6));
+	    editor.putInt("endLatitude", (int) (end.getLatitude() * 1e6));
+	    editor.putInt("endLongitude", (int) (end.getLongitude() * 1e6));
+	    editor.putString("endTime", itinerary.getEndTime().toString());
+	    editor.commit();
 		mSpinner.dismiss();
 		routeCalcDone = true;
 		draw_overlays((MapView) findViewById(R.id.mapview));
@@ -228,7 +240,7 @@ public class Map extends MapActivity implements Observer {
 
 		// List<Edge> edges = path.getShortestPath();
 
-		RouteOverlay itemizedoverlay = new RouteOverlay(dest_icon, this);
+		itemizedoverlay = new RouteOverlay(dest_icon, this);
 		ItemizedOverlay.boundCenterBottom(src_icon);
 		/*
 		 * for (Edge e : edges) { itemizedoverlay.addOverlay(new
@@ -386,7 +398,7 @@ public class Map extends MapActivity implements Observer {
 		case R.id.walk_steps:
 			Intent in = new Intent();
 			in.setClass(this, WalkSteps.class);
-			startActivity(in);
+			startActivityForResult(in, 1);
 			break;
 		case R.id.route_info:
 			/*
@@ -420,6 +432,28 @@ public class Map extends MapActivity implements Observer {
 			return false;
 		}
 		return true;
+	}
+	
+	@Override 
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {     
+	  super.onActivityResult(requestCode, resultCode, data); 
+	  switch(requestCode) { 
+	    case (1) : { 
+	      if (resultCode == Activity.RESULT_OK) { 
+	      double lat = data.getDoubleExtra("walkStepLatitude", 3.0);
+	      double lon = data.getDoubleExtra("walkStepLongitude", 50.0);
+	      String desc = data.getStringExtra("walkStepDescription");
+	      System.out.println("grr "+lat+" "+lon);
+	      
+	      
+		 itemizedoverlay.addOverlay(new OverlayItem(new GeoPoint(lat, lon), "WalkStep",
+		 desc));
+		 itemizedoverlay.requestRedraw();
+		
+	      } 
+	      break; 
+	    } 
+	  } 
 	}
 
 	void showToast(final String text) {
