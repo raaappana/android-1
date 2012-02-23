@@ -70,7 +70,7 @@ public class FriendsArrayAdapter extends ArrayAdapter<Friend> {
         Friend f = friends.get(position);
 //        TextView rowTxt = (TextView) rowView.findViewById(R.id.friendsrowtext_top);
 //        rowTxt.setText(f.name);
-        CheckBox cb = (CheckBox) rowView.findViewById(R.id.UpdateCheckBox);
+        CheckBox cb = (CheckBox) rowView.findViewById(R.id.freindsrow_checkbox);
         cb.setText(f.name);
         cb.setFocusable(false);
         cb.setChecked(false);
