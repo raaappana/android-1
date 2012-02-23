@@ -17,7 +17,7 @@ import org.idansof.otp.client.TripPlan;
 import org.xmlpull.v1.XmlPullParserException;
 
 public class OTP {
-	private static final String host = "dcs.gla.ac.uk";
+	private static final String host = "buddha.src.gla.ac.uk";
 
 	
 	public static void route(final Location from, final Location to, final Date when, final Observer ob) {	
@@ -26,7 +26,7 @@ public class OTP {
 			
 			public void run() {
 				Planner planner = new Planner(host,
-						"L311_D/opentripplanner-api-webapp/ws/plan", Locale.US);
+						"opentripplanner-api-webapp/ws/plan", Locale.US);
 				PlanRequest req = new PlanRequest();
 				req.setFrom(from);
 				req.setTo(to);
@@ -69,7 +69,7 @@ public class OTP {
 
 			public void run() {
 				Geocoder g = new Geocoder(host,
-						"L311_D/opentripplanner-geocoder/geocode");
+						"opentripplanner-geocoder/geocode");
 				try {
 					GeocoderResult res = g.geodecode(address);
 					locs = res.getLocations();
