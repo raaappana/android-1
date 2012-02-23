@@ -33,6 +33,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -215,6 +216,15 @@ public class Map extends MapActivity implements Observer {
 			if (o instanceof Itinerary)
 				itinerary = (Itinerary)o;
 		}
+	    SharedPreferences settings = getSharedPreferences("get2gether", 0);
+	    SharedPreferences.Editor editor = settings.edit();
+	    
+	    editor.putInt("startLatitude", (int) (start.getLatitude() * 1e6));
+	    editor.putInt("startLongitude", (int) (start.getLongitude() * 1e6));
+	    editor.putInt("endLatitude", (int) (end.getLatitude() * 1e6));
+	    editor.putInt("endLongitude", (int) (end.getLongitude() * 1e6));
+	    editor.putString("endTime", itinerary.getEndTime().toString());
+	    editor.commit();
 		mSpinner.dismiss();
 		routeCalcDone = true;
 		draw_overlays((MapView) findViewById(R.id.mapview));
