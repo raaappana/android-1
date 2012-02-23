@@ -27,6 +27,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 /**
@@ -67,8 +68,12 @@ public class FriendsArrayAdapter extends ArrayAdapter<Friend> {
             rowView = vi.inflate(resourceId, null);
         }
         Friend f = friends.get(position);
-        TextView rowTxt = (TextView) rowView.findViewById(R.id.rowtext_top);
-        rowTxt.setText(f.name);
+//        TextView rowTxt = (TextView) rowView.findViewById(R.id.friendsrowtext_top);
+//        rowTxt.setText(f.name);
+        CheckBox cb = (CheckBox) rowView.findViewById(R.id.UpdateCheckBox);
+        cb.setText(f.name);
+        cb.setFocusable(false);
+        cb.setChecked(false);
         return rowView;
     }
 

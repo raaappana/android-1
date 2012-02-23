@@ -311,6 +311,7 @@ public class Main extends Activity {
 		case R.id.showmap:
 			Intent in = new Intent();
 			in.setClass(this, Map.class);
+			//in.setClass(this, XMPPActivity.class);
 			startActivity(in);
 			break;
 		case R.id.sendreq:

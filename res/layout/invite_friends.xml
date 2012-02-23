@@ -7,7 +7,13 @@
     <ListView
         android:id="@+id/addfriendsview"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="450dp"
         android:textFilterEnabled="true" />
+
+    <Button
+        android:id="@+id/selectfriendsbutton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/select_friends_button_tag" />
 
 </LinearLayout>

@@ -49,9 +49,10 @@ public class CreateEvent extends Activity {
 	private PopupWindow popup;
 	private EditText locationName;
 	private Location selectedLocation;
+	private ArrayList<Location> locationList;
 	private TextView address;
 	private final int ADDRESS_DIALOG = 33;
-	
+
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == Utility.INVITE_FRIENDS_CODE) {
@@ -71,12 +72,12 @@ public class CreateEvent extends Activity {
 		intentForInviteFriends = new Intent();
 
 		final EditText name = (EditText) findViewById(R.id.meetup_name);
-		
+
 		locationName = (EditText) findViewById(R.id.meetup_location);
 		Button searchLocationButton = (Button) findViewById(R.id.search_location_button);
-		searchLocationButton.setOnClickListener(new SearchButtonListener()); // Send Location to another activity (less coupling)
+		searchLocationButton.setOnClickListener(new SearchButtonListener()); 
 		address = (TextView) findViewById(R.id.address);
-		
+
 		final DatePicker datePicker = (DatePicker) findViewById(R.id.datePicker);
 		final TimePicker timePicker = (TimePicker) findViewById(R.id.timePicker);
 		Button arrange = (Button) findViewById(R.id.arrange_button);
@@ -84,12 +85,14 @@ public class CreateEvent extends Activity {
 			@Override
 			public void onClick(View v) {
 				if (selectedLocation == null) {
-					Toast.makeText(CreateEvent.this, "You haven't selected any address, sorry..", Toast.LENGTH_SHORT).show();
+					Toast.makeText(CreateEvent.this,
+							"You haven't selected any address, sorry..",
+							Toast.LENGTH_SHORT).show();
 					return;
 				}
 				Bundle eventParams = new Bundle();
-				eventParams
-						.putString("name", name.getEditableText().toString());
+				eventParams.putString("name", "G2G - "
+						+ name.getEditableText().toString());
 				eventParams.putString(
 						"start_time",
 						getDateTimeString(datePicker.getYear(),
@@ -97,23 +100,32 @@ public class CreateEvent extends Activity {
 								datePicker.getDayOfMonth(),
 								timePicker.getCurrentHour(),
 								timePicker.getCurrentMinute()));
-//				eventParams.putString("latitude", Double.toString(selectedLocation.getLatitude()));
-//				eventParams.putString("longitude ", Double.toString(selectedLocation.getLongitude()));
-				eventParams.putString("location", locationName.getEditableText().toString());
-				
+				eventParams.putString("location", selectedLocation.getAddress()
+						+ " @ " + selectedLocation.getLatitude() + ", "
+						+ selectedLocation.getLongitude());
+				eventParams.putString("description",
+						getResources().getString(R.string.event_desc) + " - "
+								+ locationName.getEditableText().toString());
+
 				// 1st way
 				Bundle locationParam = new Bundle();
-				locationParam.putString("latitude", Double.toString(selectedLocation.getLatitude()));
-				locationParam.putString("longitude ", Double.toString(selectedLocation.getLongitude()));
+				locationParam.putString("latitude",
+						Double.toString(selectedLocation.getLatitude()));
+				locationParam.putString("longitude ",
+						Double.toString(selectedLocation.getLongitude()));
 				eventParams.putBundle("venue", locationParam);
-				
+
 				// 2nd way
-				eventParams.putString("latitude", Double.toString(selectedLocation.getLatitude()));
-				eventParams.putString("longitude ", Double.toString(selectedLocation.getLongitude()));
-				
-				
-				
-				Log.i("Event longitude-latitude", Double.toString(selectedLocation.getLatitude()) + ", " + Double.toString(selectedLocation.getLongitude()));
+				eventParams.putString("latitude",
+						Double.toString(selectedLocation.getLatitude()));
+				eventParams.putString("longitude ",
+						Double.toString(selectedLocation.getLongitude()));
+
+				Log.i("Event longitude-latitude",
+						Double.toString(selectedLocation.getLatitude())
+								+ ", "
+								+ Double.toString(selectedLocation
+										.getLongitude()));
 				mAsyncRunner.request("me/events", eventParams, "POST",
 						new RequestListener() {
 
@@ -151,17 +163,21 @@ public class CreateEvent extends Activity {
 									eventID = jo.getString("id");
 									Log.i("EVENT ID", eventID);
 
-//									Intent i = new Intent();
-									// putting the eventid in the intent to pass to inviteFriends
-									intentForInviteFriends.putExtra("eventid", eventID);
-//									setResult(Activity.RESULT_OK, i);
-									
-//									mAsyncRunner.request(parameters, listener)
+									// Intent i = new Intent();
+									// putting the eventid in the intent to pass
+									// to inviteFriends
+									intentForInviteFriends.putExtra("eventid",
+											eventID);
+									// setResult(Activity.RESULT_OK, i);
+
+									// mAsyncRunner.request(parameters,
+									// listener)
 
 									mAsyncRunner.request("me/friends",
 											new FriendsRequestListener());
-//									Log.i("CreateEvent Activity", "Finished");
-//									finish();
+									// Log.i("CreateEvent Activity",
+									// "Finished");
+									// finish();
 								} catch (JSONException e) {
 									e.printStackTrace();
 								}
@@ -190,82 +206,98 @@ public class CreateEvent extends Activity {
 		else
 			return "0" + i;
 	}
-	
+
 	protected Dialog onCreateDialog(int id) {
 		if (id == ADDRESS_DIALOG) {
-			AlertDialog.Builder builder = new AlertDialog.Builder(CreateEvent.this);
+			AlertDialog.Builder builder = new AlertDialog.Builder(
+					CreateEvent.this);
 			builder.setTitle("Select Address");
-			final ArrayList<Location> locationList = new ArrayList<Location>(OTP.geocode(locationName.getEditableText().toString()));
+			locationList = new ArrayList<Location>(OTP.geocode(locationName
+					.getEditableText().toString()));
 			Log.i("Search button clicked", locationList.toString());
-			LocationArrayAdapter locationArrayAdapter = new LocationArrayAdapter(CreateEvent.this, R.layout.rowlayout, locationList);
-			builder.setSingleChoiceItems(locationArrayAdapter, -1, new DialogInterface.OnClickListener() {
-				
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					Log.i("Selected address", Integer.toString(which));
-					selectedLocation = locationList.get(which);
-					address.setText(selectedLocation.getAddress().toString());
-//					locationName.setText(selectedLocation.getAddress().toString());
-					dismissDialog(ADDRESS_DIALOG);
-					removeDialog(ADDRESS_DIALOG);
-				}
-			});
+			LocationArrayAdapter locationArrayAdapter = new LocationArrayAdapter(
+					CreateEvent.this, R.layout.addressrowlayout, locationList);
+			builder.setSingleChoiceItems(locationArrayAdapter, -1,
+					new DialogInterface.OnClickListener() {
+
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							Log.i("Selected address", Integer.toString(which));
+							selectedLocation = locationList.get(which);
+							address.setText(selectedLocation.getAddress()
+									.toString());
+							dismissDialog(ADDRESS_DIALOG);
+							removeDialog(ADDRESS_DIALOG);
+						}
+					});
 			return builder.create();
 		}
 		return null;
 	}
-	
+
 	protected void onPrepareDialog(int id, Dialog dialog) {
 		if (id == ADDRESS_DIALOG) {
-//			dialog.
+			// dialog.
 		}
 	}
-	
+
 	private class SearchButtonListener implements OnClickListener {
 
 		@Override
 		public void onClick(View v) {
-			InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+			InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 			imm.hideSoftInputFromWindow(locationName.getWindowToken(), 0);
+
+			// remove the previous dialog instance in case it exists
+			removeDialog(ADDRESS_DIALOG);
 			showDialog(ADDRESS_DIALOG);
-//			AlertDialog.Builder builder = new AlertDialog.Builder(CreateEvent.this);
-//			builder.setTitle("Select Address");
-//			final ArrayList<Location> locationList = new ArrayList<Location>(OTP.geocode(locationName.getEditableText().toString()));
-//			Log.i("Search button clicked", locationList.toString());
-//			LocationArrayAdapter locationArrayAdapter = new LocationArrayAdapter(CreateEvent.this, R.layout.rowlayout, locationList);
-//			builder.setSingleChoiceItems(locationArrayAdapter, -1, new DialogInterface.OnClickListener() {
-//				
-//				@Override
-//				public void onClick(DialogInterface dialog, int which) {
-//					Log.i("Selected address", Integer.toString(which));
-//					selectedLocation = locationList.get(which);
-//					locationName.setText(selectedLocation.getAddress().toString());
-//				}
-//			});
-//			AlertDialog alert = builder.create()
-//					;
-//			alert.show();
-			
-//			LayoutInflater inflater = (LayoutInflater) CreateEvent.this.getSystemService(LAYOUT_INFLATER_SERVICE);
-//			Log.i("Search button clicked", locationList.toString());
-//			View popupView = inflater.inflate(R.layout.location_search, null, false);
-//			ListView locationsView = (ListView) popupView.findViewById(R.id.location_list);
-//			locationsView.setAdapter(locationArrayAdapter);
-//			locationArrayAdapter.notifyDataSetChanged();
-//			popup = new PopupWindow(popupView, 400, 500, true);
-//			popup.setAnimationStyle(-1);
-//			popup.setFocusable(true);
-//			popup.showAtLocation(CreateEvent.this.findViewById(R.id.create_event_layout), Gravity.CENTER, 0, 0);
-//			popup.update();
+			// AlertDialog.Builder builder = new
+			// AlertDialog.Builder(CreateEvent.this);
+			// builder.setTitle("Select Address");
+			// final ArrayList<Location> locationList = new
+			// ArrayList<Location>(OTP.geocode(locationName.getEditableText().toString()));
+			// Log.i("Search button clicked", locationList.toString());
+			// LocationArrayAdapter locationArrayAdapter = new
+			// LocationArrayAdapter(CreateEvent.this, R.layout.rowlayout,
+			// locationList);
+			// builder.setSingleChoiceItems(locationArrayAdapter, -1, new
+			// DialogInterface.OnClickListener() {
+			//
+			// @Override
+			// public void onClick(DialogInterface dialog, int which) {
+			// Log.i("Selected address", Integer.toString(which));
+			// selectedLocation = locationList.get(which);
+			// locationName.setText(selectedLocation.getAddress().toString());
+			// }
+			// });
+			// AlertDialog alert = builder.create()
+			// ;
+			// alert.show();
+
+			// LayoutInflater inflater = (LayoutInflater)
+			// CreateEvent.this.getSystemService(LAYOUT_INFLATER_SERVICE);
+			// Log.i("Search button clicked", locationList.toString());
+			// View popupView = inflater.inflate(R.layout.location_search, null,
+			// false);
+			// ListView locationsView = (ListView)
+			// popupView.findViewById(R.id.location_list);
+			// locationsView.setAdapter(locationArrayAdapter);
+			// locationArrayAdapter.notifyDataSetChanged();
+			// popup = new PopupWindow(popupView, 400, 500, true);
+			// popup.setAnimationStyle(-1);
+			// popup.setFocusable(true);
+			// popup.showAtLocation(CreateEvent.this.findViewById(R.id.create_event_layout),
+			// Gravity.CENTER, 0, 0);
+			// popup.update();
 		}
-		
+
 	}
-	
+
 	private class LocationArrayAdapter extends ArrayAdapter<Location> {
-		private final Activity context;
-	    private final ArrayList<Location> locationList;
-	    private int resourceId;	
-	    
+		private Activity context;
+		private ArrayList<Location> locationList;
+		private int resourceId;
+
 		public LocationArrayAdapter(Activity context, int textViewResourceId,
 				ArrayList<Location> objects) {
 			super(context, textViewResourceId, objects);
@@ -273,20 +305,21 @@ public class CreateEvent extends Activity {
 			this.locationList = objects;
 			this.resourceId = textViewResourceId;
 		}
-	    
+
 		@Override
-	    public View getView(int position, View convertView, ViewGroup parent) {
-	        View rowView = convertView;
-	        if (rowView == null) {
-	            LayoutInflater vi = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-	            rowView = vi.inflate(resourceId, null);
-	        }
-	        Location l = locationList.get(position);
-	        TextView rowTxt = (TextView) rowView.findViewById(R.id.rowtext_top);
-	        rowTxt.setText(l.getAddress());
-	        return rowView;
-	    }
-	    
+		public View getView(int position, View convertView, ViewGroup parent) {
+			View rowView = convertView;
+			if (rowView == null) {
+				LayoutInflater vi = (LayoutInflater) context
+						.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+				rowView = vi.inflate(resourceId, null);
+			}
+			Location l = locationList.get(position);
+			TextView rowTxt = (TextView) rowView.findViewById(R.id.rowtext_top);
+			rowTxt.setText(l.getAddress());
+			return rowView;
+		}
+
 	}
 
 	private class FriendsRequestListener implements
@@ -298,53 +331,63 @@ public class CreateEvent extends Activity {
 		 */
 		@Override
 		public void onComplete(final String response, Object state) {
-			// putting the friends JSON object in the intent to pass to inviteFriends
+			// putting the friends JSON object in the intent to pass to
+			// inviteFriends
 			intentForInviteFriends.putExtra("friendsresponse", response);
-			intentForInviteFriends.setClass(CreateEvent.this, InviteFriendsActivity.class);
-			startActivityForResult(intentForInviteFriends, Utility.INVITE_FRIENDS_CODE);
-			
-//			Bundle locationParam = new Bundle();
-//			locationParam.putString("latitude", Double.toString(selectedLocation.getLatitude()));
-//			locationParam.putString("longitude ", Double.toString(selectedLocation.getLongitude()));
-//			Bundle venueParam = new Bundle();
-//			venueParam.putBundle("venue", locationParam);
-//			
-//			mAsyncRunner.request("/" + eventID, venueParam, "POST", new RequestListener() {
-//				
-//				@Override
-//				public void onMalformedURLException(MalformedURLException e, Object state) {
-//					// TODO Auto-generated method stub
-//					
-//				}
-//				
-//				@Override
-//				public void onIOException(IOException e, Object state) {
-//					// TODO Auto-generated method stub
-//					
-//				}
-//				
-//				@Override
-//				public void onFileNotFoundException(FileNotFoundException e, Object state) {
-//					// TODO Auto-generated method stub
-//					
-//				}
-//				
-//				@Override
-//				public void onFacebookError(FacebookError e, Object state) {
-//					// TODO Auto-generated method stub
-//					
-//				}
-//				
-//				@Override
-//				public void onComplete(String response, Object state) {
-//					Log.i("Location edit response", response);
-//					intentForInviteFriends.setClass(CreateEvent.this, InviteFriendsActivity.class);
-//					startActivityForResult(intentForInviteFriends, Utility.INVITE_FRIENDS_CODE);
-//					
-//				}
-//			}, new Object());
+			intentForInviteFriends.setClass(CreateEvent.this,
+					InviteFriendsActivity.class);
+			startActivityForResult(intentForInviteFriends,
+					Utility.INVITE_FRIENDS_CODE);
 
-//			Intent intent = new Intent();
+			// Bundle locationParam = new Bundle();
+			// locationParam.putString("latitude",
+			// Double.toString(selectedLocation.getLatitude()));
+			// locationParam.putString("longitude ",
+			// Double.toString(selectedLocation.getLongitude()));
+			// Bundle venueParam = new Bundle();
+			// venueParam.putBundle("venue", locationParam);
+			//
+			// mAsyncRunner.request("/" + eventID, venueParam, "POST", new
+			// RequestListener() {
+			//
+			// @Override
+			// public void onMalformedURLException(MalformedURLException e,
+			// Object state) {
+			// // TODO Auto-generated method stub
+			//
+			// }
+			//
+			// @Override
+			// public void onIOException(IOException e, Object state) {
+			// // TODO Auto-generated method stub
+			//
+			// }
+			//
+			// @Override
+			// public void onFileNotFoundException(FileNotFoundException e,
+			// Object state) {
+			// // TODO Auto-generated method stub
+			//
+			// }
+			//
+			// @Override
+			// public void onFacebookError(FacebookError e, Object state) {
+			// // TODO Auto-generated method stub
+			//
+			// }
+			//
+			// @Override
+			// public void onComplete(String response, Object state) {
+			// Log.i("Location edit response", response);
+			// intentForInviteFriends.setClass(CreateEvent.this,
+			// InviteFriendsActivity.class);
+			// startActivityForResult(intentForInviteFriends,
+			// Utility.INVITE_FRIENDS_CODE);
+			//
+			// }
+			// }, new Object());
+
+			// Intent intent = new Intent();
 		}
 
 		@Override

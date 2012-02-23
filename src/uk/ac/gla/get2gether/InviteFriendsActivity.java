@@ -9,25 +9,28 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.facebook.android.AsyncFacebookRunner;
-import com.facebook.android.FacebookError;
-import com.facebook.android.AsyncFacebookRunner.RequestListener;
-
 import android.app.Activity;
-import android.content.Intent;
+import android.app.ListActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.SparseBooleanArray;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Button;
 import android.widget.ListView;
+
+import com.facebook.android.AsyncFacebookRunner;
+import com.facebook.android.AsyncFacebookRunner.RequestListener;
+import com.facebook.android.FacebookError;
 
 public class InviteFriendsActivity extends Activity {
 
 	private FriendsArrayAdapter friendsArrayAdapter;
 	private ListView listView;
 	private ArrayList<Friend> friends;
-	private AsyncFacebookRunner mAsyncRunner;
+	private Button selectFriendsButton;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -35,11 +38,12 @@ public class InviteFriendsActivity extends Activity {
 		Log.i("InviteFriends Activity", "Started");
 
 		setContentView(R.layout.invite_friends);
-		mAsyncRunner = Utility.getAsyncRunner();
 		String response = getIntent().getStringExtra("friendsresponse");
 		friends = new ArrayList<Friend>();
 		listView = (ListView) findViewById(R.id.addfriendsview);
 		Log.i("InviteFriendsActivity response", response);
+		
+		selectFriendsButton = (Button) findViewById(R.id.selectfriendsbutton);
 
 		try {
 			// process the response here: executed in background thread
@@ -61,65 +65,71 @@ public class InviteFriendsActivity extends Activity {
 				f.name = name;
 				friends.add(f);
 			}
-
-			friendsArrayAdapter = new FriendsArrayAdapter(
-					InviteFriendsActivity.this, R.layout.rowlayout, friends);
-			listView.setAdapter(friendsArrayAdapter);
-			friendsArrayAdapter.notifyDataSetChanged();
-			listView.setOnItemClickListener(new OnItemClickListener() {
-
-				@Override
-				public void onItemClick(AdapterView<?> arg0, View v,
-						int position, long arg3) {
-//					Intent i = new Intent();
-//					i.putExtra("friendid", friends.get(position).id);
-//					setResult(Activity.RESULT_OK, i);
-					
-					String eventID = getIntent().getStringExtra("eventid");
-					String friendID = friends.get(position).id;
-					Bundle params = new Bundle();
-					mAsyncRunner.request("/" + eventID + "/invited/" + friendID, params, "POST", new RequestListener(){
-
-						@Override
-						public void onComplete(String arg0, Object arg1) {
-							Log.i("Inviting response", arg0);
-							Log.i("InviteFriends Activity", "Finished");
-							finish();
-						}
-
-						@Override
-						public void onFacebookError(FacebookError arg0, Object arg1) {
-							// TODO Auto-generated method stub
-							
-						}
-
-						@Override
-						public void onFileNotFoundException(FileNotFoundException arg0,
-								Object arg1) {
-							// TODO Auto-generated method stub
-							
-						}
-
-						@Override
-						public void onIOException(IOException arg0, Object arg1) {
-							// TODO Auto-generated method stub
-							
-						}
-
-						@Override
-						public void onMalformedURLException(MalformedURLException arg0,
-								Object arg1) {
-							// TODO Auto-generated method stub
-							
-						}
-						
-					}, new Object());
-				}
-
-			});
 		} catch (JSONException e) {
 			Log.w("get2gether FB", "JSON Error in response");
 		}
+
+			friendsArrayAdapter = new FriendsArrayAdapter(
+					InviteFriendsActivity.this, R.layout.invite_friends_rowlayout, friends);
+			listView.setItemsCanFocus(false);
+			listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+			listView.setAdapter(friendsArrayAdapter);
+//			friendsArrayAdapter.notifyDataSetChanged();
+			
+			selectFriendsButton.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					// TODO Auto-generated method stub
+					
+					String eventID = getIntent().getStringExtra("eventid");
+					SparseBooleanArray hits = listView.getCheckedItemPositions();
+					int count = 0;
+					for (int i = 0; i < hits.size(); i++) {
+						if (hits.valueAt(i))
+							count++;
+					}
+					Log.i("Friends count", "" + count);
+//					String friendID = friends.get(position).id;
+//					Bundle params = new Bundle();
+//					mAsyncRunner.request("/" + eventID + "/invited/" + friendID, params, "POST", new RequestListener(){
+//
+//						@Override
+//						public void onComplete(String arg0, Object arg1) {
+//							Log.i("Inviting response", arg0);
+//							Log.i("InviteFriends Activity", "Finished");
+//							finish();
+//						}
+//
+//						@Override
+//						public void onFacebookError(FacebookError arg0, Object arg1) {
+//							// TODO Auto-generated method stub
+//							
+//						}
+//
+//						@Override
+//						public void onFileNotFoundException(FileNotFoundException arg0,
+//								Object arg1) {
+//							// TODO Auto-generated method stub
+//							
+//						}
+//
+//						@Override
+//						public void onIOException(IOException arg0, Object arg1) {
+//							// TODO Auto-generated method stub
+//							
+//						}
+//
+//						@Override
+//						public void onMalformedURLException(MalformedURLException arg0,
+//								Object arg1) {
+//							// TODO Auto-generated method stub
+//							
+//						}
+//						
+//					}, new Object());
+				}
+			});
 	}
 
 
