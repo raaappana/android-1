@@ -10,6 +10,7 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -221,6 +222,8 @@ public class G2G_Activity extends Activity {
 		@Override
 		public void onComplete(Bundle values) {
 			// Process onComplete
+			
+//			Log.i("FB ID: ", values.getString("id"));
 
 			Log.i("LoginDialogListener", "onComplete");
 
@@ -269,6 +272,12 @@ public class G2G_Activity extends Activity {
 					try {
 						JSONObject json = new JSONObject(response);
 						String id = json.getString("id");
+						
+						SharedPreferences settings = getSharedPreferences("get2gether", 0);
+			            SharedPreferences.Editor editor = settings.edit();
+			            editor.putString("facebookID", id);
+			            editor.commit();
+						
 						final String firstName = json.getString("first_name");
 
 						URL profilePicURL = new URL(

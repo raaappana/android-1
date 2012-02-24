@@ -6,6 +6,7 @@ import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.idansof.otp.client.Location;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -186,6 +187,7 @@ public class GetEvents extends Activity {
 		public String ownerID;
 		public String description;
 		public String locationCoordinates;
+		public Location location;
 
 		// Map of invited people <id, name> who haven't responded
 		// yet to their invitation to this event
