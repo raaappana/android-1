@@ -219,6 +219,7 @@ public class Map extends MapActivity implements Observer {
 		if (ob instanceof List<?>) {
 			if (((List<?>) ob).size() == 0) {
 				showToast("Sorry, no route found ;(");
+				return;
 			}
 			Object o = ((List<?>) ob).get(0);
 			if (o instanceof Itinerary)
