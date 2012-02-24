@@ -1,6 +1,7 @@
 package uk.ac.gla.get2gether;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -28,7 +29,10 @@ public class XMPPActivity extends Activity {
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);       
+        super.onCreate(savedInstanceState);    
+        
+        SharedPreferences settings = getSharedPreferences("get2gether", 0);
+        final String facebookID = settings.getString("facebookID", "unknown");
         
         new Thread(new Runnable() {
           public void run() {
@@ -42,7 +46,7 @@ public class XMPPActivity extends Activity {
             try {
             	//XMPPConnection.DEBUG_ENABLED = true;
               xmpp.connect();
-              xmpp.login("get2gether", "malpka", "KASIA");
+              xmpp.login("get2gether", "malpka", facebookID);
 
             } catch (XMPPException e) {
               Log.v(TAG, "Failed to connect to " + xmpp.getHost());

@@ -125,6 +125,17 @@ public class G2G_Activity extends Activity {
 			}
 		});
 
+		btn_options.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				Intent i = new Intent();
+				i.setClass(G2G_Activity.this, XMPPActivity.class);
+				Log.i("G2G_Activity", "Starting XMPP Activity");
+				startActivity(i);
+			}
+		});
+		
 		/**
 		 * Handling all button click events
 		 * */
