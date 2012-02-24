@@ -211,7 +211,11 @@ public class Map extends MapActivity implements Observer {
 	}
 
 	public void update(Observable caller, Object ob) {
+		mSpinner.dismiss();
 		if (ob instanceof List<?>) {
+			if (((List<?>) ob).size() == 0) {
+				showToast("Sorry, no route found ;(");
+			}
 			Object o = ((List<?>) ob).get(0);
 			if (o instanceof Itinerary)
 				itinerary = (Itinerary)o;
@@ -225,7 +229,7 @@ public class Map extends MapActivity implements Observer {
 	    editor.putInt("endLongitude", (int) (end.getLongitude() * 1e6));
 	    editor.putString("endTime", itinerary.getEndTime().toString());
 	    editor.commit();
-		mSpinner.dismiss();
+
 		routeCalcDone = true;
 		draw_overlays((MapView) findViewById(R.id.mapview));
 	}
