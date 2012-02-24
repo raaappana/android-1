@@ -1,40 +1,33 @@
 package uk.ac.gla.get2gether;
 
-import android.app.Activity;
-import android.content.SharedPreferences;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
-
-import org.jivesoftware.smack.Chat;
+import org.idansof.otp.client.Location;
 import org.jivesoftware.smack.ChatManager;
 import org.jivesoftware.smack.ConnectionConfiguration;
-import org.jivesoftware.smack.MessageListener;
 import org.jivesoftware.smack.PacketCollector;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.AndFilter;
-import org.jivesoftware.smack.filter.FromContainsFilter;
 import org.jivesoftware.smack.filter.PacketFilter;
 import org.jivesoftware.smack.filter.PacketTypeFilter;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smackx.Form;
+import org.jivesoftware.smackx.muc.MultiUserChat;
 
-public class XMPPActivity extends Activity {
+import android.app.Activity;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.util.Log;
+
+public class EventChat {
     public int state = 0;
     private static final String TAG = "get2gether XMPP"; 
     
-    /** Called when the activity is first created. */
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);    
-        
-        SharedPreferences settings = getSharedPreferences("get2gether", 0);
-        final String facebookID = settings.getString("facebookID", "unknown");
-        
+    public EventChat(final Map m) {  
         new Thread(new Runnable() {
+            SharedPreferences settings = m.getSharedPreferences("get2gether", 0);
+            final String facebookID = settings.getString("facebookID", "unknown");
+            final String eventID = settings.getString("eventID", "defaultEvent");
           public void run() {
           	ConnectionConfiguration config = new ConnectionConfiguration("openfire.dcs.gla.ac.uk",
           			5222, "openfire.dcs.gla.ac.uk");
@@ -47,13 +40,21 @@ public class XMPPActivity extends Activity {
             	//XMPPConnection.DEBUG_ENABLED = true;
               xmpp.connect();
               xmpp.login("get2gether", "malpka", facebookID);
-
             } catch (XMPPException e) {
               Log.v(TAG, "Failed to connect to " + xmpp.getHost());
               e.printStackTrace();
             }
-            ChatManager chatmanager = xmpp.getChatManager();
-            Chat newChat = chatmanager.createChat("woody@openfire", new MessageListener() {
+            
+            MultiUserChat muc = new MultiUserChat(xmpp, eventID+"@conference.openfire");
+            
+            try {
+				muc.join(facebookID);
+				muc.sendConfigurationForm(new Form(Form.TYPE_SUBMIT));
+			} catch (XMPPException e1) {
+				e1.printStackTrace();
+			}
+            
+            /*Chat newChat = chatmanager.createChat("woody@openfire", new MessageListener() {
               // THIS CODE NEVER GETS CALLED FOR SOME REASON
               public void processMessage(Chat chat, Message message) {
                 try {
@@ -64,24 +65,25 @@ public class XMPPActivity extends Activity {
                 }
                 Log.v(TAG, message.toXML());
               }
-            });
+            });*/
                    
-            // Send something to friend@gmail.com
-            try {
-              newChat.sendMessage("OMNOMNOM");
-            } catch (XMPPException e) {
-              Log.v(TAG, "couldn't send:" + e.toString());
-            }
            
-            // Accept only messages from friend@gmail.com
             PacketFilter filter 
-                = new AndFilter(new PacketTypeFilter(Message.class), 
-                                new FromContainsFilter("woody@openfire"));
+                = new AndFilter(new PacketTypeFilter(Message.class));
 
             // Collect these messages
             PacketCollector collector = xmpp.createPacketCollector(filter);
             
             while(true) {
+                try {
+                    muc.sendMessage(m.currentLocation.getLatitude()+" "+m.currentLocation.getLongitude());
+                    Thread.sleep(4000);
+                  } catch (XMPPException e) {
+                    Log.v(TAG, "couldn't send:" + e.toString());
+              } catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
               Packet packet = collector.nextResult();
                 
               if (packet instanceof Message) {
@@ -95,7 +97,6 @@ public class XMPPActivity extends Activity {
           
         }).start();
         
-        //setContentView(this);
     }
 }
 

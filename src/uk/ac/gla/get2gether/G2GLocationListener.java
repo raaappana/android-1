@@ -8,7 +8,6 @@ import android.location.LocationListener;
 import android.os.Bundle;
 
 public class G2GLocationListener implements LocationListener {
-
 	
 	private final Map map;
 	
@@ -25,7 +24,6 @@ public class G2GLocationListener implements LocationListener {
         map.circleOverlay.requestRedraw();
         map.itemizedOverlay.requestRedraw();
         map.currentLocation = l;
-
 	}
 
 	@Override

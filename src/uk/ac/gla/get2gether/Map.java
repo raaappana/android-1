@@ -82,6 +82,8 @@ public class Map extends MapActivity implements Observer {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		EventChat ec = new EventChat(this);
+		System.out.println(ec);
 		setContentView(R.layout.map);
 		// Context context = getApplicationContext();
 		MapView mapView = (MapView) findViewById(R.id.mapview);
@@ -169,11 +171,13 @@ public class Map extends MapActivity implements Observer {
 			showToast("Location service not available");
 			return;
 		}
-
+		
+		
 		locationListener = new G2GLocationListener(this);
 		// locationListener.setCenterAtFirstFix(centerAtFirstFix);
 		locationManager.requestLocationUpdates(bestProvider, 1000, 0,
 				locationListener);
+
 
 	}
 
