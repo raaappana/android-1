@@ -1,0 +1,21 @@
+<uk.ac.gla.get2gether.DashboardLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:layout_weight="1">
+	
+	<!--  Get2gether button -->
+    <Button
+        android:id="@+id/btn_get2gether"
+        style="@style/DashboardButton"
+        android:drawableTop="@drawable/btn_get2gether"
+         />
+    
+	<!--  Navig8 button -->
+    <Button
+        android:id="@+id/btn_navig8"
+        style="@style/DashboardButton"
+        android:drawableTop="@drawable/btn_navig8"
+         />
+    
+</uk.ac.gla.get2gether.DashboardLayout>

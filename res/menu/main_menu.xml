@@ -1,8 +1,9 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/login" android:icon="@drawable/ic_menu_login" android:title="Login"/>
-    <item android:id="@+id/getfriends" android:icon="@drawable/ic_menu_allfriends" android:title="Get Friends"/>
+    <item android:id="@+id/getevents_menuitem" android:icon="@drawable/ic_menu_allfriends" android:title="Get Events"/>
     <item android:id="@+id/wallpost" android:icon="@drawable/ic_menu_share" android:title="Wall Post"/>
     <item android:id="@+id/showmap" android:icon="@drawable/ic_menu_mapmode" android:title="Show Map"/>
-    <item android:id="@+id/sendreq" android:title="Send Request" />
-    <item android:id="@+id/createev" android:title="Create Event" />
+    <item android:id="@+id/sendreq" android:icon="@drawable/ic_menu_send" android:title="Send Request" />
+    <item android:id="@+id/createev" android:icon="@drawable/ic_menu_event" android:title="Arrange meet-up" />
+    <item android:id="@+id/manageev" android:icon="@drawable/ic_menu_event" android:title="Manage events" />
 </menu>

@@ -1,4 +1,4 @@
-package uk.ac.gla.get2gether.pathcalc;
+package uk.ac.gla.get2gether.map;
 
 import java.util.ArrayList;
 import java.util.List;

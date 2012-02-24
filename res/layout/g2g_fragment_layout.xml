@@ -1,0 +1,36 @@
+<uk.ac.gla.get2gether.DashboardLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:layout_weight="1">
+
+    
+    <!--  Events Button -->
+    <Button
+        android:id="@+id/btn_events"
+        style="@style/DashboardButton"
+        android:drawableTop="@drawable/btn_events"
+        android:text="Events" />
+    
+	<!--  Current Button -->
+    <Button
+        android:id="@+id/btn_current"
+        style="@style/DashboardButton"
+        android:drawableTop="@drawable/btn_current"
+        android:text="Current" />
+	
+    <!--  Statistics Button -->
+    <Button
+        android:id="@+id/btn_statistics"
+        style="@style/DashboardButton"
+        android:drawableTop="@drawable/btn_statistics"
+        android:text="Statistics" />
+
+    <!--  Options Button -->
+    <Button
+        android:id="@+id/btn_options"
+        style="@style/DashboardButton"
+        android:drawableTop="@drawable/btn_options"
+        android:text="Options" />
+
+</uk.ac.gla.get2gether.DashboardLayout>

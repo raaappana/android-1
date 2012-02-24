@@ -6,6 +6,7 @@
     
 	<uses-permission android:name="android.permission.INTERNET" />
     <uses-sdk android:minSdkVersion="10" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     
     
     <application android:label="@string/app_name" android:icon="@drawable/app_icon"  android:debuggable="true"> 
@@ -18,11 +19,34 @@
                   android:label="@string/app_name"
                   android:theme="@android:style/Theme.NoTitleBar"
                   >
+        </activity>
+        
+        <activity android:name="AndroidDashboardDesignActivity"
+                  android:label="@string/app_name"
+                  android:theme="@android:style/Theme.NoTitleBar">
                <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
                 </intent-filter>
         </activity>
+        <activity android:name="G2G_Activity"
+            	  android:label="G2G_dashboardDesign"></activity>
+            	  
+            	  
+        <activity android:name="CreateEvent" android:theme="@android:style/Theme.NoTitleBar" android:label="CreateFBEvent"></activity>
+        <activity android:theme="@android:style/Theme.NoTitleBar" android:name=".InviteFriendsActivity" android:label="InviteFriends"></activity>
+        <activity android:name=".map.WalkSteps"></activity>
+        
+        <receiver android:name=".HelloWidget" android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/hello_widget_provider" />
+        </receiver>
+        
+	<activity android:name=".GetEvents" android:theme="@android:style/Theme.NoTitleBar" android:label="Get Events"></activity>
+        <activity android:name="XMPPActivity"></activity>
+        <activity android:name="EventInfoActivity"></activity>
     </application>
 
 </manifest> 

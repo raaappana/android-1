@@ -8,5 +8,20 @@
 	
 	<string name="newHello">MapOverlayDemo</string>
 	<string name="goLabel">Show the Map</string>
-	<string name="overlay_label">THIS IS WHAT YOU WANT</string>
+	<string name="set_locations">Set locations</string>
+	<string name="arrange">Arrange a meet-up</string>
+	<string name="entername">Name:</string>
+	<string name="enterlocation">Location:</string>
+	<string name="enterdate">Date:</string>
+	<string name="entertime">Time:</string>
+	<string name="arrange_button_tag">Arrange I say</string>
+	<string name="search_location_button_tag">Search Location</string>
+	<string name="dismiss_tag">Dismiss</string>
+	<string name="select_address_header">Select Address</string>
+	<string name="widget_text">Hello Widget!</string>
+	<string name="address">(Search for address)</string>
+	
+	<string name="fb_login">You need to log in to Facebook!</string>
+	<string name="event_desc">get2gether Event</string>
+	<string name="select_friends_button_tag">Select</string>
 </resources>

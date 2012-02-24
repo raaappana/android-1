@@ -1,4 +1,4 @@
-package uk.ac.gla.get2gether.pathcalc;
+package uk.ac.gla.get2gether.map;
 
 import java.io.IOException;
 import java.util.List;
@@ -26,8 +26,8 @@ public class Point {
 		Runnable decoder = new Runnable() {
 			public void run() {
 				List<Location> locs;
-				Geocoder g = new Geocoder("spurga.numeris.lt:8888",
-						"opentripplanner-geocoder/geocode");
+				Geocoder g = new Geocoder("dcs.gla.ac.uk",
+						"L311_D/opentripplanner-geocoder/geocode");
 				try {
 					GeocoderResult res = g.geodecode(ad_parm);
 					locs = res.getLocations();
@@ -38,8 +38,10 @@ public class Point {
 				} catch (IOException e) {
 					System.err.println(e.getMessage());
 					e.printStackTrace();
+	
 					throw new RuntimeException("Could not decode address");
 				} catch (XmlPullParserException e) {
+					
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
