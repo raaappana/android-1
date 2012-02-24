@@ -11,6 +11,15 @@ public class Utility extends Activity{
 	private static Resources res;
 	private static Facebook mFacebook;
 	private static AsyncFacebookRunner mAsyncRunner;
+	private static Event event;
+
+	public static Event getEvent() {
+		return event;
+	}
+
+	public static void setEvent(Event eventToEdit) {
+		Utility.event = eventToEdit;
+	}
 
 	// these could be in the xml files??????
 	public final static int MAIN_CODE = 12;

@@ -18,6 +18,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -52,6 +53,7 @@ public class CreateEvent extends Activity {
 	private ArrayList<Location> locationList;
 	private TextView address;
 	private final int ADDRESS_DIALOG = 33;
+	private boolean addressSelected;
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -68,6 +70,9 @@ public class CreateEvent extends Activity {
 		Log.i("CreateEvent Activity", "Started");
 		setContentView(R.layout.create_event);
 
+		SharedPreferences settings = getSharedPreferences("get2gether", 0);
+		final boolean onEditMode = settings.getBoolean("onEditMode", false);
+
 		mAsyncRunner = Utility.getAsyncRunner();
 		intentForInviteFriends = new Intent();
 
@@ -75,12 +80,34 @@ public class CreateEvent extends Activity {
 
 		locationName = (EditText) findViewById(R.id.meetup_location);
 		Button searchLocationButton = (Button) findViewById(R.id.search_location_button);
-		searchLocationButton.setOnClickListener(new SearchButtonListener()); 
+		searchLocationButton.setOnClickListener(new SearchButtonListener());
 		address = (TextView) findViewById(R.id.address);
 
 		final DatePicker datePicker = (DatePicker) findViewById(R.id.datePicker);
 		final TimePicker timePicker = (TimePicker) findViewById(R.id.timePicker);
 		Button arrange = (Button) findViewById(R.id.arrange_button);
+
+		if (onEditMode) {
+			Event e = Utility.getEvent();
+			if (e == null) {
+				Log.e("EditEvent", "Utility.getEventToEdit() was null");
+				finish();
+			}
+			name.setText(e.name);
+			locationName.setText(e.locationName);
+			address.setText(e.address);
+			Log.i("Date/TimePicker values",
+					"" + e.startTime.getYear() + ", " + e.startTime.getMonth()
+							+ ", " + e.startTime.getDate() + ", "
+							+ e.startTime.getHours() + ", "
+							+ e.startTime.getMinutes());
+			datePicker.init(e.startTime.getYear() + 1900, e.startTime.getMonth(),
+					e.startTime.getDate(), null);
+			timePicker.setCurrentHour(e.startTime.getHours());
+			timePicker.setCurrentMinute(e.startTime.getMinutes());
+			selectedLocation = new Location(e.address, e.latitude, e.longitude);
+		} 
+
 		arrange.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -126,7 +153,12 @@ public class CreateEvent extends Activity {
 								+ ", "
 								+ Double.toString(selectedLocation
 										.getLongitude()));
-				mAsyncRunner.request("me/events", eventParams, "POST",
+				String graphString;
+				if (onEditMode)
+					graphString = "/" + Utility.getEvent().id;
+				else
+					graphString = "me/events";
+				mAsyncRunner.request(graphString, eventParams, "POST",
 						new RequestListener() {
 
 							@Override
@@ -159,25 +191,22 @@ public class CreateEvent extends Activity {
 							public void onComplete(String response, Object state) {
 
 								try {
-									JSONObject jo = new JSONObject(response);
-									eventID = jo.getString("id");
-									Log.i("EVENT ID", eventID);
+									if (onEditMode)
+										intentForInviteFriends.putExtra("eventid",
+												Utility.getEvent().id);
+									else {
+										JSONObject jo = new JSONObject(response);
+										eventID = jo.getString("id");
+										Log.i("EVENT ID", eventID);
 
-									// Intent i = new Intent();
 									// putting the eventid in the intent to pass
 									// to inviteFriends
-									intentForInviteFriends.putExtra("eventid",
-											eventID);
-									// setResult(Activity.RESULT_OK, i);
-
-									// mAsyncRunner.request(parameters,
-									// listener)
-
+										intentForInviteFriends.putExtra("eventid",
+											eventID);	
+									}
+									
 									mAsyncRunner.request("me/friends",
 											new FriendsRequestListener());
-									// Log.i("CreateEvent Activity",
-									// "Finished");
-									// finish();
 								} catch (JSONException e) {
 									e.printStackTrace();
 								}
@@ -226,6 +255,7 @@ public class CreateEvent extends Activity {
 							selectedLocation = locationList.get(which);
 							address.setText(selectedLocation.getAddress()
 									.toString());
+							addressSelected = true;
 							dismissDialog(ADDRESS_DIALOG);
 							removeDialog(ADDRESS_DIALOG);
 						}
@@ -339,55 +369,6 @@ public class CreateEvent extends Activity {
 			startActivityForResult(intentForInviteFriends,
 					Utility.INVITE_FRIENDS_CODE);
 
-			// Bundle locationParam = new Bundle();
-			// locationParam.putString("latitude",
-			// Double.toString(selectedLocation.getLatitude()));
-			// locationParam.putString("longitude ",
-			// Double.toString(selectedLocation.getLongitude()));
-			// Bundle venueParam = new Bundle();
-			// venueParam.putBundle("venue", locationParam);
-			//
-			// mAsyncRunner.request("/" + eventID, venueParam, "POST", new
-			// RequestListener() {
-			//
-			// @Override
-			// public void onMalformedURLException(MalformedURLException e,
-			// Object state) {
-			// // TODO Auto-generated method stub
-			//
-			// }
-			//
-			// @Override
-			// public void onIOException(IOException e, Object state) {
-			// // TODO Auto-generated method stub
-			//
-			// }
-			//
-			// @Override
-			// public void onFileNotFoundException(FileNotFoundException e,
-			// Object state) {
-			// // TODO Auto-generated method stub
-			//
-			// }
-			//
-			// @Override
-			// public void onFacebookError(FacebookError e, Object state) {
-			// // TODO Auto-generated method stub
-			//
-			// }
-			//
-			// @Override
-			// public void onComplete(String response, Object state) {
-			// Log.i("Location edit response", response);
-			// intentForInviteFriends.setClass(CreateEvent.this,
-			// InviteFriendsActivity.class);
-			// startActivityForResult(intentForInviteFriends,
-			// Utility.INVITE_FRIENDS_CODE);
-			//
-			// }
-			// }, new Object());
-
-			// Intent intent = new Intent();
 		}
 
 		@Override

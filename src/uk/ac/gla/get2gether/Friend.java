@@ -28,6 +28,27 @@ public class Friend {
 	public String id;
 	public String name;
 	public byte[] picture;
-	public Bitmap pictureBitmap;;
-}
+	public Bitmap pictureBitmap;
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Friend other = (Friend) obj;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		return true;
+	}
 
+	@Override
+	public String toString() {
+		return "Friend [id=" + id + ", name=" + name + "]";
+	};
+}

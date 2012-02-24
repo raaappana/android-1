@@ -46,6 +46,7 @@
         
 	<activity android:name=".GetEvents" android:theme="@android:style/Theme.NoTitleBar" android:label="Get Events"></activity>
         <activity android:name="XMPPActivity"></activity>
+        <activity android:name="EventInfoActivity"></activity>
     </application>
 
 </manifest> 

@@ -38,7 +38,7 @@ public class G2G_Activity extends Activity {
 
 	private static final String[] PERMISSIONS = new String[] { "email",
 			"offline_access", "publish_checkins", "publish_stream",
-			"read_stream", "offline_access", "user_events", "create_event" };
+			"read_stream", "offline_access", "user_events", "create_event", "rsvp_event" };
 
 	/**
 	 * Code to be executed when control returns to this Activity
@@ -68,6 +68,13 @@ public class G2G_Activity extends Activity {
 		setContentView(R.layout.g2g_dashboard_layout);
 
 		Log.i("G2G_Activity", "Started");
+
+		
+		// XXX maybe a better way??
+		SharedPreferences settings = getSharedPreferences("get2gether", 0);
+		SharedPreferences.Editor editor = settings.edit();
+		editor.putBoolean("onEditMode", false);
+		editor.commit();
 
 		mHandler = new Handler();
 		footer = (TextView) findViewById(R.id.g2g_footer);
@@ -113,9 +120,9 @@ public class G2G_Activity extends Activity {
 				startActivity(i);
 			}
 		});
-		
+
 		btn_statistics.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
 				Intent i = new Intent();
@@ -129,13 +136,13 @@ public class G2G_Activity extends Activity {
 
 			@Override
 			public void onClick(View v) {
-				//Intent i = new Intent();
-				//i.setClass(G2G_Activity.this, XMPPActivity.class);
+				// Intent i = new Intent();
+				// i.setClass(G2G_Activity.this, XMPPActivity.class);
 				Log.i("G2G_Activity", "Not implemented");
-				//startActivity(i);
+				// startActivity(i);
 			}
 		});
-		
+
 		/**
 		 * Handling all button click events
 		 * */
@@ -233,8 +240,8 @@ public class G2G_Activity extends Activity {
 		@Override
 		public void onComplete(Bundle values) {
 			// Process onComplete
-			
-//			Log.i("FB ID: ", values.getString("id"));
+
+			// Log.i("FB ID: ", values.getString("id"));
 
 			Log.i("LoginDialogListener", "onComplete");
 
@@ -283,12 +290,13 @@ public class G2G_Activity extends Activity {
 					try {
 						JSONObject json = new JSONObject(response);
 						String id = json.getString("id");
-						
-						SharedPreferences settings = getSharedPreferences("get2gether", 0);
-			            SharedPreferences.Editor editor = settings.edit();
-			            editor.putString("facebookID", id);
-			            editor.commit();
-						
+
+						SharedPreferences settings = getSharedPreferences(
+								"get2gether", 0);
+						SharedPreferences.Editor editor = settings.edit();
+						editor.putString("facebookID", id);
+						editor.commit();
+
 						final String firstName = json.getString("first_name");
 
 						URL profilePicURL = new URL(

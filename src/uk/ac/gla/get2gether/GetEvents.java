@@ -3,12 +3,9 @@ package uk.ac.gla.get2gether;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
+import java.util.Collection;
+import java.util.Collections;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -16,7 +13,7 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.SharedPreferences;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -86,6 +83,7 @@ public class GetEvents extends Activity {
 
 				runOnUiThread(new Runnable() {
 
+					@SuppressWarnings("unchecked")
 					@Override
 					public void run() {
 						setContentView(R.layout.getevents);
@@ -98,21 +96,10 @@ public class GetEvents extends Activity {
 							@Override
 							public void onItemClick(AdapterView<?> parent,
 									View view, int position, long id) {
-
-								SharedPreferences settings = getSharedPreferences(
-										"get2gether", 0);
-								SharedPreferences.Editor editor = settings
-										.edit();
-								editor.putString("eventID",
-										events.get(position).id);
-								editor.commit();
-
-								Log.i("GetEvents",
-										"Event clicked: "
-												+ events.get(position).id
-												+ ", "
-												+ events.get(position).name);
-
+								Utility.setEvent(events.get(position));
+								
+								Intent i = new Intent(GetEvents.this, EventInfoActivity.class);
+								startActivity(i);
 								finish();
 							}
 						});
@@ -154,6 +141,8 @@ public class GetEvents extends Activity {
 								events.add(e);
 								Log.i("Event added", e.toString());
 							}
+							
+							Collections.sort(events);
 
 							Log.i("Events length",
 									Integer.toString(events.size()));
@@ -228,57 +217,5 @@ public class GetEvents extends Activity {
 
 	}
 
-	private class Event {
-
-		public String id;
-		public String locationName;
-		public String name;
-		// public String start_time;
-		public Date startTime;
-
-		public String ownerID;
-		public String description;
-		public double latitude;
-		public double longitude;
-
-		// Map of invited people <id, name> who haven't responded
-		// yet to their invitation to this event
-		public HashMap<String, String> invitedMap;
-		public HashMap<String, String> confirmedMap; // likewise for confirmed
-
-		public Event(String id, String locationName, String name,
-				String start_time, String description) {
-			this.id = id;
-
-			int atCursor = locationName.lastIndexOf('@');
-			this.locationName = locationName.substring(0, atCursor - 1);
-
-			int commaCursor = locationName.lastIndexOf(',');
-			this.latitude = Double.valueOf(locationName.substring(atCursor + 2,
-					commaCursor));
-			this.longitude = Double.valueOf(locationName.substring(
-					commaCursor + 2, locationName.length()));
-
-			// this.start_time = start_time;
-			this.name = name.substring(6);
-			this.description = description;
-
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-			try {
-				this.startTime = sdf.parse(start_time);
-			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
-		}
-
-		public String toString() {
-			return id + ", " + locationName + ", " + name + ", " + description
-					+ ", " + latitude + ", " + longitude + ", "
-					+ startTime.toGMTString();
-		}
-
-	}
-
+	
 }
