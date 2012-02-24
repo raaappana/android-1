@@ -186,13 +186,18 @@ public class GetEvents extends Activity {
 
 		public String ownerID;
 		public String description;
-		public String locationCoordinates;
-		public Location location;
+		public double latitude;
+		public double longitude;
 
 		// Map of invited people <id, name> who haven't responded
 		// yet to their invitation to this event
 		public HashMap<String, String> invitedMap;
 		public HashMap<String, String> confirmedMap; // likewise for confirmed
+		
+		public Event (String id, String locationName, String name, String start_time, String description) {
+			this.id = id;
+			this.locationName = 
+		}
 
 	}
 
