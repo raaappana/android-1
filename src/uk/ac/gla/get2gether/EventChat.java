@@ -76,7 +76,10 @@ public class EventChat {
             
             while(true) {
                 try {
-                    muc.sendMessage(m.currentLocation.getLatitude()+" "+m.currentLocation.getLongitude());
+                	if (m.currentLocation != null)
+                		muc.sendMessage(m.currentLocation.getLatitude()+" "+m.currentLocation.getLongitude());
+                	else
+                		muc.sendMessage("don't know where I am");
                     Thread.sleep(4000);
                   } catch (XMPPException e) {
                     Log.v(TAG, "couldn't send:" + e.toString());
