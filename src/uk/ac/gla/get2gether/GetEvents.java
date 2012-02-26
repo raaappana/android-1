@@ -48,8 +48,8 @@ public class GetEvents extends Activity {
 		// listView = (ListView) findViewById(R.id.geteventsview);
 		
 		Typeface green_pillow = Typeface.createFromAsset(getAssets(), "GREENPIL.otf");
-		((TextView) findViewById(R.id.get2)).setTypeface(green_pillow);
-		((TextView) findViewById(R.id.together2)).setTypeface(green_pillow);
+		((TextView) findViewById(R.id.get)).setTypeface(green_pillow);
+		((TextView) findViewById(R.id.together)).setTypeface(green_pillow);
 
 		Bundle params = new Bundle();
 		params.putString("fields", "location,description,name,id,start_time");
@@ -208,8 +208,8 @@ public class GetEvents extends Activity {
 		public View getView(int position, View convertView, ViewGroup parent) {
 			
 			Typeface green_pillow = Typeface.createFromAsset(getAssets(), "GREENPIL.otf");
-			((TextView) findViewById(R.id.get2)).setTypeface(green_pillow);
-			((TextView) findViewById(R.id.together2)).setTypeface(green_pillow);
+			((TextView) findViewById(R.id.get)).setTypeface(green_pillow);
+			((TextView) findViewById(R.id.together)).setTypeface(green_pillow);
 			
 			Event e = events.get(position);
 			View rowView = convertView;

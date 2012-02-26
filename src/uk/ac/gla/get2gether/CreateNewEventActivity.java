@@ -5,6 +5,7 @@ package uk.ac.gla.get2gether;
 //import android.R;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -137,12 +138,14 @@ public class CreateNewEventActivity extends G2G_Activity{
 		address = (TextView) findViewById(R.id.address);
 		
 		//Background image
-		View v = findViewById(R.id.create_event_layout);
+		//View v = findViewById(R.id.create_event_layout);
 		
 		//EditBoxes
 		final EditText name = (EditText) findViewById(R.id.meetup_name);
 		locationName = (EditText) findViewById(R.id.meetup_location);
 		
+		//Calendar
+		cal = Calendar.getInstance();
 		
 		SharedPreferences settings = getSharedPreferences("get2gether", 0);
 		final boolean onEditMode = settings.getBoolean("onEditMode", false);
@@ -357,7 +360,10 @@ public class CreateNewEventActivity extends G2G_Activity{
 		            	// update the dateText view with the corresponding date
 		            	prepareTextView(dateText, barlow);
 		                dateText.setText(String.format("%n%te %tB %tY", selectedDate, selectedDate, selectedDate));
-		                cal = selectedDate;
+		                if(cal == null)
+		                	cal = Calendar.getInstance();
+		                //
+		                cal.set(selectedDate.get(YEAR), selectedDate.get(MONTH), selectedDate.get(DAY_OF_MONTH));
 		                Log.i("Year2", cal.get(1) + "");
 						Log.i("Month2", cal.get(2) + 1 + "");
 						Log.i("Day2", cal.get(5) + "");
@@ -373,6 +379,8 @@ public class CreateNewEventActivity extends G2G_Activity{
 		                	// update the dateText view with the corresponding date
 		                	prepareTextView(timeText, barlow);
 		                	timeText.setText(String.format("%n%tR", selectedDate));
+		                	if (cal == null)
+		                		cal = Calendar.getInstance();
 		                    cal.set(cal.get(YEAR), cal.get(MONTH), cal.get(DAY_OF_MONTH), selectedDate.get(HOUR), selectedDate.get(MINUTE));
 		                }
 		        };

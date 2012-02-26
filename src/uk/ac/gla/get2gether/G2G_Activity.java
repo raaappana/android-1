@@ -21,6 +21,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -110,6 +111,10 @@ public class G2G_Activity extends Activity {
 		// Dashboard Options button
 		Button btn_options = (Button) findViewById(R.id.btn_options);
 		styleButton(btn_options, green_pillow);//, R.color.black);
+		
+		//Logout Button
+		ImageButton btn_logout = (ImageButton) findViewById(R.id.btn_logout);
+		//NEED TO IMPLEMENT
 
 		Utility.setResources(getResources());
 		mFacebook = Utility.getFacebook();
@@ -143,8 +148,8 @@ public class G2G_Activity extends Activity {
 			@Override
 			public void onClick(View v) {
 				Intent i = new Intent();
-				i.setClass(G2G_Activity.this, CreateEvent.class);
-				Log.i("G2G_Activity", "Starting CreateEvent Activity");
+				i.setClass(G2G_Activity.this, StatisticsActivity.class);
+				Log.i("G2G_Activity", "Starting Statistics Activity");
 				startActivity(i);
 			}
 		});
@@ -153,10 +158,21 @@ public class G2G_Activity extends Activity {
 
 			@Override
 			public void onClick(View v) {
-				// Intent i = new Intent();
-				// i.setClass(G2G_Activity.this, XMPPActivity.class);
+				 Intent i = new Intent();
+				 i.setClass(G2G_Activity.this, OptionsActivity.class);
+				 startActivity(i);
 				Log.i("G2G_Activity", "Not implemented");
 				// startActivity(i);
+			}
+		});
+		
+		btn_current.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				 Intent i = new Intent();
+				 i.setClass(G2G_Activity.this, Map.class);
+				 startActivity(i);
 			}
 		});
 
