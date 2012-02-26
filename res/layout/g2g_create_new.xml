@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/create_event_layout"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:background="@drawable/background_alternative" >
+    
+    <include layout="@layout/g2g_actionbar_layout"/>
+
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:isScrollContainer="false">
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/arrange"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:text="@string/arrange"
+                android:textSize="60dp"
+	    	    android:textColor="@color/black"
+	    	    android:layout_marginBottom="-20dp"/>
+            
+             <TextView
+                android:id="@+id/meetup"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:text="@string/meetup"
+                android:textSize="50dp"
+	    	    android:layout_margin="0dp"
+	    	    android:textColor="@color/black"
+	    	    android:layout_marginBottom="40dp"/>
+
+            <TextView
+                android:id="@+id/enter_name"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:layout_marginLeft="10dp"
+                android:text="@string/entername"
+                android:textColor="@color/g2green"
+                android:textSize="35dp" />
+
+            <EditText
+                android:id="@+id/meetup_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:background="@drawable/custom_editbox"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp" />
+
+            <TextView
+                android:id="@+id/enter_location"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:layout_marginLeft="10dp"
+                android:text="@string/enterlocation"
+                android:textStyle="bold"
+                android:textColor="@color/g2green"
+                android:textSize="35dp" />
+
+            
+            <EditText
+                android:id="@+id/meetup_location"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" 
+                android:background="@drawable/custom_editbox"
+                android:layout_margin="5dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"/>
+            
+            <TextView
+                android:id="@+id/address"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:padding="10dp"
+                android:text=""
+                android:textSize="12dp" />
+
+            <Button
+                android:id="@+id/search_location_button"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/button"
+                android:textColor="@color/black"
+                android:textSize="30dp"
+                android:text="@string/search_location_button_tag" />
+
+            <TableLayout
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+                <TableRow>
+	                <TextView
+	                android:id="@+id/enter_date"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:gravity="center_horizontal"
+	                android:text=""
+	                android:padding="3dp"
+	                android:textSize="20dp" />
+	                
+	                <TextView
+	                android:id="@+id/enter_time"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:gravity="center_horizontal"
+	                android:padding="3dp"
+	                android:text=""
+	                android:textSize="35dp" />
+                </TableRow>
+                <TableRow>
+	                <Button
+	                android:id="@+id/date_button"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:textColor="#000000"
+	                android:textSize="30dp"
+	                android:background="@drawable/button"
+	                android:paddingLeft="25dp"
+	                android:paddingRight="25dp"
+	                android:text="@string/selectdate" />
+	                
+	                <Button
+	                android:id="@+id/time_button"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:textColor="@color/black"
+	                android:textSize="30dp"
+	                android:background="@drawable/button"
+	                android:paddingLeft="25dp"
+	                android:paddingRight="25dp"
+	                android:text="@string/selecttime"/>
+                </TableRow>
+            </TableLayout>
+            
+            <TextView
+                android:id="@+id/enter_description"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:text="@string/enterdescription"
+                android:textColor="@color/g2green"
+                android:textSize="35dp" />
+
+            <EditText
+                android:id="@+id/event_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/custom_editbox"
+                android:layout_margin="5dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp" 
+                android:scrollHorizontally="true"/>
+            
+            <Button
+                android:id="@+id/arrange_button"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:background="@drawable/button"
+                android:textColor="@color/black"
+                android:textSize="35dp"
+                 />
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

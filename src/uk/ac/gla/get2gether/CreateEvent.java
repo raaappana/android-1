@@ -4,7 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
-import java.util.List;
+
 
 import org.idansof.otp.client.Location;
 import org.json.JSONException;
@@ -21,18 +21,15 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
-import android.view.View.OnCreateContextMenuListener;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -81,7 +78,7 @@ public class CreateEvent extends Activity {
 		locationName = (EditText) findViewById(R.id.meetup_location);
 		Button searchLocationButton = (Button) findViewById(R.id.search_location_button);
 		searchLocationButton.setOnClickListener(new SearchButtonListener());
-		address = (TextView) findViewById(R.id.address);
+		address = (TextView) findViewById(R.id.address_old);
 
 		final DatePicker datePicker = (DatePicker) findViewById(R.id.datePicker);
 		final TimePicker timePicker = (TimePicker) findViewById(R.id.timePicker);
@@ -195,6 +192,7 @@ public class CreateEvent extends Activity {
 										intentForInviteFriends.putExtra("eventid",
 												Utility.getEvent().id);
 									else {
+										Log.i("Create Event", response);
 										JSONObject jo = new JSONObject(response);
 										eventID = jo.getString("id");
 										Log.i("EVENT ID", eventID);

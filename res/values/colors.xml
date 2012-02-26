@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <drawable name="white">#ffffff</drawable>
-    <drawable name="black">#000000</drawable>
+    <color name="white">#ffffff</color>
+    <color name="black">#000000</color>
+    <color name="g2green">#246212</color>
+    <color name="g2brown">#c86f22</color>
+    <color name="g2blue">#404a9c</color>
+    <color name="g2purple">#c991de</color>
+    <color name="g2darkpurple">#7f4b8b</color>
 </resources>

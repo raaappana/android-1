@@ -1,16 +1,39 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" 
-    style="@style/ActionBarCompat" >
-
-    <ImageView
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:clickable="false"
-        android:paddingLeft="15dip"
-        android:scaleType="center"
-        android:src="@drawable/get2gether2"
-        android:layout_gravity="center_vertical|center_horizontal"
-        android:adjustViewBounds="true"
-        android:layout_margin="3dp"
-        />
-
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"  
+	    style="@style/ActionBarCompat" 
+	    android:gravity="center_horizontal|center_vertical"
+	    
+	    >
+	    <TextView
+	        android:id="@+id/get"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:gravity="center_vertical"
+	        android:textSize="80dp"
+	        android:layout_marginTop="-12dp"
+	        android:layout_marginRight="-2dp"
+	        android:textColor="@color/g2darkpurple"
+	        android:text="get"
+	        />
+	    
+	
+	    <ImageView
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:clickable="false"
+	        android:scaleType="center"
+	        android:src="@drawable/two"
+	        android:layout_gravity="center_vertical|center_horizontal"
+	        android:adjustViewBounds="true"
+	        />
+	    
+	    <TextView
+	        android:id="@+id/together"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:gravity="center_vertical"
+	        android:textSize="80dp"
+	        android:layout_marginTop="-12dp"
+	        android:textColor="@color/g2green"
+	        android:text="gether"
+	        />
 </LinearLayout>

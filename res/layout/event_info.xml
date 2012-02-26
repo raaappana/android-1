@@ -2,7 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical" 
+    android:background="@drawable/background">
 
     <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
@@ -14,18 +15,21 @@
             android:id="@+id/eventinfo_use_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@drawable/button"
             android:text="Set the course" />
 
         <Button
             android:id="@+id/eventinfo_edit_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@drawable/button"
             android:text="Edit" />
 
         <Button
             android:id="@+id/eventinfo_delete_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@drawable/button"
             android:text="Delete" />
     </LinearLayout>
 
@@ -45,6 +49,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Large Text"
+                android:textColor="@color/black"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
             <TextView
@@ -52,12 +57,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Large Text"
+                android:textColor="@color/black"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
             <TextView
                 android:id="@+id/eventinfo_address_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="@color/black"
                 android:text="Large Text" />
 
             <TextView
@@ -65,12 +72,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Large Text"
+                android:textColor="@color/black"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
             <ListView
                 android:id="@+id/eventinfo_friend_listview"
                 android:layout_width="fill_parent"
-                android:layout_height="400px" >
+                android:layout_height="400px" 
+                android:textColor="@color/black">
             </ListView>
         </LinearLayout>
     </ScrollView>

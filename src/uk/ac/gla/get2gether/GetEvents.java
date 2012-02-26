@@ -14,6 +14,7 @@ import org.json.JSONObject;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -41,10 +42,14 @@ public class GetEvents extends Activity {
 		super.onCreate(savedInstanceState);
 		Log.i("GetEvents Activity", "Started");
 
-		// setContentView(R.layout.getevents);
+		setContentView(R.layout.getevents);
 		mAsyncRunner = Utility.getAsyncRunner();
 		// events = new ArrayList<Event>();
 		// listView = (ListView) findViewById(R.id.geteventsview);
+		
+		Typeface green_pillow = Typeface.createFromAsset(getAssets(), "GREENPIL.otf");
+		((TextView) findViewById(R.id.get2)).setTypeface(green_pillow);
+		((TextView) findViewById(R.id.together2)).setTypeface(green_pillow);
 
 		Bundle params = new Bundle();
 		params.putString("fields", "location,description,name,id,start_time");
@@ -201,6 +206,11 @@ public class GetEvents extends Activity {
 		 */
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
+			
+			Typeface green_pillow = Typeface.createFromAsset(getAssets(), "GREENPIL.otf");
+			((TextView) findViewById(R.id.get2)).setTypeface(green_pillow);
+			((TextView) findViewById(R.id.together2)).setTypeface(green_pillow);
+			
 			Event e = events.get(position);
 			View rowView = convertView;
 			if (rowView == null) {
@@ -210,8 +220,11 @@ public class GetEvents extends Activity {
 			}
 			TextView dateTxt = (TextView) rowView.findViewById(R.id.daterow);
 			dateTxt.setText(e.startTime.toLocaleString());
+			dateTxt.setTextColor(R.color.black);
 			TextView nameTxt = (TextView) rowView.findViewById(R.id.namerow);
 			nameTxt.setText(e.name);
+			nameTxt.setTextColor(R.color.black);
+			nameTxt.setTextSize(20);
 			return rowView;
 		}
 
