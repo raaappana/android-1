@@ -29,7 +29,7 @@ public class Event implements Comparable{
 	public HashMap<String, String> confirmedMap; // likewise for confirmed
 
 	public Event(String id, String locationName, String name,
-			String start_time, String description) {
+			String start_time, String description) {//, String ownerID
 		this.id = id;
 
 		int atCursor = locationName.lastIndexOf('@');
@@ -53,6 +53,8 @@ public class Event implements Comparable{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+//		this.ownerID = ownerID;
 
 	}
 

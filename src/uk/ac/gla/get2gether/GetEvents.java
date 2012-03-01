@@ -125,11 +125,14 @@ public class GetEvents extends Activity {
 																.trim())
 										|| !jsonObj.has("location"))
 									continue;
+//								JSONObject ownerObj = jsonObj.getJSONObject("owner");
+//								String ownerID = ownerObj.getString("id");
+//								Log.i("Event owner ", ownerID);
 								Event e = new Event(jsonObj.getString("id"),
 										jsonObj.getString("location"), jsonObj
 												.getString("name"), jsonObj
 												.getString("start_time"),
-										jsonObj.getString("description"));
+										jsonObj.getString("description"));//, ownerObj.getString("id")
 								// e.description =
 								// jsonObj.getString("description");
 								// e.id = jsonObj.getString("id");
