@@ -264,7 +264,8 @@ public class CreateNewEventActivity extends G2G_Activity{
 						+ selectedLocation.getLongitude());
 				eventParams.putString("description",
 						getResources().getString(R.string.event_desc) + " - "
-								+ locationName.getEditableText().toString());
+								+ locationName.getEditableText().toString() + "\n" +
+								details.getEditableText().toString());
 				// 1st way
 				Bundle locationParam = new Bundle();
 				locationParam.putString("latitude",
