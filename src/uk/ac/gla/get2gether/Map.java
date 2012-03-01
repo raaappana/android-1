@@ -61,7 +61,7 @@ public class Map extends MapActivity implements Observer {
 	// Route calculation
 	// private DumbPath path;
 	private ProgressDialog mSpinner;
-	public static Itinerary itinerary = null; //Android Tutorial recommended :)
+	public static Itinerary itinerary = null; // Android Tutorial recommended :)
 	private boolean routeCalcDone = false;
 
 	private View infoView;
@@ -72,6 +72,7 @@ public class Map extends MapActivity implements Observer {
 	ArrayCircleOverlay circleOverlay;
 	G2GItemizedOverlay itemizedOverlay;
 	OverlayCircle overlayCircle;
+	List<OverlayCircle> friendsLocations;
 	OverlayItem overlayItem;
 	Paint circleOverlayFill;
 	private Paint circleOverlayOutline;
@@ -124,7 +125,7 @@ public class Map extends MapActivity implements Observer {
 		// Current location accuracy radius
 		circleOverlayFill = new Paint(Paint.ANTI_ALIAS_FLAG);
 		circleOverlayFill.setStyle(Paint.Style.FILL);
-		circleOverlayFill.setColor(Color.BLUE);
+		circleOverlayFill.setColor(Color.YELLOW);
 		circleOverlayFill.setAlpha(48);
 
 		circleOverlayOutline = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -137,6 +138,7 @@ public class Map extends MapActivity implements Observer {
 				this.circleOverlayOutline, this);
 
 		overlayCircle = new OverlayCircle();
+		friendsLocations = new ArrayList<OverlayCircle>();
 		circleOverlay.addCircle(this.overlayCircle);
 		mapView.getOverlays().add(this.circleOverlay);
 
@@ -144,7 +146,7 @@ public class Map extends MapActivity implements Observer {
 		for (String provider : this.locationManager.getProviders(true)) {
 			android.location.Location cursor = this.locationManager
 					.getLastKnownLocation(provider);
-			if (currentLocation == null
+			if (currentLocation == null || cursor == null
 					|| cursor.getAccuracy() < currentLocation.getAccuracy()) {
 				currentLocation = cursor;
 			}
@@ -155,7 +157,7 @@ public class Map extends MapActivity implements Observer {
 			mapView.getController().setCenter(point); // re-center if possible
 			showToast("Last location acquired!");
 			overlayCircle.setCircleData(point, currentLocation.getAccuracy());
-			circleOverlayFill.setColor(Color.BLUE);
+			circleOverlayFill.setColor(Color.YELLOW);
 			overlayItem.setPoint(point);
 			circleOverlay.requestRedraw();
 			itemizedOverlay.requestRedraw();
@@ -170,15 +172,30 @@ public class Map extends MapActivity implements Observer {
 		if (bestProvider == null) {
 			showToast("Location service not available");
 			return;
+		} else {
+			locationListener = new G2GLocationListener(this);
+			// locationListener.setCenterAtFirstFix(centerAtFirstFix);
+			locationManager.requestLocationUpdates(bestProvider, 1000, 0,
+					locationListener);
 		}
+		/*
+		final String address = this.getIntent().getExtras()
+				.getString("address");
 		
-		
-		locationListener = new G2GLocationListener(this);
-		// locationListener.setCenterAtFirstFix(centerAtFirstFix);
-		locationManager.requestLocationUpdates(bestProvider, 1000, 0,
-				locationListener);
+		new Thread(new Runnable() {
+			public void run() {
 
+				if (address != null) {
+					System.err.println(address);
+					Location d = OTP.geocode(address).get(0);
+					GeoPoint p = new GeoPoint(d.getLatitude(), d.getLongitude());
+					setDestination(p);
+					startRouting();
+				}
 
+			}
+		}).start();
+*/
 	}
 
 	void launchDestinationDialog(final GeoPoint p) {
@@ -223,17 +240,17 @@ public class Map extends MapActivity implements Observer {
 			}
 			Object o = ((List<?>) ob).get(0);
 			if (o instanceof Itinerary)
-				itinerary = (Itinerary)o;
+				itinerary = (Itinerary) o;
 		}
-	    SharedPreferences settings = getSharedPreferences("get2gether", 0);
-	    SharedPreferences.Editor editor = settings.edit();
-	    
-	    editor.putInt("startLatitude", (int) (start.getLatitude() * 1e6));
-	    editor.putInt("startLongitude", (int) (start.getLongitude() * 1e6));
-	    editor.putInt("endLatitude", (int) (end.getLatitude() * 1e6));
-	    editor.putInt("endLongitude", (int) (end.getLongitude() * 1e6));
-	    editor.putString("endTime", itinerary.getEndTime().toString());
-	    editor.commit();
+		SharedPreferences settings = getSharedPreferences("get2gether", 0);
+		SharedPreferences.Editor editor = settings.edit();
+
+		editor.putInt("startLatitude", (int) (start.getLatitude() * 1e6));
+		editor.putInt("startLongitude", (int) (start.getLongitude() * 1e6));
+		editor.putInt("endLatitude", (int) (end.getLatitude() * 1e6));
+		editor.putInt("endLongitude", (int) (end.getLongitude() * 1e6));
+		editor.putString("endTime", itinerary.getEndTime().toString());
+		editor.commit();
 
 		routeCalcDone = true;
 		draw_overlays((MapView) findViewById(R.id.mapview));
@@ -308,10 +325,9 @@ public class Map extends MapActivity implements Observer {
 			mPaint.setStrokeJoin(Paint.Join.ROUND);
 			mPaint.setStrokeCap(Paint.Cap.SQUARE);
 			mPaint.setStrokeWidth(4);
-			
 
 			for (Leg leg : itinerary.getLegs()) {
-				
+
 				List<Location> geometry = leg.getGeometry();
 				switch (leg.getMode()) {
 				case WALK:
@@ -361,9 +377,9 @@ public class Map extends MapActivity implements Observer {
 	 */
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
-		//MenuItem calcrouteItem = menu.findItem(R.id.calc_route);
+		// MenuItem calcrouteItem = menu.findItem(R.id.calc_route);
 		MenuItem routeInfoMenuItem = menu.findItem(R.id.route_info);
-		//MenuItem inputLocationItem = menu.findItem(R.id.input_locations);
+		// MenuItem inputLocationItem = menu.findItem(R.id.input_locations);
 		MenuItem walkStepsItem = menu.findItem(R.id.walk_steps);
 		routeInfoMenuItem.setEnabled(routeCalcDone);
 		walkStepsItem.setEnabled(routeCalcDone);
@@ -442,27 +458,26 @@ public class Map extends MapActivity implements Observer {
 		}
 		return true;
 	}
-	
-	@Override 
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {     
-	  super.onActivityResult(requestCode, resultCode, data); 
-	  switch(requestCode) { 
-	    case (1) : { 
-	      if (resultCode == Activity.RESULT_OK) { 
-	      double lat = data.getDoubleExtra("walkStepLatitude", 3.0);
-	      double lon = data.getDoubleExtra("walkStepLongitude", 50.0);
-	      String desc = data.getStringExtra("walkStepDescription");
-	      System.out.println("grr "+lat+" "+lon);
-	      
-	      
-		 itemizedoverlay.addOverlay(new OverlayItem(new GeoPoint(lat, lon), "WalkStep",
-		 desc));
-		 itemizedoverlay.requestRedraw();
-		
-	      } 
-	      break; 
-	    } 
-	  } 
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		switch (requestCode) {
+		case (1): {
+			if (resultCode == Activity.RESULT_OK) {
+				double lat = data.getDoubleExtra("walkStepLatitude", 3.0);
+				double lon = data.getDoubleExtra("walkStepLongitude", 50.0);
+				String desc = data.getStringExtra("walkStepDescription");
+				System.out.println("grr " + lat + " " + lon);
+
+				itemizedoverlay.addOverlay(new OverlayItem(new GeoPoint(lat,
+						lon), "WalkStep", desc));
+				itemizedoverlay.requestRedraw();
+
+			}
+			break;
+		}
+		}
 	}
 
 	void showToast(final String text) {

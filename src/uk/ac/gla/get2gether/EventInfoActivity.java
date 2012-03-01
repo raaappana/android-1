@@ -46,17 +46,20 @@ public class EventInfoActivity extends Activity {
 
 			@Override
 			public void onClick(View v) {
-
+				Log.i("EventInfoActivity", "Event clicked: " + event.id + ", "
+						+ event.name);
 				SharedPreferences settings = getSharedPreferences("get2gether",
 						0);
 				SharedPreferences.Editor editor = settings.edit();
 				editor.putString("eventID", event.id);
 				editor.commit();
+				Bundle bundle = new Bundle();
+				bundle.putString("address", event.address);
+				Intent i = new Intent(getApplicationContext(), Map.class);
+				i.putExtras(bundle);
+				startActivity(i);
 
-				Log.i("EventInfoActivity", "Event clicked: " + event.id + ", "
-						+ event.name);
-
-				finish();
+				//finish();
 			}
 		});
 

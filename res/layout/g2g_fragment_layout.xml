@@ -10,27 +10,31 @@
         android:id="@+id/btn_events"
         style="@style/DashboardButton"
         android:drawableTop="@drawable/btn_events"
-        android:text="Events" />
+        android:text="Events"
+        android:textColor="@color/black" />
     
 	<!--  Current Button -->
     <Button
         android:id="@+id/btn_current"
         style="@style/DashboardButton"
         android:drawableTop="@drawable/btn_current"
-        android:text="Current" />
+        android:text="Current" 
+        android:textColor="@color/black"/>
 	
     <!--  Statistics Button -->
     <Button
         android:id="@+id/btn_statistics"
         style="@style/DashboardButton"
         android:drawableTop="@drawable/btn_statistics"
-        android:text="Statistics" />
+        android:text="Statistics" 
+        android:textColor="@color/black"/>
 
     <!--  Options Button -->
     <Button
         android:id="@+id/btn_options"
         style="@style/DashboardButton"
         android:drawableTop="@drawable/btn_options"
-        android:text="Options" />
+        android:text="Options" 
+        android:textColor="@color/black"/>
 
 </uk.ac.gla.get2gether.DashboardLayout>

@@ -17,14 +17,11 @@ public class G2GItemizedOverlay extends ArrayItemizedOverlay {
 	public G2GItemizedOverlay(Drawable defaultMarker, Context context) {
 		super(defaultMarker, context);
 		map = (Map) context;
-		// TODO Auto-generated constructor stub
 	}
 	
 	@Override
 	public boolean onLongPress(GeoPoint p, MapView mapView) {
-		 // TODO Auto-generated method stub
-		map.launchDestinationDialog(p);
-		
+		map.launchDestinationDialog(p);		
 		 return true;
 	}
 

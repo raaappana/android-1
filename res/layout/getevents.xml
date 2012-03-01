@@ -1,12 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical" >
-
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" 
+    android:background="@drawable/background_alternative">
+    
+	 <include layout="@layout/g2g_actionbar_layout"/>
+    
     <ListView
         android:id="@+id/geteventsview"
         android:layout_width="fill_parent"
+        android:textColor="@color/black"
+        android:gravity="center_horizontal"
+        android:textSize="20dp"
+        android:smoothScrollbar="true"
+        android:isScrollContainer="false"
         android:layout_height="wrap_content"
         android:textFilterEnabled="true" />
 

@@ -13,12 +13,15 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -56,10 +59,17 @@ public class G2G_Activity extends Activity {
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		Log.d("get2gether Main", "onActivityResult(): " + requestCode);
+		
 
 		// The following method has to be called when returning to the Activity
 		// (it's a bit vague what it does but it's in the Facebook specs)
 		mFacebook.authorizeCallback(requestCode, resultCode, data);
+	}
+	
+	private void styleButton(Button bt, Typeface tf){
+		bt.setTypeface(tf);
+		bt.setTextSize(35);
+		//bt.setTextColor(color);
 	}
 
 	@Override
@@ -67,6 +77,10 @@ public class G2G_Activity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.g2g_dashboard_layout);
 
+		Typeface green_pillow = Typeface.createFromAsset(getAssets(), "GREENPIL.otf");
+		((TextView) findViewById(R.id.get)).setTypeface(green_pillow);
+		((TextView) findViewById(R.id.together)).setTypeface(green_pillow);
+		
 		Log.i("G2G_Activity", "Started");
 
 		
@@ -83,17 +97,24 @@ public class G2G_Activity extends Activity {
 		/**
 		 * Creating all buttons instances
 		 * */
-		// Dashboard News feed button
+		
+		
+		// Dashboard Events button
 		Button btn_events = (Button) findViewById(R.id.btn_events);
-
-		// Dashboard Friends button
+		styleButton(btn_events, green_pillow);//, R.color.black);
+		// Dashboard Current Event button
 		Button btn_current = (Button) findViewById(R.id.btn_current);
-
-		// Dashboard Messages button
+		styleButton(btn_current, green_pillow);//, R.color.black);
+		// Dashboard Statistics button
 		Button btn_statistics = (Button) findViewById(R.id.btn_statistics);
-
-		// Dashboard Places button
+		styleButton(btn_statistics, green_pillow);//, R.color.black);
+		// Dashboard Options button
 		Button btn_options = (Button) findViewById(R.id.btn_options);
+		styleButton(btn_options, green_pillow);//, R.color.black);
+		
+		//Logout Button
+		ImageButton btn_logout = (ImageButton) findViewById(R.id.btn_logout);
+		//NEED TO IMPLEMENT
 
 		Utility.setResources(getResources());
 		mFacebook = Utility.getFacebook();
@@ -115,7 +136,8 @@ public class G2G_Activity extends Activity {
 			@Override
 			public void onClick(View v) {
 				Intent i = new Intent();
-				i.setClass(G2G_Activity.this, GetEvents.class);
+				i.setClass(getApplicationContext(), EventsActivity.class);
+				//i.setClass(G2G_Activity.this, GetEvents.class);
 				Log.i("G2G_Activity", "Starting GetEvents Activity");
 				startActivity(i);
 			}
@@ -126,8 +148,8 @@ public class G2G_Activity extends Activity {
 			@Override
 			public void onClick(View v) {
 				Intent i = new Intent();
-				i.setClass(G2G_Activity.this, CreateEvent.class);
-				Log.i("G2G_Activity", "Starting CreateEvent Activity");
+				i.setClass(G2G_Activity.this, StatisticsActivity.class);
+				Log.i("G2G_Activity", "Starting Statistics Activity");
 				startActivity(i);
 			}
 		});
@@ -136,10 +158,21 @@ public class G2G_Activity extends Activity {
 
 			@Override
 			public void onClick(View v) {
-				// Intent i = new Intent();
-				// i.setClass(G2G_Activity.this, XMPPActivity.class);
+				 Intent i = new Intent();
+				 i.setClass(G2G_Activity.this, OptionsActivity.class);
+				 startActivity(i);
 				Log.i("G2G_Activity", "Not implemented");
 				// startActivity(i);
+			}
+		});
+		
+		btn_current.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				 Intent i = new Intent();
+				 i.setClass(G2G_Activity.this, Map.class);
+				 startActivity(i);
 			}
 		});
 
@@ -189,6 +222,8 @@ public class G2G_Activity extends Activity {
 		 * Screen Intent i = new Intent(getApplicationContext(),
 		 * PhotosActivity.class); startActivity(i); } });
 		 */
+		
+		
 	}
 
 	private class LogoutRequestListener implements RequestListener {
