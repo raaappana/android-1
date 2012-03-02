@@ -178,23 +178,23 @@ public class Map extends MapActivity implements Observer {
 			locationManager.requestLocationUpdates(bestProvider, 1000, 0,
 					locationListener);
 		}
-		
-		//final String address = this.getIntent().getExtras()
-		//		.getString("address");
-		final String address = "Buchanan Bus Station";
+
+		final double latitude = this.getIntent().getExtras()
+				.getDouble("latitude", 999.0);
+		final double longitude = this.getIntent().getExtras()
+				.getDouble("longitude");
+
 		startTime = (Date) this.getIntent().getExtras()
 				.getSerializable("startTime");
-		
+
 		new Thread(new Runnable() {
 			public void run() {
 
-				if (address != null) {
-					System.err.println(address);
+				if (latitude != 999.0) {
 					try {
-					Location d = OTP.geocode(address).get(0);
-					GeoPoint p = new GeoPoint(d.getLatitude(), d.getLongitude());
-					setDestination(p);
-					startRouting();
+						GeoPoint p = new GeoPoint(latitude, longitude);
+						setDestination(p);
+						startRouting();
 					} catch (Exception e) {
 						showToast("Error in launching routing, sorry :/");
 					}
