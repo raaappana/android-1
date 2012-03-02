@@ -44,7 +44,13 @@ public class Event implements Comparable{
 		// this.start_time = start_time;
 		this.name = name.substring(6);
 //		this.description = description;
-		this.locationName = description.substring(19);
+		int newLine = description.indexOf('\n');
+		if (newLine != -1) {
+			this.locationName = description.substring(0, newLine);
+			this.description = description.substring(newLine + 1, description.length());
+		} 
+//			this.locationName = description.substring(19); 
+		
 
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 		try {
@@ -56,6 +62,15 @@ public class Event implements Comparable{
 		
 //		this.ownerID = ownerID;
 
+	}
+	
+	public boolean isOld() {
+		Date now = new Date();
+		if (startTime.before(now))
+			return true;
+		else
+			return false;
+		
 	}
 
 	public String toString() {

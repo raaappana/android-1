@@ -15,6 +15,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -132,16 +133,7 @@ public class EventInfoActivity extends Activity {
 							finish();
 							
 						} else {
-							Handler mHandler = new Handler();
-							mHandler.post(new Runnable() {
-								
-								@Override
-								public void run() {
-									Toast.makeText(EventInfoActivity.this, 
-											"You have to be the owner of the event in order to edit it", 
-											Toast.LENGTH_SHORT).show();									
-								}
-							});
+							showToast("You have to be the owner of the event in order to edit it");
 						}
 					}
 				});
@@ -193,6 +185,7 @@ public class EventInfoActivity extends Activity {
 		TextView locationName = (TextView) findViewById(R.id.eventinfo_location_name_textview);
 		TextView address = (TextView) findViewById(R.id.eventinfo_address_textview);
 		TextView time = (TextView) findViewById(R.id.eventinfo_time_textview);
+		TextView description = (TextView) findViewById(R.id.eventinfo_description);
 		friendsListView = (ListView) findViewById(R.id.eventinfo_friend_listview);
 
 		invitedNames = new ArrayList<String>();
@@ -206,6 +199,7 @@ public class EventInfoActivity extends Activity {
 		locationName.setText(event.locationName);
 		address.setText(event.address);
 		time.setText(event.startTime.toLocaleString());
+		description.setText(event.description);
 
 		mAsyncRunner = Utility.getAsyncRunner();
 		mAsyncRunner.request(event.id + "/invited", new RequestListener() {
@@ -282,6 +276,22 @@ public class EventInfoActivity extends Activity {
 			}
 		});
 
+	}
+	
+	private void showToast(final String text) {
+		if (Looper.getMainLooper().getThread() == Thread.currentThread()) {
+			Toast toast = Toast.makeText(EventInfoActivity.this, text, Toast.LENGTH_LONG);
+			toast.show();
+		} else {
+			runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					Toast toast = Toast.makeText(EventInfoActivity.this, text,
+							Toast.LENGTH_LONG);
+					toast.show();
+				}
+			});
+		}
 	}
 
 }

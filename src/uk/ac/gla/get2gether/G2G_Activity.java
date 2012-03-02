@@ -40,7 +40,7 @@ public class G2G_Activity extends Activity {
 	ImageView profilePic;
 
 	private static final String[] PERMISSIONS = new String[] { "email",
-			"offline_access", "publish_checkins", "publish_stream",
+			"offline_access", "publish_stream",
 			"read_stream", "offline_access", "user_events", "create_event", "rsvp_event" };
 
 	/**
