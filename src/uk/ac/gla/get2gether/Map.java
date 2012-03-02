@@ -187,8 +187,8 @@ public class Map extends MapActivity implements Observer {
 		startTime = (Date) this.getIntent().getExtras()
 				.getSerializable("startTime");
 
-		new Thread(new Runnable() {
-			public void run() {
+		//new Thread(new Runnable() {
+		//	public void run() {
 
 				if (latitude != 999.0) {
 					try {
@@ -196,12 +196,13 @@ public class Map extends MapActivity implements Observer {
 						setDestination(p);
 						startRouting();
 					} catch (Exception e) {
+						e.printStackTrace();
 						showToast("Error in launching routing, sorry :/");
 					}
 				}
 
-			}
-		}).start();
+			//}
+		//}).start();
 
 	}
 
