@@ -49,6 +49,8 @@
         <activity android:name="EventInfoActivity" android:screenOrientation="portrait"></activity>
         <activity android:name="EventsActivity" android:screenOrientation="portrait"></activity>
         <activity android:name="CreateNewEventActivity" android:screenOrientation="portrait"></activity>
+        <activity android:name="StatisticsActivity"></activity>
+        <activity android:name="OptionsActivity"></activity>
     </application>
 
 </manifest> 

@@ -82,9 +82,9 @@ public class Map extends MapActivity implements Observer {
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
+		System.err.println("Map: instance created");
 		super.onCreate(savedInstanceState);
-		EventChat ec = new EventChat(this);
-		System.out.println(ec);
+		EventChat.start(this);
 		setContentView(R.layout.map);
 		// Context context = getApplicationContext();
 		MapView mapView = (MapView) findViewById(R.id.mapview);

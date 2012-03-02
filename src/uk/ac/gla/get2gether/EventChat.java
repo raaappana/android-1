@@ -1,5 +1,6 @@
 package uk.ac.gla.get2gether;
 
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 import org.idansof.otp.client.Location;
@@ -27,117 +28,138 @@ import android.os.Bundle;
 import android.util.Log;
 
 public class EventChat {
-	public int state = 0;
+	private static boolean started = false;
 	private static final String TAG = "get2gether XMPP";
 
-	public EventChat(final Map m) {
-		new Thread(new Runnable() {
-			SharedPreferences settings = m
-					.getSharedPreferences("get2gether", 0);
-			final String facebookID = settings.getString("facebookID",
-					"unknown");
-			final String eventID = settings
-					.getString("eventID", "defaultEvent");
+	public static void start(final Map m) {
+		if (!started) {
+			started = true;
+			new Thread(new Runnable() {
+				SharedPreferences settings = m.getSharedPreferences(
+						"get2gether", 0);
+				final String facebookID = settings.getString("facebookID",
+						"unknown");
+				final String eventID = settings.getString("eventID",
+						"defaultEvent");
 
-			public void run() {
-				ConnectionConfiguration config = new ConnectionConfiguration(
-						"openfire.dcs.gla.ac.uk", 5222,
-						"openfire.dcs.gla.ac.uk");
-				config.setTruststorePath("/system/etc/security/cacerts.bks");
-				config.setTruststorePassword("changeit");
-				config.setTruststoreType("bks");
+				public void run() {
+					ConnectionConfiguration config = new ConnectionConfiguration(
+							"openfire.dcs.gla.ac.uk", 5222,
+							"openfire.dcs.gla.ac.uk");
+					config.setTruststorePath("/system/etc/security/cacerts.bks");
+					config.setTruststorePassword("changeit");
+					config.setTruststoreType("bks");
 
-				XMPPConnection xmpp = new XMPPConnection(config);
-				try {
-					// XMPPConnection.DEBUG_ENABLED = true;
-					xmpp.connect();
-					xmpp.login("get2gether", "malpka", facebookID);
-				} catch (XMPPException e) {
-					Log.v(TAG, "Failed to connect to " + xmpp.getHost());
-					e.printStackTrace();
-					return;
-				}
-
-				MultiUserChat muc = new MultiUserChat(xmpp, eventID
-						+ "@conference.openfire");
-
-				try {
-					muc.join(facebookID);
-					muc.sendConfigurationForm(new Form(Form.TYPE_SUBMIT));
-				} catch (XMPPException e1) {
-					e1.printStackTrace();
-				}
-
-				/*
-				 * Chat newChat = chatmanager.createChat("woody@openfire", new
-				 * MessageListener() { // THIS CODE NEVER GETS CALLED FOR SOME
-				 * REASON public void processMessage(Chat chat, Message message)
-				 * { try { Log.v(TAG, "Got:" + message.getBody());
-				 * chat.sendMessage(message.getBody()); } catch (XMPPException
-				 * e) { Log.v(TAG, "Couldn't respond:" + e); } Log.v(TAG,
-				 * message.toXML()); } });
-				 */
-
-				PacketFilter filter = new AndFilter(new PacketTypeFilter(
-						Message.class), new NotFilter(new FromMatchesFilter(
-						eventID + "@conference.openfire/" + facebookID)));
-
-				// Collect these messages
-				PacketCollector collector = xmpp.createPacketCollector(filter);
-
-				while (true) {
+					XMPPConnection xmpp = new XMPPConnection(config);
 					try {
-						if (m.currentLocation != null)
-							muc.sendMessage(m.currentLocation.getLatitude()
-									+ " " + m.currentLocation.getLongitude() + " " + m.currentLocation.getAccuracy());
-						Thread.sleep(4000);
+						// XMPPConnection.DEBUG_ENABLED = true;
+						xmpp.connect();
+						xmpp.login("get2gether", "malpka", facebookID);
 					} catch (XMPPException e) {
-						Log.v(TAG, "couldn't send:" + e.toString());
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
+						Log.v(TAG, "Failed to connect to " + xmpp.getHost());
 						e.printStackTrace();
+						return;
 					}
-					Packet packet = collector.nextResult();
 
-					if (packet instanceof Message) {
-						Message msg = (Message) packet;
-						// Process message
-						Scanner s = new Scanner(msg.getBody());
-						double lat = s.nextFloat();
-						double lon = s.nextFloat();
-						float accuracy = s.nextFloat();
+					MultiUserChat muc = new MultiUserChat(xmpp, eventID
+							+ "@conference.openfire");
 
-						Log.v(TAG,
-								"Got message:" + msg.getBody() + msg.getFrom());
+					try {
+						muc.join(facebookID);
+						muc.sendConfigurationForm(new Form(Form.TYPE_SUBMIT));
+					} catch (XMPPException e1) {
+						e1.printStackTrace();
+					}
 
-						boolean found = false;
+					/*
+					 * Chat newChat = chatmanager.createChat("woody@openfire",
+					 * new MessageListener() { // THIS CODE NEVER GETS CALLED
+					 * FOR SOME REASON public void processMessage(Chat chat,
+					 * Message message) { try { Log.v(TAG, "Got:" +
+					 * message.getBody()); chat.sendMessage(message.getBody());
+					 * } catch (XMPPException e) { Log.v(TAG,
+					 * "Couldn't respond:" + e); } Log.v(TAG, message.toXML());
+					 * } });
+					 */
 
-						for (OverlayCircle c : m.friendsLocations) {
-							if (c.getTitle() == msg.getFrom()) {
-								c.setCircleData(new GeoPoint(lat, lon), accuracy);
-								found = true;
-								break;
+					PacketFilter filter = new AndFilter(new PacketTypeFilter(
+							Message.class), new NotFilter(
+							new FromMatchesFilter(eventID
+									+ "@conference.openfire/" + facebookID)));
+
+					// Collect these messages
+					PacketCollector collector = xmpp
+							.createPacketCollector(filter);
+
+					while (true) {
+						try {
+							if (m.currentLocation != null)
+								muc.sendMessage("Location: "
+										+ m.currentLocation.getLatitude() + " "
+										+ m.currentLocation.getLongitude()
+										+ " " + m.currentLocation.getAccuracy());
+							Thread.sleep(4000);
+						} catch (XMPPException e) {
+							Log.v(TAG, "couldn't send:" + e.toString());
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						Packet packet = collector.nextResult();
+
+						if (packet instanceof Message) {
+							Message msg = (Message) packet;
+							// Process message
+							if (!msg.getBody().startsWith("Location: "))
+								continue;
+
+							double lat, lon;
+							float accuracy;
+
+							try {
+								Scanner s = new Scanner(msg.getBody()
+										.substring(10));
+								lat = s.nextFloat();
+								lon = s.nextFloat();
+								accuracy = s.nextFloat();
+							} catch (InputMismatchException e) {
+								Log.v(TAG, "Location input mismatch");
+								continue;
 							}
-						}
-
-						if (!found) {
-							OverlayCircle c = new OverlayCircle(new GeoPoint(
-									lat, lon), accuracy, msg.getFrom());
-							m.friendsLocations.add(c);
 							Log.v(TAG,
-									"Adding new circle");
+									"Got message:" + msg.getBody()
+											+ msg.getFrom());
+
+							boolean found = false;
+
+							for (OverlayCircle c : m.friendsLocations) {
+								if (c.getTitle() == msg.getFrom()) {
+									c.setCircleData(new GeoPoint(lat, lon),
+											accuracy);
+									found = true;
+									break;
+								}
+							}
+
+							if (!found) {
+								OverlayCircle c = new OverlayCircle(
+										new GeoPoint(lat, lon), accuracy, msg
+												.getFrom());
+								m.friendsLocations.add(c);
+								Log.v(TAG, "Adding new circle");
+							}
+
+							m.circleOverlay.addCircles(m.friendsLocations);
+							m.circleOverlayFill.setColor(Color.GREEN);
+							m.circleOverlayFill.setAlpha(48);
+							m.circleOverlay.requestRedraw();
 						}
-						
-						m.circleOverlay.addCircles(m.friendsLocations);
-						m.circleOverlayFill.setColor(Color.GREEN);
-						m.circleOverlayFill.setAlpha(48);
-						m.circleOverlay.requestRedraw();
 					}
+
 				}
 
-			}
-
-		}).start();
+			}).start();
+		}
 
 	}
 }
