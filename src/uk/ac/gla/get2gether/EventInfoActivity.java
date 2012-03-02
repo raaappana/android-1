@@ -56,6 +56,7 @@ public class EventInfoActivity extends Activity {
 				editor.commit();
 				Bundle bundle = new Bundle();
 				bundle.putString("address", event.address);
+				bundle.putSerializable("startTime", event.startTime);
 				Intent i = new Intent(getApplicationContext(), Map.class);
 				i.putExtras(bundle);
 				startActivity(i);

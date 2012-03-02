@@ -63,6 +63,7 @@ public class Map extends MapActivity implements Observer {
 	private ProgressDialog mSpinner;
 	public static Itinerary itinerary = null; // Android Tutorial recommended :)
 	private boolean routeCalcDone = false;
+	private Date startTime = null;
 
 	private View infoView;
 
@@ -171,31 +172,37 @@ public class Map extends MapActivity implements Observer {
 		String bestProvider = locationManager.getBestProvider(criteria, true);
 		if (bestProvider == null) {
 			showToast("Location service not available");
-			return;
 		} else {
 			locationListener = new G2GLocationListener(this);
 			// locationListener.setCenterAtFirstFix(centerAtFirstFix);
 			locationManager.requestLocationUpdates(bestProvider, 1000, 0,
 					locationListener);
 		}
-		/*
-		final String address = this.getIntent().getExtras()
-				.getString("address");
+		
+		//final String address = this.getIntent().getExtras()
+		//		.getString("address");
+		final String address = "Buchanan Bus Station";
+		startTime = (Date) this.getIntent().getExtras()
+				.getSerializable("startTime");
 		
 		new Thread(new Runnable() {
 			public void run() {
 
 				if (address != null) {
 					System.err.println(address);
+					try {
 					Location d = OTP.geocode(address).get(0);
 					GeoPoint p = new GeoPoint(d.getLatitude(), d.getLongitude());
 					setDestination(p);
 					startRouting();
+					} catch (Exception e) {
+						showToast("Error in launching routing, sorry :/");
+					}
 				}
 
 			}
 		}).start();
-*/
+
 	}
 
 	void launchDestinationDialog(final GeoPoint p) {
@@ -228,7 +235,9 @@ public class Map extends MapActivity implements Observer {
 
 	private void startRouting() {
 		mSpinner.show();
-		OTP.route(start, end, new Date(System.currentTimeMillis()), this);
+		if (startTime == null)
+			startTime = new Date(System.currentTimeMillis());
+		OTP.route(start, end, startTime, this);
 	}
 
 	public void update(Observable caller, Object ob) {
