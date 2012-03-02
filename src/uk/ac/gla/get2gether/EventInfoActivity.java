@@ -21,6 +21,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.facebook.android.AsyncFacebookRunner;
 import com.facebook.android.AsyncFacebookRunner.RequestListener;
@@ -68,18 +69,71 @@ public class EventInfoActivity extends Activity {
 
 			@Override
 			public void onClick(View v) {
-				SharedPreferences settings = getSharedPreferences("get2gether",
-						0);
-				SharedPreferences.Editor editor = settings.edit();
-				editor.putBoolean("onEditMode", true);
-				editor.commit();
 
 				Log.i("EventInfoActivity", "Event clicked: " + event.id + ", "
 						+ event.name);
-
-				Intent i = new Intent(EventInfoActivity.this, CreateEvent.class);
-				startActivity(i);
-				finish();
+				mAsyncRunner.request("/" + Utility.getEvent().id, new RequestListener() {
+					
+					@Override
+					public void onMalformedURLException(MalformedURLException e, Object state) {
+						// TODO Auto-generated method stub
+						
+					}
+					
+					@Override
+					public void onIOException(IOException e, Object state) {
+						// TODO Auto-generated method stub
+						
+					}
+					
+					@Override
+					public void onFileNotFoundException(FileNotFoundException e, Object state) {
+						// TODO Auto-generated method stub
+						
+					}
+					
+					@Override
+					public void onFacebookError(FacebookError e, Object state) {
+						// TODO Auto-generated method stub
+						
+					}
+					
+					@Override
+					public void onComplete(String response, Object state) {
+						Log.i("Event details response", response);
+						
+						String ownerID = "";
+						try {
+							JSONObject json = new JSONObject(response);
+							JSONObject ownerObj;
+							ownerObj = json.getJSONObject("owner");
+							ownerID = ownerObj.getString("id");
+						} catch (JSONException e) {
+							e.printStackTrace();
+						}
+						
+						Log.i("Event owner ID", ownerID);
+						SharedPreferences settings = getSharedPreferences("get2gether",
+								0);
+						String currentUserID = settings.getString("facebookID", "");
+						Log.i("Current user id", currentUserID);
+						if (ownerID.equals(currentUserID)) {
+							
+							SharedPreferences.Editor editor = settings.edit();
+							editor.putBoolean("onEditMode", true);
+							editor.commit();
+							
+							Intent i = new Intent(EventInfoActivity.this, CreateEvent.class);
+							startActivity(i);
+							finish();
+							
+						} else {
+							Toast.makeText(EventInfoActivity.this, 
+									"You have to be the owner of the event in order to edit it", 
+									Toast.LENGTH_SHORT).show();
+						}
+					}
+				});
 			}
 		});
 		

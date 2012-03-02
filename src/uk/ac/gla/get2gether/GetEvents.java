@@ -105,62 +105,10 @@ public class GetEvents extends Activity {
 									View view, int position, long id) {
 								Utility.setEvent(events.get(position));
 								
-								mAsyncRunner.request("/" + events.get(position).id, new RequestListener() {
-									
-									@Override
-									public void onMalformedURLException(MalformedURLException e, Object state) {
-										// TODO Auto-generated method stub
-										
-									}
-									
-									@Override
-									public void onIOException(IOException e, Object state) {
-										// TODO Auto-generated method stub
-										
-									}
-									
-									@Override
-									public void onFileNotFoundException(FileNotFoundException e, Object state) {
-										// TODO Auto-generated method stub
-										
-									}
-									
-									@Override
-									public void onFacebookError(FacebookError e, Object state) {
-										// TODO Auto-generated method stub
-										
-									}
-									
-									@Override
-									public void onComplete(String response, Object state) {
-										Log.i("Event details response", response);
-										
-										String ownerID = "";
-										try {
-											JSONObject json = new JSONObject(response);
-											JSONObject ownerObj;
-											ownerObj = json.getJSONObject("owner");
-											ownerID = ownerObj.getString("id");
-										} catch (JSONException e) {
-											e.printStackTrace();
-										}
-										
-										Log.i("Event owner ID", ownerID);
-										SharedPreferences settings = getSharedPreferences("get2gether",
-												0);
-										String currentUserID = settings.getString("facebookID", "");
-										Log.i("Current user id", currentUserID);
-										if (ownerID.equals(currentUserID)) {
-											Intent i = new Intent(GetEvents.this, EventInfoActivity.class);
-											startActivity(i);
-											finish();
-										} else {
-											Toast.makeText(GetEvents.this, 
-													"You have to be the owner of the event in order to edit it", 
-													Toast.LENGTH_SHORT).show();
-										}
-									}
-								});
+
+								Intent i = new Intent(GetEvents.this, EventInfoActivity.class);
+								startActivity(i);
+								finish();
 								
 							}
 						});
