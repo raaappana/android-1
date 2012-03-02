@@ -55,7 +55,9 @@ public class EventInfoActivity extends Activity {
 				editor.putString("eventID", event.id);
 				editor.commit();
 				Bundle bundle = new Bundle();
-				bundle.putString("address", event.address);
+				//bundle.putString("address", event.address);
+				bundle.putDouble("latitude", event.latitude);
+				bundle.putDouble("longitude", event.longitude);
 				Intent i = new Intent(getApplicationContext(), Map.class);
 				i.putExtras(bundle);
 				startActivity(i);
