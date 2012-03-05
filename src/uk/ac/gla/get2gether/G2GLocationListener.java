@@ -25,6 +25,10 @@ public class G2GLocationListener implements LocationListener {
         map.circleOverlay.requestRedraw();
         map.itemizedOverlay.requestRedraw();
         map.currentLocation = l;
+        map.start = new org.idansof.otp.client.Location(l.getProvider(),
+				l.getLatitude(),
+				l.getLongitude());
+        map.route();
 	}
 
 	@Override

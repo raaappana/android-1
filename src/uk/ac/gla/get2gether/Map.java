@@ -78,7 +78,7 @@ public class Map extends MapActivity implements Observer {
 	Paint circleOverlayFill;
 	private Paint circleOverlayOutline;
 	android.location.Location currentLocation = null; // coupled to listener!
-	private Location start, end;
+	Location start, end;
 	private RouteOverlay itemizedoverlay;
 
 	@Override
@@ -179,30 +179,31 @@ public class Map extends MapActivity implements Observer {
 					locationListener);
 		}
 
+		if (this.getIntent().getExtras() != null) {
 		final double latitude = this.getIntent().getExtras()
-				.getDouble("latitude", 999.0);
+				.getDouble("latitude");
 		final double longitude = this.getIntent().getExtras()
 				.getDouble("longitude");
 
 		startTime = (Date) this.getIntent().getExtras()
 				.getSerializable("startTime");
+		
+		// new Thread(new Runnable() {
+		// public void run() {
 
-		//new Thread(new Runnable() {
-		//	public void run() {
-
-				if (latitude != 999.0) {
-					try {
-						GeoPoint p = new GeoPoint(latitude, longitude);
-						setDestination(p);
-						startRouting();
-					} catch (Exception e) {
-						e.printStackTrace();
-						showToast("Error in launching routing, sorry :/");
-					}
-				}
-
-			//}
-		//}).start();
+		if (latitude != 999.0) {
+			try {
+				GeoPoint p = new GeoPoint(latitude, longitude);
+				setDestination(p);
+				startRouting();
+			} catch (Exception e) {
+				e.printStackTrace();
+				showToast("Error in launching routing, sorry :/");
+			}
+		}
+		}
+		// }
+		// }).start();
 
 	}
 
@@ -236,9 +237,14 @@ public class Map extends MapActivity implements Observer {
 
 	private void startRouting() {
 		mSpinner.show();
+		route();
+	}
+
+	void route() {
 		if (startTime == null)
 			startTime = new Date(System.currentTimeMillis());
-		OTP.route(start, end, startTime, this);
+		if (start != null && end != null)
+			OTP.route(start, end, startTime, this);
 	}
 
 	public void update(Observable caller, Object ob) {

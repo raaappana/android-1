@@ -65,7 +65,7 @@ public class EventInfoActivity extends Activity {
 				i.putExtras(bundle);
 				startActivity(i);
 
-				//finish();
+				finish();
 			}
 		});
 
