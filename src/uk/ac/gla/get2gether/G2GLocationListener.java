@@ -28,7 +28,6 @@ public class G2GLocationListener implements LocationListener {
         map.start = new org.idansof.otp.client.Location(l.getProvider(),
 				l.getLatitude(),
 				l.getLongitude());
-        map.route();
 	}
 
 	@Override

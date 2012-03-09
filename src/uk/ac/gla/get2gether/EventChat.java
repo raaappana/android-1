@@ -98,7 +98,8 @@ public class EventChat {
 										+ m.currentLocation.getLatitude() + " "
 										+ m.currentLocation.getLongitude()
 										+ " " + m.currentLocation.getAccuracy());
-							Thread.sleep(4000);
+					        m.route();
+							Thread.sleep(10000);
 						} catch (XMPPException e) {
 							Log.v(TAG, "couldn't send:" + e.toString());
 						} catch (InterruptedException e) {
