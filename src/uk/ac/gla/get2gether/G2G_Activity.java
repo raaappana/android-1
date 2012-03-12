@@ -172,6 +172,16 @@ public class G2G_Activity extends Activity {
 			public void onClick(View v) {
 				 Intent i = new Intent();
 				 i.setClass(G2G_Activity.this, Map.class);
+				 SharedPreferences settings = getSharedPreferences("get2gether",
+							0);
+				 String eventID= settings.getString("eventID", null);
+				 //TODO: get the event object (Kostis)
+				 /*
+				Event e = null;
+				Bundle bundle = new Bundle();
+				bundle.putSerializable("startTime", event.startTime);
+				bundle.putDouble("latitude", event.latitude);
+				bundle.putDouble("longitude", event.longitude); */
 				 startActivity(i);
 			}
 		});

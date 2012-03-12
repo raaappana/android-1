@@ -70,12 +70,12 @@ public class Map extends MapActivity implements Observer {
 	// Current location stuff
 	private LocationManager locationManager;
 	private G2GLocationListener locationListener;
-	ArrayCircleOverlay circleOverlay;
+	ArrayCircleOverlay circleOverlay, friendCircleOverlay;
 	G2GItemizedOverlay itemizedOverlay;
 	OverlayCircle overlayCircle;
 	List<OverlayCircle> friendsLocations;
 	OverlayItem overlayItem;
-	Paint circleOverlayFill;
+	Paint circleOverlayFill, friendCircleOverlayFill;
 	private Paint circleOverlayOutline;
 	android.location.Location currentLocation = null; // coupled to listener!
 	Location start, end;
@@ -90,6 +90,7 @@ public class Map extends MapActivity implements Observer {
 		// Context context = getApplicationContext();
 		MapView mapView = (MapView) findViewById(R.id.mapview);
 		locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+		friendsLocations =  new ArrayList<OverlayCircle>();
 		mSpinner = new ProgressDialog(mapView.getContext());
 		mSpinner.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		mSpinner.setMessage("Loading..");
@@ -128,6 +129,11 @@ public class Map extends MapActivity implements Observer {
 		circleOverlayFill.setStyle(Paint.Style.FILL);
 		circleOverlayFill.setColor(Color.YELLOW);
 		circleOverlayFill.setAlpha(48);
+		
+		friendCircleOverlayFill = new Paint(Paint.ANTI_ALIAS_FLAG);
+		friendCircleOverlayFill.setStyle(Paint.Style.FILL);
+		friendCircleOverlayFill.setColor(Color.GREEN);
+		friendCircleOverlayFill.setAlpha(48);
 
 		circleOverlayOutline = new Paint(Paint.ANTI_ALIAS_FLAG);
 		circleOverlayOutline.setStyle(Paint.Style.STROKE);
@@ -137,11 +143,13 @@ public class Map extends MapActivity implements Observer {
 
 		circleOverlay = new ArrayCircleOverlay(this.circleOverlayFill,
 				this.circleOverlayOutline, this);
+		
+		friendCircleOverlay = new ArrayCircleOverlay(this.friendCircleOverlayFill, this.circleOverlayOutline, this);
 
 		overlayCircle = new OverlayCircle();
-		friendsLocations = new ArrayList<OverlayCircle>();
 		circleOverlay.addCircle(this.overlayCircle);
 		mapView.getOverlays().add(this.circleOverlay);
+		mapView.getOverlays().add(this.friendCircleOverlay);
 
 		// Get location service
 		for (String provider : this.locationManager.getProviders(true)) {
@@ -158,7 +166,6 @@ public class Map extends MapActivity implements Observer {
 			mapView.getController().setCenter(point); // re-center if possible
 			showToast("Last location acquired!");
 			overlayCircle.setCircleData(point, currentLocation.getAccuracy());
-			circleOverlayFill.setColor(Color.YELLOW);
 			overlayItem.setPoint(point);
 			circleOverlay.requestRedraw();
 			itemizedOverlay.requestRedraw();

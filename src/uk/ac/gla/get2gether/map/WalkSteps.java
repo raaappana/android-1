@@ -1,10 +1,12 @@
 package uk.ac.gla.get2gether.map;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
 import org.idansof.otp.client.Leg;
+import org.idansof.otp.client.Leg.Mode;
 import org.idansof.otp.client.WalkStep;
 
 import uk.ac.gla.get2gether.Map;
@@ -25,6 +27,8 @@ public class WalkSteps extends ListActivity {
 	
 	ArrayList<WalkStep> wsl = new ArrayList<WalkStep>();
 	
+	SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 	  super.onCreate(savedInstanceState);
@@ -34,6 +38,12 @@ public class WalkSteps extends ListActivity {
 	  
 	  List<Leg> legs = Map.itinerary.getLegs();
 	  for (Leg l : legs) {
+		  if (l.getMode() == Mode.BUS) {
+			  wsd.add("Take bus "+l.getRoute()+" at "+timeFormat.format(l.getStartTime())+" "+l.getFrom().getAddress());
+			  wsd.add("Get off at "+timeFormat.format(l.getEndTime())+" "+l.getTo().getAddress());
+			  wsl.add(new WalkStep()); /* ugly hack */
+			  wsl.add(new WalkStep()); /**/
+		  } else {
 		  for (WalkStep w : l.getWalkSteps()) {
 			  String rel;
 			  if (w.getRelativeDirection() == null)
@@ -43,7 +53,7 @@ public class WalkSteps extends ListActivity {
 			  wsd.add(rel+" on "+w.getLocation().getAddress());
 			  wsl.add(w);
 			  
-		  }
+		  }}
 	  }
 	  
 	  /*

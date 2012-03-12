@@ -26,6 +26,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 public class EventChat {
 	private static boolean started = false;
@@ -35,8 +36,10 @@ public class EventChat {
 		if (!started) {
 			started = true;
 			new Thread(new Runnable() {
+				boolean works = false;
 				SharedPreferences settings = m.getSharedPreferences(
 						"get2gether", 0);
+				MultiUserChat muc;
 				final String facebookID = settings.getString("facebookID",
 						"unknown");
 				final String eventID = settings.getString("eventID",
@@ -51,6 +54,14 @@ public class EventChat {
 					config.setTruststoreType("bks");
 
 					XMPPConnection xmpp = new XMPPConnection(config);
+					
+					while (!works) {
+						try {
+							Thread.sleep(10000);
+							m.showToast("Trying to connect to friends...");
+						} catch (InterruptedException e2) {
+							e2.printStackTrace();
+						}
 					try {
 						// XMPPConnection.DEBUG_ENABLED = true;
 						xmpp.connect();
@@ -58,10 +69,12 @@ public class EventChat {
 					} catch (XMPPException e) {
 						Log.v(TAG, "Failed to connect to " + xmpp.getHost());
 						e.printStackTrace();
-						return;
+						continue;
+					} catch (IllegalStateException e) {
+						continue;
 					}
 
-					MultiUserChat muc = new MultiUserChat(xmpp, eventID
+					muc = new MultiUserChat(xmpp, eventID
 							+ "@conference.openfire");
 
 					try {
@@ -69,18 +82,13 @@ public class EventChat {
 						muc.sendConfigurationForm(new Form(Form.TYPE_SUBMIT));
 					} catch (XMPPException e1) {
 						e1.printStackTrace();
+						continue;
 					}
-
-					/*
-					 * Chat newChat = chatmanager.createChat("woody@openfire",
-					 * new MessageListener() { // THIS CODE NEVER GETS CALLED
-					 * FOR SOME REASON public void processMessage(Chat chat,
-					 * Message message) { try { Log.v(TAG, "Got:" +
-					 * message.getBody()); chat.sendMessage(message.getBody());
-					 * } catch (XMPPException e) { Log.v(TAG,
-					 * "Couldn't respond:" + e); } Log.v(TAG, message.toXML());
-					 * } });
-					 */
+					
+					works = true;
+					}
+					
+					m.showToast("Connected!");
 
 					PacketFilter filter = new AndFilter(new PacketTypeFilter(
 							Message.class), new NotFilter(
@@ -91,6 +99,12 @@ public class EventChat {
 					PacketCollector collector = xmpp
 							.createPacketCollector(filter);
 
+						try {
+							muc.sendMessage("I'm in!");
+						} catch (XMPPException e) {
+							Log.v(TAG, "couldn't send:" + e.toString());
+						}
+	
 					while (true) {
 						try {
 							if (m.currentLocation != null)
@@ -98,7 +112,7 @@ public class EventChat {
 										+ m.currentLocation.getLatitude() + " "
 										+ m.currentLocation.getLongitude()
 										+ " " + m.currentLocation.getAccuracy());
-					        m.route();
+							m.route();
 							Thread.sleep(10000);
 						} catch (XMPPException e) {
 							Log.v(TAG, "couldn't send:" + e.toString());
@@ -134,7 +148,7 @@ public class EventChat {
 							boolean found = false;
 
 							for (OverlayCircle c : m.friendsLocations) {
-								if (c.getTitle() == msg.getFrom()) {
+								if (c.getTitle().equals(msg.getFrom())) {
 									c.setCircleData(new GeoPoint(lat, lon),
 											accuracy);
 									found = true;
@@ -150,10 +164,8 @@ public class EventChat {
 								Log.v(TAG, "Adding new circle");
 							}
 
-							m.circleOverlay.addCircles(m.friendsLocations);
-							m.circleOverlayFill.setColor(Color.GREEN);
-							m.circleOverlayFill.setAlpha(48);
-							m.circleOverlay.requestRedraw();
+							m.friendCircleOverlay.addCircles(m.friendsLocations);
+							m.friendCircleOverlay.requestRedraw();
 						}
 					}
 
