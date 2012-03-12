@@ -281,6 +281,9 @@ public class Map extends MapActivity implements Observer {
 
 	private void draw_overlays(MapView mapView) {
 		List<Overlay> mapOverlays = mapView.getOverlays();
+		if (mapOverlays.contains(itemizedoverlay))
+				mapOverlays.remove(itemizedoverlay);
+		
 		Drawable dest_icon = this.getResources().getDrawable(
 				R.drawable.ic_menu_flag_red);
 
