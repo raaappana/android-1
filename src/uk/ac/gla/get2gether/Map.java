@@ -95,14 +95,6 @@ public class Map extends MapActivity implements Observer {
 		mSpinner.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		mSpinner.setMessage("Loading..");
 
-		if (currentLocation != null)
-			start = new Location(currentLocation.getProvider(),
-					currentLocation.getLatitude(),
-					currentLocation.getLongitude());
-		else
-			start = new Location("fallback starting point", 55.866521,
-					-4.261803);
-
 		mapView.setMapViewMode(MapViewMode.MAPNIK_TILE_DOWNLOAD);
 		// mapView.mapView.setMapViewMode(MapViewMode.CANVAS_RENDERER);
 		// mapView.setMapFile("/sdcard/great_britain-0.2.4.map");
@@ -185,7 +177,15 @@ public class Map extends MapActivity implements Observer {
 			locationManager.requestLocationUpdates(bestProvider, 1000, 0,
 					locationListener);
 		}
-
+		
+		if (currentLocation != null)
+			start = new Location(currentLocation.getProvider(),
+					currentLocation.getLatitude(),
+					currentLocation.getLongitude());
+		else
+			start = new Location("fallback starting point", 55.866521,
+					-4.261803);
+		
 		if (this.getIntent().getExtras() != null) {
 		final double latitude = this.getIntent().getExtras()
 				.getDouble("latitude");

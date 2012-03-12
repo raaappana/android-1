@@ -161,10 +161,10 @@ public class EventChat {
 										new GeoPoint(lat, lon), accuracy, msg
 												.getFrom());
 								m.friendsLocations.add(c);
+								m.friendCircleOverlay.addCircle(c);
 								Log.v(TAG, "Adding new circle");
 							}
 
-							m.friendCircleOverlay.addCircles(m.friendsLocations);
 							m.friendCircleOverlay.requestRedraw();
 						}
 					}
