@@ -74,7 +74,7 @@ public class Event implements Comparable{
 	}
 
 	public String toString() {
-		return id + ", " + locationName + ", " + name + ", " + address
+		return id + ", " + name + ", " + locationName + ", " + address
 				+ ", " + latitude + ", " + longitude + ", "
 				+ startTime.toGMTString();
 	}

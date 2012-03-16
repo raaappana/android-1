@@ -103,7 +103,7 @@ public class GetEvents extends Activity {
 						if (!jsonObj.getString("name").trim()
 								.startsWith("G2G - ")
 								|| !jsonObj.has("location")) {
-							Log.i("JSON not_replied array", "item incompatible");
+							Log.i("JSON events array", "item incompatible" + jsonObj.toString());
 							continue;
 						}
 						String description = "";
@@ -212,7 +212,7 @@ public class GetEvents extends Activity {
 														|| !jsonObj
 																.has("location")) {
 													Log.i("JSON not_replied array",
-															"item incompatible");
+															"item incompatible" + jsonObj.toString());
 													continue;
 												}
 												String description = "";

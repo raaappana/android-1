@@ -1,57 +1,108 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-      package="uk.ac.gla.get2gether"
-      android:versionCode="1"
-      android:versionName="1.0">
-    
-	<uses-permission android:name="android.permission.INTERNET" />
+    package="uk.ac.gla.get2gether"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <uses-sdk android:minSdkVersion="10" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    
-    
-    <application android:label="@string/app_name" android:icon="@drawable/app_icon"  android:debuggable="true"> 
-        <activity android:name="Map"
-                android:label="Get2getherMap"
-                android:theme="@android:style/Theme.NoTitleBar"
-                android:screenOrientation="portrait"
-                >
+
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
+    <application
+        android:debuggable="true"
+        android:icon="@drawable/app_icon"
+        android:label="@string/app_name" >
+        <activity
+            android:label="Get2getherMap"
+            android:name="Map"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
-        <activity android:name="Main"
-                  android:label="@string/app_name"
-                  android:theme="@android:style/Theme.NoTitleBar"
-                  >
+        <activity
+            android:label="@string/app_name"
+            android:name="Main"
+            android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
-        
-        <activity android:name="AndroidDashboardDesignActivity"
-                  android:label="@string/app_name"
-                  android:theme="@android:style/Theme.NoTitleBar" android:screenOrientation="portrait">
-               <intent-filter>
+        <activity
+            android:label="@string/app_name"
+            android:name="AndroidDashboardDesignActivity"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar" >
+            <intent-filter >
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
-                </intent-filter>
+            </intent-filter>
         </activity>
-        <activity android:name="G2G_Activity"
-            	  android:label="G2G_dashboardDesign" android:screenOrientation="portrait"></activity>
-            	  
-            	  
-        <activity android:name="CreateEvent" android:theme="@android:style/Theme.NoTitleBar" android:label="CreateFBEvent" android:screenOrientation="portrait"></activity>
-        <activity android:theme="@android:style/Theme.NoTitleBar" android:name=".InviteFriendsActivity" android:label="InviteFriends"></activity>
-        <activity android:name=".map.WalkSteps"></activity>
-        
-        <receiver android:name=".HelloWidget" android:label="@string/app_name">
-            <intent-filter>
+        <activity
+            android:label="G2G_dashboardDesign"
+            android:name="G2G_Activity"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar" >
+        </activity>
+        <activity
+            android:label="CreateFBEvent"
+            android:name="CreateEvent"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar" >
+        </activity>
+        <activity
+            android:label="InviteFriends"
+            android:name=".InviteFriendsActivity"
+            android:theme="@android:style/Theme.NoTitleBar" >
+        </activity>
+        <activity
+            android:name=".map.WalkSteps"
+            android:theme="@android:style/Theme.NoTitleBar" >
+        </activity>
+
+        <receiver
+            android:label="@string/app_name"
+            android:name=".HelloWidget" >
+            <intent-filter >
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/hello_widget_provider" />
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/hello_widget_provider" />
         </receiver>
-        
-	<activity android:name=".GetEvents" android:theme="@android:style/Theme.NoTitleBar" android:label="Get Events" android:screenOrientation="portrait"></activity>
-        <activity android:name="XMPPActivity"></activity>
-        <activity android:name="EventInfoActivity" android:screenOrientation="portrait"></activity>
-        <activity android:name="EventsActivity" android:screenOrientation="portrait"></activity>
-        <activity android:name="CreateNewEventActivity" android:screenOrientation="portrait"></activity>
-        <activity android:name="StatisticsActivity"></activity>
-        <activity android:name="OptionsActivity"></activity>
+
+        <activity
+            android:label="Get Events"
+            android:name=".GetEvents"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar" >
+        </activity>
+        <activity
+            android:name="XMPPActivity"
+            android:theme="@android:style/Theme.NoTitleBar" >
+        </activity>
+        <activity
+            android:name="EventInfoActivity"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar" >
+        </activity>
+        <activity
+            android:name="EventsActivity"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar" >
+        </activity>
+        <activity
+            android:name="CreateNewEventActivity"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar" >
+        </activity>
+        <activity
+            android:name="StatisticsActivity"
+            android:theme="@android:style/Theme.NoTitleBar" >
+        </activity>
+        <activity
+            android:name="OptionsActivity"
+            android:theme="@android:style/Theme.NoTitleBar" >
+        </activity>
     </application>
 
-</manifest> 
+</manifest>
