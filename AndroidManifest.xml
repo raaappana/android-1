@@ -44,7 +44,7 @@
         </activity>
         <activity
             android:label="CreateFBEvent"
-            android:name="CreateEvent"
+            android:name=".EditEventActivity"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.NoTitleBar" >
         </activity>

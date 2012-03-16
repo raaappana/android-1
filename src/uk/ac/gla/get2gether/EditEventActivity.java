@@ -39,7 +39,7 @@ import com.facebook.android.AsyncFacebookRunner;
 import com.facebook.android.AsyncFacebookRunner.RequestListener;
 import com.facebook.android.FacebookError;
 
-public class CreateEvent extends Activity {
+public class EditEventActivity extends Activity {
 
 	private String eventID;
 	private AsyncFacebookRunner mAsyncRunner;
@@ -109,7 +109,7 @@ public class CreateEvent extends Activity {
 			@Override
 			public void onClick(View v) {
 				if (selectedLocation == null) {
-					Toast.makeText(CreateEvent.this,
+					Toast.makeText(EditEventActivity.this,
 							"You haven't selected any address, sorry..",
 							Toast.LENGTH_SHORT).show();
 					return;
@@ -237,13 +237,13 @@ public class CreateEvent extends Activity {
 	protected Dialog onCreateDialog(int id) {
 		if (id == ADDRESS_DIALOG) {
 			AlertDialog.Builder builder = new AlertDialog.Builder(
-					CreateEvent.this);
+					EditEventActivity.this);
 			builder.setTitle("Select Address");
 			locationList = new ArrayList<Location>(OTP.geocode(locationName
 					.getEditableText().toString()));
 			Log.i("Search button clicked", locationList.toString());
 			LocationArrayAdapter locationArrayAdapter = new LocationArrayAdapter(
-					CreateEvent.this, R.layout.addressrowlayout, locationList);
+					EditEventActivity.this, R.layout.addressrowlayout, locationList);
 			builder.setSingleChoiceItems(locationArrayAdapter, -1,
 					new DialogInterface.OnClickListener() {
 
@@ -362,7 +362,7 @@ public class CreateEvent extends Activity {
 			// putting the friends JSON object in the intent to pass to
 			// inviteFriends
 			intentForInviteFriends.putExtra("friendsresponse", response);
-			intentForInviteFriends.setClass(CreateEvent.this,
+			intentForInviteFriends.setClass(EditEventActivity.this,
 					InviteFriendsActivity.class);
 			startActivityForResult(intentForInviteFriends,
 					Utility.INVITE_FRIENDS_CODE);

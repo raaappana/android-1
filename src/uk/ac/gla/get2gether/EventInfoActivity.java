@@ -128,7 +128,7 @@ public class EventInfoActivity extends Activity {
 							editor.putBoolean("onEditMode", true);
 							editor.commit();
 							
-							Intent i = new Intent(EventInfoActivity.this, CreateEvent.class);
+							Intent i = new Intent(EventInfoActivity.this, EditEventActivity.class);
 							startActivity(i);
 							finish();
 							
@@ -145,8 +145,9 @@ public class EventInfoActivity extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				Bundle params = new Bundle();
-				mAsyncRunner.request("/" + event.id, params, "DELETE", new RequestListener() {
+				Log.i("EventInfoActivity", "Event clicked: " + event.id + ", "
+						+ event.name);
+				mAsyncRunner.request("/" + Utility.getEvent().id, new RequestListener() {
 					
 					@Override
 					public void onMalformedURLException(MalformedURLException e, Object state) {
@@ -174,10 +175,64 @@ public class EventInfoActivity extends Activity {
 					
 					@Override
 					public void onComplete(String response, Object state) {
-						Log.i("Delete response", response);
-						finish();
+						Log.i("Event details response", response);
+						
+						String ownerID = "";
+						try {
+							JSONObject json = new JSONObject(response);
+							JSONObject ownerObj;
+							ownerObj = json.getJSONObject("owner");
+							ownerID = ownerObj.getString("id");
+						} catch (JSONException e) {
+							e.printStackTrace();
+						}
+						
+						Log.i("Event owner ID", ownerID);
+						SharedPreferences settings = getSharedPreferences("get2gether",
+								0);
+						String currentUserID = settings.getString("facebookID", "");
+						Log.i("Current user id", currentUserID);
+						if (ownerID.equals(currentUserID)) {
+							Bundle params = new Bundle();
+							mAsyncRunner.request("/" + event.id, params, "DELETE", new RequestListener() {
+								
+								@Override
+								public void onMalformedURLException(MalformedURLException e, Object state) {
+									// TODO Auto-generated method stub
+									
+								}
+								
+								@Override
+								public void onIOException(IOException e, Object state) {
+									// TODO Auto-generated method stub
+									
+								}
+								
+								@Override
+								public void onFileNotFoundException(FileNotFoundException e, Object state) {
+									// TODO Auto-generated method stub
+									
+								}
+								
+								@Override
+								public void onFacebookError(FacebookError e, Object state) {
+									// TODO Auto-generated method stub
+									
+								}
+								
+								@Override
+								public void onComplete(String response, Object state) {
+									Log.i("Delete response", response);
+									finish();
+								}
+							}, null);							
+							
+						} else {
+							showToast("You have to be the owner of the event in order to delete it");
+						}
 					}
-				}, null);
+				});
+				
 			}
 		});
 
