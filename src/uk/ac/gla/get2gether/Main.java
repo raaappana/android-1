@@ -322,7 +322,7 @@ public class Main extends Activity {
 			break;
 		case R.id.createev:
 			Intent intent = new Intent();
-			intent.setClass(this, CreateEvent.class);
+			intent.setClass(this, EditEventActivity.class);
 			Log.i("Main Activity", "Starting CreateEvent Activity");
 			startActivityForResult(intent, Utility.CREATE_EVENT_CODE);
 			break;

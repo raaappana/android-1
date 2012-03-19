@@ -89,6 +89,10 @@ public class CreateNewEventActivity extends G2G_Activity{
 	
 	private boolean addressSelected;
 	
+	private boolean dateSelected;
+	private boolean timeSelected;
+	private EditText details;
+	
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == Utility.INVITE_FRIENDS_CODE) {
@@ -123,6 +127,9 @@ public class CreateNewEventActivity extends G2G_Activity{
 		super.onCreate(savedInstanceBundle);
 		setContentView(R.layout.g2g_create_new);
 		
+		dateSelected = false;
+		timeSelected = false;
+		
 		
 		Typeface green_pillow = Typeface.createFromAsset(getAssets(), "GREENPIL.otf");
 		Typeface barlow = Typeface.createFromAsset(getAssets(), "Barlow_solid.ttf");
@@ -149,6 +156,8 @@ public class CreateNewEventActivity extends G2G_Activity{
 		
 		SharedPreferences settings = getSharedPreferences("get2gether", 0);
 		final boolean onEditMode = settings.getBoolean("onEditMode", false);
+		
+		details = (EditText) findViewById(R.id.event_description);
 		
 		
 		//Buttons
@@ -187,7 +196,9 @@ public class CreateNewEventActivity extends G2G_Activity{
 							+ e.startTime.getMinutes());
 			dateText.setText(String.format("%n%te %tB %tY", e.startTime.getYear() + 1900,
 					e.startTime.getMonth(), e.startTime.getDate()));
+			dateSelected = true;
 			timeText.setText(String.format("%n%tR", e.startTime.getHours(), e.startTime.getMinutes()));
+			timeSelected = true;
 			selectedLocation = new Location(e.address, e.latitude, e.longitude);
 			} 
 		
@@ -229,9 +240,12 @@ public class CreateNewEventActivity extends G2G_Activity{
 		arrangeButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if (selectedLocation == null) {
+				if (selectedLocation == null || timeSelected == false ||
+						dateSelected == false || 
+						name.getEditableText().toString().equals("") ||
+						details.getEditableText().toString().equals("")) {
 					Toast.makeText(CreateNewEventActivity.this,
-							"You haven't selected any address, sorry..",
+							"Please fill in all fields before proceeding",
 							Toast.LENGTH_SHORT).show();
 					return;
 				}
@@ -249,8 +263,8 @@ public class CreateNewEventActivity extends G2G_Activity{
 						+ " @ " + selectedLocation.getLatitude() + ", "
 						+ selectedLocation.getLongitude());
 				eventParams.putString("description",
-						getResources().getString(R.string.event_desc) + " - "
-								+ locationName.getEditableText().toString());
+								locationName.getEditableText().toString() + "\n" +
+								details.getEditableText().toString());
 				// 1st way
 				Bundle locationParam = new Bundle();
 				locationParam.putString("latitude",
@@ -370,6 +384,7 @@ public class CreateNewEventActivity extends G2G_Activity{
 						Log.i("Hour2", cal.get(10) + "");
 						Log.i("Minute2", cal.get(12) + "");
 		                
+						dateSelected = true;
 		            }
 		    };
 		
@@ -382,6 +397,7 @@ public class CreateNewEventActivity extends G2G_Activity{
 		                	if (cal == null)
 		                		cal = Calendar.getInstance();
 		                    cal.set(cal.get(YEAR), cal.get(MONTH), cal.get(DAY_OF_MONTH), selectedDate.get(HOUR), selectedDate.get(MINUTE));
+		                    timeSelected = true;
 		                }
 		        };
 	

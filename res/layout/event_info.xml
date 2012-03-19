@@ -75,6 +75,14 @@
                 android:textColor="@color/black"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
+            <TextView
+                android:id="@+id/eventinfo_description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Medium Text"
+                android:textColor="@color/black"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
             <ListView
                 android:id="@+id/eventinfo_friend_listview"
                 android:layout_width="fill_parent"

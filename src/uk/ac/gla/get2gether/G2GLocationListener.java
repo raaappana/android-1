@@ -20,10 +20,12 @@ public class G2GLocationListener implements LocationListener {
 		GeoPoint point = new GeoPoint(l.getLatitude(), l.getLongitude());
         map.overlayCircle.setCircleData(point, l.getAccuracy());
         map.overlayItem.setPoint(point);
-        map.circleOverlayFill.setColor(Color.BLUE);
         map.circleOverlay.requestRedraw();
         map.itemizedOverlay.requestRedraw();
         map.currentLocation = l;
+        map.start = new org.idansof.otp.client.Location(l.getProvider(),
+				l.getLatitude(),
+				l.getLongitude());
 	}
 
 	@Override

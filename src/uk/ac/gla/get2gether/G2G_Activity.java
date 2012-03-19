@@ -40,7 +40,7 @@ public class G2G_Activity extends Activity {
 	ImageView profilePic;
 
 	private static final String[] PERMISSIONS = new String[] { "email",
-			"offline_access", "publish_checkins", "publish_stream",
+			"offline_access", "publish_stream",
 			"read_stream", "offline_access", "user_events", "create_event", "rsvp_event" };
 
 	/**
@@ -170,9 +170,65 @@ public class G2G_Activity extends Activity {
 
 			@Override
 			public void onClick(View v) {
-				 Intent i = new Intent();
-				 i.setClass(G2G_Activity.this, Map.class);
-				 startActivity(i);
+				 SharedPreferences settings = getSharedPreferences("get2gether",
+							0);
+				 String eventID = settings.getString("eventID", null);
+				 
+				 asyncRunner.request(eventID, new RequestListener() {
+					
+					@Override
+					public void onMalformedURLException(MalformedURLException e, Object state) {
+						// TODO Auto-generated method stub
+						
+					}
+					
+					@Override
+					public void onIOException(IOException e, Object state) {
+						// TODO Auto-generated method stub
+						
+					}
+					
+					@Override
+					public void onFileNotFoundException(FileNotFoundException e, Object state) {
+						// TODO Auto-generated method stub
+						
+					}
+					
+					@Override
+					public void onFacebookError(FacebookError e, Object state) {
+						// TODO Auto-generated method stub
+						
+					}
+					
+					@Override
+					public void onComplete(String response, Object state) {
+						Log.i("Current event request response", response);
+
+						try {
+							JSONObject jsonObj = new JSONObject(response);
+							
+							String description = "";
+							if (jsonObj.has("description"))
+								description = jsonObj.getString("description");
+							Event event = new Event(jsonObj.getString("id"), jsonObj
+									.getString("location"), jsonObj
+									.getString("name"), jsonObj
+									.getString("start_time"), description);
+							Bundle bundle = new Bundle();
+							bundle.putSerializable("startTime", event.startTime);
+							bundle.putDouble("latitude", event.latitude);
+							bundle.putDouble("longitude", event.longitude);
+
+							Intent i = new Intent();
+							i.setClass(G2G_Activity.this, Map.class);
+							i.putExtras(bundle);
+							startActivity(i);
+							
+						} catch (JSONException e) {
+							Log.i("JSON Exception", e.getMessage());
+						}
+					}
+				});
 			}
 		});
 

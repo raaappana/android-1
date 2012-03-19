@@ -61,44 +61,39 @@ public class Map extends MapActivity implements Observer {
 	// Route calculation
 	// private DumbPath path;
 	private ProgressDialog mSpinner;
-	public static Itinerary itinerary = null; //Android Tutorial recommended :)
+	public static Itinerary itinerary = null; // Android Tutorial recommended :)
 	private boolean routeCalcDone = false;
+	private Date startTime = null;
 
 	private View infoView;
 
 	// Current location stuff
 	private LocationManager locationManager;
 	private G2GLocationListener locationListener;
-	ArrayCircleOverlay circleOverlay;
+	ArrayCircleOverlay circleOverlay, friendCircleOverlay;
 	G2GItemizedOverlay itemizedOverlay;
 	OverlayCircle overlayCircle;
+	List<OverlayCircle> friendsLocations;
 	OverlayItem overlayItem;
-	Paint circleOverlayFill;
+	Paint circleOverlayFill, friendCircleOverlayFill;
 	private Paint circleOverlayOutline;
 	android.location.Location currentLocation = null; // coupled to listener!
-	private Location start, end;
+	Location start, end;
 	private RouteOverlay itemizedoverlay;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
+		System.err.println("Map: instance created");
 		super.onCreate(savedInstanceState);
-		EventChat ec = new EventChat(this);
-		System.out.println(ec);
+		EventChat.start(this);
 		setContentView(R.layout.map);
 		// Context context = getApplicationContext();
 		MapView mapView = (MapView) findViewById(R.id.mapview);
 		locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+		friendsLocations =  new ArrayList<OverlayCircle>();
 		mSpinner = new ProgressDialog(mapView.getContext());
 		mSpinner.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		mSpinner.setMessage("Loading..");
-
-		if (currentLocation != null)
-			start = new Location(currentLocation.getProvider(),
-					currentLocation.getLatitude(),
-					currentLocation.getLongitude());
-		else
-			start = new Location("fallback starting point", 55.866521,
-					-4.261803);
 
 		mapView.setMapViewMode(MapViewMode.MAPNIK_TILE_DOWNLOAD);
 		// mapView.mapView.setMapViewMode(MapViewMode.CANVAS_RENDERER);
@@ -124,8 +119,13 @@ public class Map extends MapActivity implements Observer {
 		// Current location accuracy radius
 		circleOverlayFill = new Paint(Paint.ANTI_ALIAS_FLAG);
 		circleOverlayFill.setStyle(Paint.Style.FILL);
-		circleOverlayFill.setColor(Color.BLUE);
+		circleOverlayFill.setColor(Color.YELLOW);
 		circleOverlayFill.setAlpha(48);
+		
+		friendCircleOverlayFill = new Paint(Paint.ANTI_ALIAS_FLAG);
+		friendCircleOverlayFill.setStyle(Paint.Style.FILL);
+		friendCircleOverlayFill.setColor(Color.GREEN);
+		friendCircleOverlayFill.setAlpha(48);
 
 		circleOverlayOutline = new Paint(Paint.ANTI_ALIAS_FLAG);
 		circleOverlayOutline.setStyle(Paint.Style.STROKE);
@@ -135,16 +135,19 @@ public class Map extends MapActivity implements Observer {
 
 		circleOverlay = new ArrayCircleOverlay(this.circleOverlayFill,
 				this.circleOverlayOutline, this);
+		
+		friendCircleOverlay = new ArrayCircleOverlay(this.friendCircleOverlayFill, this.circleOverlayOutline, this);
 
 		overlayCircle = new OverlayCircle();
 		circleOverlay.addCircle(this.overlayCircle);
 		mapView.getOverlays().add(this.circleOverlay);
+		mapView.getOverlays().add(this.friendCircleOverlay);
 
 		// Get location service
 		for (String provider : this.locationManager.getProviders(true)) {
 			android.location.Location cursor = this.locationManager
 					.getLastKnownLocation(provider);
-			if (currentLocation == null
+			if (currentLocation == null || cursor == null
 					|| cursor.getAccuracy() < currentLocation.getAccuracy()) {
 				currentLocation = cursor;
 			}
@@ -155,7 +158,6 @@ public class Map extends MapActivity implements Observer {
 			mapView.getController().setCenter(point); // re-center if possible
 			showToast("Last location acquired!");
 			overlayCircle.setCircleData(point, currentLocation.getAccuracy());
-			circleOverlayFill.setColor(Color.BLUE);
 			overlayItem.setPoint(point);
 			circleOverlay.requestRedraw();
 			itemizedOverlay.requestRedraw();
@@ -169,15 +171,46 @@ public class Map extends MapActivity implements Observer {
 		String bestProvider = locationManager.getBestProvider(criteria, true);
 		if (bestProvider == null) {
 			showToast("Location service not available");
-			return;
+		} else {
+			locationListener = new G2GLocationListener(this);
+			// locationListener.setCenterAtFirstFix(centerAtFirstFix);
+			locationManager.requestLocationUpdates(bestProvider, 1000, 0,
+					locationListener);
 		}
 		
+		if (currentLocation != null)
+			start = new Location(currentLocation.getProvider(),
+					currentLocation.getLatitude(),
+					currentLocation.getLongitude());
+		else
+			start = new Location("fallback starting point", 55.866521,
+					-4.261803);
 		
-		locationListener = new G2GLocationListener(this);
-		// locationListener.setCenterAtFirstFix(centerAtFirstFix);
-		locationManager.requestLocationUpdates(bestProvider, 1000, 0,
-				locationListener);
+		if (this.getIntent().getExtras() != null) {
+		final double latitude = this.getIntent().getExtras()
+				.getDouble("latitude");
+		final double longitude = this.getIntent().getExtras()
+				.getDouble("longitude");
 
+		startTime = (Date) this.getIntent().getExtras()
+				.getSerializable("startTime");
+		
+		// new Thread(new Runnable() {
+		// public void run() {
+
+		if (latitude != 999.0) {
+			try {
+				GeoPoint p = new GeoPoint(latitude, longitude);
+				setDestination(p);
+				startRouting();
+			} catch (Exception e) {
+				e.printStackTrace();
+				showToast("Error in launching routing, sorry :/");
+			}
+		}
+		}
+		// }
+		// }).start();
 
 	}
 
@@ -211,7 +244,14 @@ public class Map extends MapActivity implements Observer {
 
 	private void startRouting() {
 		mSpinner.show();
-		OTP.route(start, end, new Date(System.currentTimeMillis()), this);
+		route();
+	}
+
+	void route() {
+		if (startTime == null)
+			startTime = new Date(System.currentTimeMillis());
+		if (start != null && end != null)
+			OTP.route(start, end, startTime, this);
 	}
 
 	public void update(Observable caller, Object ob) {
@@ -223,17 +263,17 @@ public class Map extends MapActivity implements Observer {
 			}
 			Object o = ((List<?>) ob).get(0);
 			if (o instanceof Itinerary)
-				itinerary = (Itinerary)o;
+				itinerary = (Itinerary) o;
 		}
-	    SharedPreferences settings = getSharedPreferences("get2gether", 0);
-	    SharedPreferences.Editor editor = settings.edit();
-	    
-	    editor.putInt("startLatitude", (int) (start.getLatitude() * 1e6));
-	    editor.putInt("startLongitude", (int) (start.getLongitude() * 1e6));
-	    editor.putInt("endLatitude", (int) (end.getLatitude() * 1e6));
-	    editor.putInt("endLongitude", (int) (end.getLongitude() * 1e6));
-	    editor.putString("endTime", itinerary.getEndTime().toString());
-	    editor.commit();
+		SharedPreferences settings = getSharedPreferences("get2gether", 0);
+		SharedPreferences.Editor editor = settings.edit();
+
+		editor.putInt("startLatitude", (int) (start.getLatitude() * 1e6));
+		editor.putInt("startLongitude", (int) (start.getLongitude() * 1e6));
+		editor.putInt("endLatitude", (int) (end.getLatitude() * 1e6));
+		editor.putInt("endLongitude", (int) (end.getLongitude() * 1e6));
+		editor.putString("endTime", itinerary.getEndTime().toString());
+		editor.commit();
 
 		routeCalcDone = true;
 		draw_overlays((MapView) findViewById(R.id.mapview));
@@ -241,6 +281,9 @@ public class Map extends MapActivity implements Observer {
 
 	private void draw_overlays(MapView mapView) {
 		List<Overlay> mapOverlays = mapView.getOverlays();
+		if (mapOverlays.contains(itemizedoverlay))
+				mapOverlays.remove(itemizedoverlay);
+		
 		Drawable dest_icon = this.getResources().getDrawable(
 				R.drawable.ic_menu_flag_red);
 
@@ -308,10 +351,9 @@ public class Map extends MapActivity implements Observer {
 			mPaint.setStrokeJoin(Paint.Join.ROUND);
 			mPaint.setStrokeCap(Paint.Cap.SQUARE);
 			mPaint.setStrokeWidth(4);
-			
 
 			for (Leg leg : itinerary.getLegs()) {
-				
+
 				List<Location> geometry = leg.getGeometry();
 				switch (leg.getMode()) {
 				case WALK:
@@ -361,9 +403,9 @@ public class Map extends MapActivity implements Observer {
 	 */
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
-		//MenuItem calcrouteItem = menu.findItem(R.id.calc_route);
+		// MenuItem calcrouteItem = menu.findItem(R.id.calc_route);
 		MenuItem routeInfoMenuItem = menu.findItem(R.id.route_info);
-		//MenuItem inputLocationItem = menu.findItem(R.id.input_locations);
+		// MenuItem inputLocationItem = menu.findItem(R.id.input_locations);
 		MenuItem walkStepsItem = menu.findItem(R.id.walk_steps);
 		routeInfoMenuItem.setEnabled(routeCalcDone);
 		walkStepsItem.setEnabled(routeCalcDone);
@@ -442,27 +484,26 @@ public class Map extends MapActivity implements Observer {
 		}
 		return true;
 	}
-	
-	@Override 
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {     
-	  super.onActivityResult(requestCode, resultCode, data); 
-	  switch(requestCode) { 
-	    case (1) : { 
-	      if (resultCode == Activity.RESULT_OK) { 
-	      double lat = data.getDoubleExtra("walkStepLatitude", 3.0);
-	      double lon = data.getDoubleExtra("walkStepLongitude", 50.0);
-	      String desc = data.getStringExtra("walkStepDescription");
-	      System.out.println("grr "+lat+" "+lon);
-	      
-	      
-		 itemizedoverlay.addOverlay(new OverlayItem(new GeoPoint(lat, lon), "WalkStep",
-		 desc));
-		 itemizedoverlay.requestRedraw();
-		
-	      } 
-	      break; 
-	    } 
-	  } 
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		switch (requestCode) {
+		case (1): {
+			if (resultCode == Activity.RESULT_OK) {
+				double lat = data.getDoubleExtra("walkStepLatitude", 3.0);
+				double lon = data.getDoubleExtra("walkStepLongitude", 50.0);
+				String desc = data.getStringExtra("walkStepDescription");
+				System.out.println("grr " + lat + " " + lon);
+
+				itemizedoverlay.addOverlay(new OverlayItem(new GeoPoint(lat,
+						lon), "WalkStep", desc));
+				itemizedoverlay.requestRedraw();
+
+			}
+			break;
+		}
+		}
 	}
 
 	void showToast(final String text) {

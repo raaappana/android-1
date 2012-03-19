@@ -1,82 +1,91 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-      package="uk.ac.gla.get2gether"
-      android:versionCode="1"
-      android:versionName="1.0">
-    
-	<uses-permission android:name="android.permission.INTERNET" />
-    <uses-sdk android:minSdkVersion="10" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    
-    
-    <application android:label="@string/app_name" android:icon="@drawable/n_icon"  android:debuggable="true"> 
-        <activity android:name="Map"
-              	  android:label="Get2getherMap"
-                android:theme="@android:style/Theme.NoTitleBar">
-        </activity>
-        <activity android:name="Main"
-                  android:label="@string/app_name"
-                  android:theme="@android:style/Theme.NoTitleBar"
-                  >
-        </activity>
-        
-        <activity android:name="AndroidDashboardDesignActivity"
-                  android:label="@string/app_name"
-                  android:screenOrientation="portrait"
-                  android:theme="@android:style/Theme.NoTitleBar">
-               <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-                </intent-filter>
-        </activity>
-        <activity android:name="G2G_Activity"
-           	android:label="G2G_dashboardDesign"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar"
-            ></activity>    	  
-        <activity android:theme="@android:style/Theme.NoTitleBar" 
-            android:name=".InviteFriendsActivity" 
-            android:label="InviteFriends"           
-            android:screenOrientation="portrait"></activity>
-        <activity android:name=".map.WalkSteps"
-            android:theme="@android:style/Theme.NoTitleBar"></activity>
-        <activity android:name="EventsActivity"
-            android:screenOrientation="portrait" 
-            android:theme="@android:style/Theme.NoTitleBar"></activity>
-        <activity android:name=".CreateNewEventActivity" 
-            android:theme="@android:style/Theme.NoTitleBar"
-        	android:windowSoftInputMode="adjustPan"
-        	android:screenOrientation="portrait"    
-		></activity>
-        <activity android:name=".OptionsActivity" 
-            android:theme="@android:style/Theme.NoTitleBar"
-        	android:windowSoftInputMode="adjustPan"
-        	android:screenOrientation="portrait"    
-		></activity>
-  		<activity android:name=".StatisticsActivity" 
-            android:theme="@android:style/Theme.NoTitleBar"
-        	android:windowSoftInputMode="adjustPan"
-        	android:screenOrientation="portrait"    
-		></activity>
-        <activity android:name="CreateEvent" 
-            android:theme="@android:style/Theme.NoTitleBar"></activity>
-        
-        <receiver android:name=".HelloWidget" android:label="@string/app_name">
-            <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-            </intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/hello_widget_provider" />
-        </receiver>
-        
-	<activity android:name=".GetEvents" 
-	    	android:theme="@android:style/Theme.NoTitleBar"
-	     	android:label="Get Events"
-	     	android:screenOrientation="portrait"></activity>
-        <activity android:name="XMPPActivity"
-            android:theme="@android:style/Theme.NoTitleBar"></activity>
-        <activity android:name="EventInfoActivity"
-            android:theme="@android:style/Theme.NoTitleBar"
-        	android:screenOrientation="portrait"></activity>
-    </application>
+	package="uk.ac.gla.get2gether" android:versionCode="1"
+	android:versionName="1.0">
 
-</manifest> 
+	<uses-permission android:name="android.permission.INTERNET" />
+	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
+	<uses-sdk android:minSdkVersion="10" />
+
+	<application android:debuggable="true" android:icon="@drawable/n_icon"
+		android:label="@string/app_name">
+		<activity android:name="Map" android:label="Get2getherMap"
+			android:theme="@android:style/Theme.NoTitleBar" />
+
+		<activity android:name="Main" android:label="@string/app_name"
+			android:theme="@android:style/Theme.NoTitleBar" />
+
+		<activity android:name="AndroidDashboardDesignActivity"
+			android:label="@string/app_name" android:screenOrientation="portrait"
+			android:theme="@android:style/Theme.NoTitleBar">
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN" />
+
+				<category android:name="android.intent.category.LAUNCHER" />
+			</intent-filter>
+		</activity>
+		<activity android:name="G2G_Activity" android:label="G2G_dashboardDesign"
+			android:screenOrientation="portrait" android:theme="@android:style/Theme.NoTitleBar" />
+
+		<activity android:name=".InviteFriendsActivity"
+			android:label="InviteFriends" android:screenOrientation="portrait"
+			android:theme="@android:style/Theme.NoTitleBar" />
+
+		<activity android:name=".map.WalkSteps" android:theme="@android:style/Theme.NoTitleBar" />
+
+		<activity android:name="EventsActivity"
+			android:screenOrientation="portrait" android:theme="@android:style/Theme.NoTitleBar" />
+
+		<activity android:name=".CreateNewEventActivity"
+			android:screenOrientation="portrait" android:theme="@android:style/Theme.NoTitleBar"
+			android:windowSoftInputMode="adjustPan" />
+
+		<activity android:name=".OptionsActivity"
+			android:screenOrientation="portrait" android:theme="@android:style/Theme.NoTitleBar"
+			android:windowSoftInputMode="adjustPan" />
+
+		<activity android:name=".StatisticsActivity"
+			android:screenOrientation="portrait" android:theme="@android:style/Theme.NoTitleBar"
+			android:windowSoftInputMode="adjustPan" />
+
+		<activity android:name="CreateEvent" android:theme="@android:style/Theme.NoTitleBar" />
+
+
+		<receiver android:name=".HelloWidget" android:label="@string/app_name">
+			<intent-filter>
+				<action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+			</intent-filter>
+
+			<meta-data android:name="android.appwidget.provider"
+				android:resource="@xml/hello_widget_provider" />
+		</receiver>
+
+		<activity android:name=".GetEvents" android:label="Get Events"
+			android:screenOrientation="portrait" android:theme="@android:style/Theme.NoTitleBar" />
+
+		<activity android:name="XMPPActivity" android:theme="@android:style/Theme.NoTitleBar" />
+
+		<activity android:name="EventInfoActivity"
+			android:screenOrientation="portrait" android:theme="@android:style/Theme.NoTitleBar" />
+
+		<activity android:name=".GetEvents" android:label="Get Events"
+			android:screenOrientation="portrait" android:theme="@android:style/Theme.NoTitleBar" />
+
+		<activity android:name="XMPPActivity" android:theme="@android:style/Theme.NoTitleBar" />
+
+		<activity android:name="EventInfoActivity"
+			android:screenOrientation="portrait" android:theme="@android:style/Theme.NoTitleBar" />
+
+		<activity android:name="EventsActivity"
+			android:screenOrientation="portrait" android:theme="@android:style/Theme.NoTitleBar" />
+
+		<activity android:name="CreateNewEventActivity"
+			android:screenOrientation="portrait" android:theme="@android:style/Theme.NoTitleBar" />
+
+		<activity android:name="StatisticsActivity" android:theme="@android:style/Theme.NoTitleBar" />
+
+		<activity android:name="OptionsActivity" android:theme="@android:style/Theme.NoTitleBar" />
+
+	</application>
+</manifest>

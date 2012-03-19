@@ -2,6 +2,8 @@ package uk.ac.gla.get2gether;
 
 import android.app.Activity;
 import android.content.res.Resources;
+import android.os.Looper;
+import android.widget.Toast;
 
 import com.facebook.android.AsyncFacebookRunner;
 import com.facebook.android.Facebook;

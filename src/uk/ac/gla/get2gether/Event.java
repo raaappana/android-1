@@ -29,7 +29,7 @@ public class Event implements Comparable{
 	public HashMap<String, String> confirmedMap; // likewise for confirmed
 
 	public Event(String id, String locationName, String name,
-			String start_time, String description) {
+			String start_time, String description) {//, String ownerID
 		this.id = id;
 
 		int atCursor = locationName.lastIndexOf('@');
@@ -44,7 +44,13 @@ public class Event implements Comparable{
 		// this.start_time = start_time;
 		this.name = name.substring(6);
 //		this.description = description;
-		this.locationName = description.substring(19);
+		int newLine = description.indexOf('\n');
+		if (newLine != -1) {
+			this.locationName = description.substring(0, newLine);
+			this.description = description.substring(newLine + 1, description.length());
+		} 
+//			this.locationName = description.substring(19); 
+		
 
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 		try {
@@ -53,11 +59,22 @@ public class Event implements Comparable{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+//		this.ownerID = ownerID;
 
+	}
+	
+	public boolean isOld() {
+		Date now = new Date();
+		if (startTime.before(now))
+			return true;
+		else
+			return false;
+		
 	}
 
 	public String toString() {
-		return id + ", " + locationName + ", " + name + ", " + address
+		return id + ", " + name + ", " + locationName + ", " + address
 				+ ", " + latitude + ", " + longitude + ", "
 				+ startTime.toGMTString();
 	}

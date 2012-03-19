@@ -14,6 +14,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -21,6 +23,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.facebook.android.AsyncFacebookRunner;
 import com.facebook.android.AsyncFacebookRunner.RequestListener;
@@ -46,15 +49,21 @@ public class EventInfoActivity extends Activity {
 
 			@Override
 			public void onClick(View v) {
-
+				Log.i("EventInfoActivity", "Event clicked: " + event.id + ", "
+						+ event.name);
 				SharedPreferences settings = getSharedPreferences("get2gether",
 						0);
 				SharedPreferences.Editor editor = settings.edit();
 				editor.putString("eventID", event.id);
 				editor.commit();
-
-				Log.i("EventInfoActivity", "Event clicked: " + event.id + ", "
-						+ event.name);
+				Bundle bundle = new Bundle();
+				bundle.putSerializable("startTime", event.startTime);
+				//bundle.putString("address", event.address);
+				bundle.putDouble("latitude", event.latitude);
+				bundle.putDouble("longitude", event.longitude);
+				Intent i = new Intent(getApplicationContext(), Map.class);
+				i.putExtras(bundle);
+				startActivity(i);
 
 				finish();
 			}
@@ -65,28 +74,10 @@ public class EventInfoActivity extends Activity {
 
 			@Override
 			public void onClick(View v) {
-				SharedPreferences settings = getSharedPreferences("get2gether",
-						0);
-				SharedPreferences.Editor editor = settings.edit();
-				editor.putBoolean("onEditMode", true);
-				editor.commit();
 
 				Log.i("EventInfoActivity", "Event clicked: " + event.id + ", "
 						+ event.name);
-
-				Intent i = new Intent(EventInfoActivity.this, CreateEvent.class);
-				startActivity(i);
-				finish();
-			}
-		});
-		
-		Button deleteButton = (Button) findViewById(R.id.eventinfo_delete_button);
-		deleteButton.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				Bundle params = new Bundle();
-				mAsyncRunner.request("/" + event.id, params, "DELETE", new RequestListener() {
+				mAsyncRunner.request("/" + Utility.getEvent().id, new RequestListener() {
 					
 					@Override
 					public void onMalformedURLException(MalformedURLException e, Object state) {
@@ -114,10 +105,134 @@ public class EventInfoActivity extends Activity {
 					
 					@Override
 					public void onComplete(String response, Object state) {
-						Log.i("Delete response", response);
-						finish();
+						Log.i("Event details response", response);
+						
+						String ownerID = "";
+						try {
+							JSONObject json = new JSONObject(response);
+							JSONObject ownerObj;
+							ownerObj = json.getJSONObject("owner");
+							ownerID = ownerObj.getString("id");
+						} catch (JSONException e) {
+							e.printStackTrace();
+						}
+						
+						Log.i("Event owner ID", ownerID);
+						SharedPreferences settings = getSharedPreferences("get2gether",
+								0);
+						String currentUserID = settings.getString("facebookID", "");
+						Log.i("Current user id", currentUserID);
+						if (ownerID.equals(currentUserID)) {
+							
+							SharedPreferences.Editor editor = settings.edit();
+							editor.putBoolean("onEditMode", true);
+							editor.commit();
+							
+							Intent i = new Intent(EventInfoActivity.this, EditEventActivity.class);
+							startActivity(i);
+							finish();
+							
+						} else {
+							showToast("You have to be the owner of the event in order to edit it");
+						}
 					}
-				}, null);
+				});
+			}
+		});
+		
+		Button deleteButton = (Button) findViewById(R.id.eventinfo_delete_button);
+		deleteButton.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Log.i("EventInfoActivity", "Event clicked: " + event.id + ", "
+						+ event.name);
+				mAsyncRunner.request("/" + Utility.getEvent().id, new RequestListener() {
+					
+					@Override
+					public void onMalformedURLException(MalformedURLException e, Object state) {
+						// TODO Auto-generated method stub
+						
+					}
+					
+					@Override
+					public void onIOException(IOException e, Object state) {
+						// TODO Auto-generated method stub
+						
+					}
+					
+					@Override
+					public void onFileNotFoundException(FileNotFoundException e, Object state) {
+						// TODO Auto-generated method stub
+						
+					}
+					
+					@Override
+					public void onFacebookError(FacebookError e, Object state) {
+						// TODO Auto-generated method stub
+						
+					}
+					
+					@Override
+					public void onComplete(String response, Object state) {
+						Log.i("Event details response", response);
+						
+						String ownerID = "";
+						try {
+							JSONObject json = new JSONObject(response);
+							JSONObject ownerObj;
+							ownerObj = json.getJSONObject("owner");
+							ownerID = ownerObj.getString("id");
+						} catch (JSONException e) {
+							e.printStackTrace();
+						}
+						
+						Log.i("Event owner ID", ownerID);
+						SharedPreferences settings = getSharedPreferences("get2gether",
+								0);
+						String currentUserID = settings.getString("facebookID", "");
+						Log.i("Current user id", currentUserID);
+						if (ownerID.equals(currentUserID)) {
+							Bundle params = new Bundle();
+							mAsyncRunner.request("/" + event.id, params, "DELETE", new RequestListener() {
+								
+								@Override
+								public void onMalformedURLException(MalformedURLException e, Object state) {
+									// TODO Auto-generated method stub
+									
+								}
+								
+								@Override
+								public void onIOException(IOException e, Object state) {
+									// TODO Auto-generated method stub
+									
+								}
+								
+								@Override
+								public void onFileNotFoundException(FileNotFoundException e, Object state) {
+									// TODO Auto-generated method stub
+									
+								}
+								
+								@Override
+								public void onFacebookError(FacebookError e, Object state) {
+									// TODO Auto-generated method stub
+									
+								}
+								
+								@Override
+								public void onComplete(String response, Object state) {
+									Log.i("Delete response", response);
+									finish();
+								}
+							}, null);							
+							
+						} else {
+							showToast("You have to be the owner of the event in order to delete it");
+						}
+					}
+				});
+				
 			}
 		});
 
@@ -125,6 +240,7 @@ public class EventInfoActivity extends Activity {
 		TextView locationName = (TextView) findViewById(R.id.eventinfo_location_name_textview);
 		TextView address = (TextView) findViewById(R.id.eventinfo_address_textview);
 		TextView time = (TextView) findViewById(R.id.eventinfo_time_textview);
+		TextView description = (TextView) findViewById(R.id.eventinfo_description);
 		friendsListView = (ListView) findViewById(R.id.eventinfo_friend_listview);
 
 		invitedNames = new ArrayList<String>();
@@ -138,6 +254,7 @@ public class EventInfoActivity extends Activity {
 		locationName.setText(event.locationName);
 		address.setText(event.address);
 		time.setText(event.startTime.toLocaleString());
+		description.setText(event.description);
 
 		mAsyncRunner = Utility.getAsyncRunner();
 		mAsyncRunner.request(event.id + "/invited", new RequestListener() {
@@ -214,6 +331,22 @@ public class EventInfoActivity extends Activity {
 			}
 		});
 
+	}
+	
+	private void showToast(final String text) {
+		if (Looper.getMainLooper().getThread() == Thread.currentThread()) {
+			Toast toast = Toast.makeText(EventInfoActivity.this, text, Toast.LENGTH_LONG);
+			toast.show();
+		} else {
+			runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					Toast toast = Toast.makeText(EventInfoActivity.this, text,
+							Toast.LENGTH_LONG);
+					toast.show();
+				}
+			});
+		}
 	}
 
 }
