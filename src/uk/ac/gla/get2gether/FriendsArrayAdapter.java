@@ -28,7 +28,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
-import android.widget.TextView;
 
 /**
  * ListView Friends ArrayAdapter
@@ -44,7 +43,7 @@ public class FriendsArrayAdapter extends ArrayAdapter<Friend> {
      * @param resourceId the ID of the resource/view
      * @param friends the bound ArrayList
      */
-    public FriendsArrayAdapter(
+    public FriendsArrayAdapter (
             Activity context, 
             int resourceId, 
             ArrayList<Friend> friends) {

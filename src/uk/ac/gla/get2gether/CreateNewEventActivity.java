@@ -3,20 +3,17 @@ package uk.ac.gla.get2gether;
 
 //import android.app.Activity;
 //import android.R;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.ArrayList;
+import java.util.Calendar;
 
 import org.idansof.otp.client.Location;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import uk.ac.gla.get2gether.map.OTP;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -24,15 +21,14 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.os.Bundle;
-import android.text.AlteredCharSequence;
 import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnFocusChangeListener;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -40,24 +36,13 @@ import android.widget.EditText;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.graphics.*;
 
 import com.facebook.android.AsyncFacebookRunner;
 import com.facebook.android.AsyncFacebookRunner.RequestListener;
 import com.facebook.android.FacebookError;
-
-
 import com.googlecode.android.widgets.DateSlider.DateSlider;
 import com.googlecode.android.widgets.DateSlider.DefaultDateSlider;
 import com.googlecode.android.widgets.DateSlider.TimeSlider;
-
-//import android.app.Dialog;
-import android.graphics.Typeface;
-//import android.os.Bundle;
-//import android.view.View;
-//import android.view.View.OnClickListener;
-//import android.widget.Button;
-//import android.widget.TextView;
 
 public class CreateNewEventActivity extends G2G_Activity{
 	

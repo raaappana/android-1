@@ -5,13 +5,11 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 
-
 import org.idansof.otp.client.Location;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import uk.ac.gla.get2gether.map.OTP;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -23,14 +21,13 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -44,13 +41,11 @@ public class EditEventActivity extends Activity {
 	private String eventID;
 	private AsyncFacebookRunner mAsyncRunner;
 	private Intent intentForInviteFriends;
-	private PopupWindow popup;
 	private EditText locationName;
 	private Location selectedLocation;
 	private ArrayList<Location> locationList;
 	private TextView address;
 	private final int ADDRESS_DIALOG = 33;
-	private boolean addressSelected;
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -253,7 +248,6 @@ public class EditEventActivity extends Activity {
 							selectedLocation = locationList.get(which);
 							address.setText(selectedLocation.getAddress()
 									.toString());
-							addressSelected = true;
 							dismissDialog(ADDRESS_DIALOG);
 							removeDialog(ADDRESS_DIALOG);
 						}

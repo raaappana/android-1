@@ -2,7 +2,6 @@ package uk.ac.gla.get2gether;
 
 import org.mapsforge.android.maps.GeoPoint;
 
-import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.os.Bundle;

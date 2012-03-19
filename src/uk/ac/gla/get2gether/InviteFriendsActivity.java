@@ -13,7 +13,6 @@ import org.json.JSONObject;
 import android.app.ListActivity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -24,7 +23,6 @@ import android.widget.Toast;
 
 import com.facebook.android.AsyncFacebookRunner;
 import com.facebook.android.AsyncFacebookRunner.RequestListener;
-import com.facebook.android.Facebook;
 import com.facebook.android.FacebookError;
 
 public class InviteFriendsActivity extends ListActivity {
@@ -34,12 +32,10 @@ public class InviteFriendsActivity extends ListActivity {
 	private ArrayList<Friend> friends;
 	private Button selectFriendsButton;
 	private AsyncFacebookRunner mAsyncRunner;
-	private Handler mHandler;
 	private String friendIDsString;
 	private Bundle addParams;
 	private List<Friend> friendsToAdd;
 	private List<Friend> friendsToDelete;
-	private Facebook mFacebook;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -47,12 +43,10 @@ public class InviteFriendsActivity extends ListActivity {
 		Log.i("InviteFriends Activity", "Started");
 		setContentView(R.layout.invite_friends);
 
-		mHandler = new Handler();
 
 		String response = getIntent().getStringExtra("friendsresponse");
 		friends = new ArrayList<Friend>();
 		mAsyncRunner = Utility.getAsyncRunner();
-		mFacebook = Utility.getFacebook();
 		// listView = (ListView) findViewById(R.id.addfriendsview);
 		listView = getListView();
 		listView.setCacheColorHint(0);

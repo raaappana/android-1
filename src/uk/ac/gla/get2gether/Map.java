@@ -1,20 +1,14 @@
 package uk.ac.gla.get2gether;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.Observable;
 import java.util.Observer;
 
 import org.idansof.otp.client.Itinerary;
 import org.idansof.otp.client.Leg;
 import org.idansof.otp.client.Location;
-import org.idansof.otp.client.PlanRequest;
-import org.idansof.otp.client.Planner;
-import org.idansof.otp.client.TripPlan;
-import org.idansof.otp.client.WalkStep;
 import org.mapsforge.android.maps.ArrayCircleOverlay;
 import org.mapsforge.android.maps.GeoPoint;
 import org.mapsforge.android.maps.ItemizedOverlay;
@@ -25,8 +19,9 @@ import org.mapsforge.android.maps.Overlay;
 import org.mapsforge.android.maps.OverlayCircle;
 import org.mapsforge.android.maps.OverlayItem;
 import org.mapsforge.android.maps.Projection;
-import org.xmlpull.v1.XmlPullParserException;
 
+import uk.ac.gla.get2gether.map.OTP;
+import uk.ac.gla.get2gether.map.WalkSteps;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -52,9 +47,6 @@ import android.view.View;
 import android.view.Window;
 import android.widget.EditText;
 import android.widget.Toast;
-
-import uk.ac.gla.get2gether.map.OTP;
-import uk.ac.gla.get2gether.map.WalkSteps;
 
 public class Map extends MapActivity implements Observer {
 

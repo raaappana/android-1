@@ -3,8 +3,6 @@ package uk.ac.gla.get2gether;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
-import org.idansof.otp.client.Location;
-import org.jivesoftware.smack.ChatManager;
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.PacketCollector;
 import org.jivesoftware.smack.XMPPConnection;
@@ -21,12 +19,8 @@ import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.mapsforge.android.maps.GeoPoint;
 import org.mapsforge.android.maps.OverlayCircle;
 
-import android.app.Activity;
 import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.os.Bundle;
 import android.util.Log;
-import android.widget.Toast;
 
 public class EventChat {
 	private static boolean started = false;
