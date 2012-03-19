@@ -31,11 +31,18 @@ import android.widget.Toast;
 public class EventChat {
 	private static boolean started = false;
 	private static final String TAG = "get2gether XMPP";
+	private static Thread t;
 
 	public static void start(final Map m) {
-		if (!started) {
+		if (started) {
+			if (t != null)
+				t.interrupt();
+			started = false;
+			start(m);
+		}
+		else {
 			started = true;
-			new Thread(new Runnable() {
+			t = new Thread(new Runnable() {
 				boolean works = false;
 				SharedPreferences settings = m.getSharedPreferences(
 						"get2gether", 0);
@@ -54,7 +61,7 @@ public class EventChat {
 					config.setTruststoreType("bks");
 
 					XMPPConnection xmpp = new XMPPConnection(config);
-					
+
 					while (!works) {
 						try {
 							Thread.sleep(10000);
@@ -62,32 +69,32 @@ public class EventChat {
 						} catch (InterruptedException e2) {
 							e2.printStackTrace();
 						}
-					try {
-						// XMPPConnection.DEBUG_ENABLED = true;
-						xmpp.connect();
-						xmpp.login("get2gether", "malpka", facebookID);
-					} catch (XMPPException e) {
-						Log.v(TAG, "Failed to connect to " + xmpp.getHost());
-						e.printStackTrace();
-						continue;
-					} catch (IllegalStateException e) {
-						continue;
+						try {
+							// XMPPConnection.DEBUG_ENABLED = true;
+							xmpp.connect();
+							xmpp.login("get2gether", "malpka", facebookID);
+						} catch (XMPPException e) {
+							Log.v(TAG, "Failed to connect to " + xmpp.getHost());
+							e.printStackTrace();
+							continue;
+						} catch (IllegalStateException e) {
+							continue;
+						}
+
+						muc = new MultiUserChat(xmpp, eventID
+								+ "@conference.openfire");
+
+						try {
+							muc.join(facebookID);
+							muc.sendConfigurationForm(new Form(Form.TYPE_SUBMIT));
+						} catch (XMPPException e1) {
+							e1.printStackTrace();
+							continue;
+						}
+
+						works = true;
 					}
 
-					muc = new MultiUserChat(xmpp, eventID
-							+ "@conference.openfire");
-
-					try {
-						muc.join(facebookID);
-						muc.sendConfigurationForm(new Form(Form.TYPE_SUBMIT));
-					} catch (XMPPException e1) {
-						e1.printStackTrace();
-						continue;
-					}
-					
-					works = true;
-					}
-					
 					m.showToast("Connected!");
 
 					PacketFilter filter = new AndFilter(new PacketTypeFilter(
@@ -99,12 +106,12 @@ public class EventChat {
 					PacketCollector collector = xmpp
 							.createPacketCollector(filter);
 
-						try {
-							muc.sendMessage("I'm in!");
-						} catch (XMPPException e) {
-							Log.v(TAG, "couldn't send:" + e.toString());
-						}
-	
+					try {
+						muc.sendMessage("I'm in!");
+					} catch (XMPPException e) {
+						Log.v(TAG, "couldn't send:" + e.toString());
+					}
+
 					while (true) {
 						try {
 							if (m.currentLocation != null)
@@ -117,8 +124,7 @@ public class EventChat {
 						} catch (XMPPException e) {
 							Log.v(TAG, "couldn't send:" + e.toString());
 						} catch (InterruptedException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
+							return;
 						}
 						Packet packet = collector.nextResult();
 
@@ -171,7 +177,8 @@ public class EventChat {
 
 				}
 
-			}).start();
+			});
+			t.start();
 		}
 
 	}
