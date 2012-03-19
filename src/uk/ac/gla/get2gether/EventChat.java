@@ -124,6 +124,8 @@ public class EventChat {
 						} catch (XMPPException e) {
 							Log.v(TAG, "couldn't send:" + e.toString());
 						} catch (InterruptedException e) {
+							muc.leave();
+							xmpp.disconnect();
 							return;
 						}
 						Packet packet = collector.nextResult();
