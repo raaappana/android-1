@@ -3,6 +3,5 @@
     <item android:id="@+id/input_locations" android:icon="@drawable/ic_menu_compass" android:title="@string/set_locations"></item>
     <item android:id="@+id/calc_route" android:icon="@drawable/ic_menu_directions" android:title="@string/calc_route"></item>
 	<item android:id="@+id/route_info" android:icon="@drawable/ic_menu_info_details" android:title="@string/route_info"></item>
-	<item android:id="@+id/walk_steps" android:title="Walk Steps"></item>
-	
+	<item android:id="@+id/walk_steps" android:icon="@drawable/ic_menu_event" android:title="Walk Steps"></item>
 </menu>

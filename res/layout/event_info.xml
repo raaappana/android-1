@@ -15,21 +15,21 @@
             android:id="@+id/eventinfo_use_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/button"
+            android:background="@drawable/btn_default"
             android:text="Set the course" />
 
         <Button
             android:id="@+id/eventinfo_edit_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/button"
+            android:background="@drawable/btn_default"
             android:text="Edit" />
 
         <Button
             android:id="@+id/eventinfo_delete_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/button"
+            android:background="@drawable/btn_default"
             android:text="Delete" />
     </LinearLayout>
 

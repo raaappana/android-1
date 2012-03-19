@@ -45,7 +45,16 @@ public class WalkSteps extends ListActivity {
 						+ l.getTo().getAddress());
 				wsl.add(new WalkStep()); /* ugly hack */
 				wsl.add(new WalkStep()); /**/
-			} else {
+			} else if (l.getMode() == Mode.SUBWAY){
+				wsd.add("Take subway " + " at "
+						+ timeFormat.format(l.getStartTime()) + " "
+						+ l.getFrom().getAddress());
+				wsd.add("Alight at " + timeFormat.format(l.getEndTime()) + " "
+						+ l.getTo().getAddress());
+				wsl.add(new WalkStep()); /* ugly hack */
+				wsl.add(new WalkStep()); /**/
+			}
+			{
 				for (WalkStep w : l.getWalkSteps()) {
 					String rel;
 					if (w.getRelativeDirection() == null)
@@ -78,7 +87,8 @@ public class WalkSteps extends ListActivity {
 				 * Toast.makeText(getApplicationContext(), ((TextView)
 				 * view).getText(), Toast.LENGTH_SHORT).show();
 				 */
-				if (wsl.get(position) != null) {
+				try {
+					wsl.get(position);
 					Intent resultIntent = new Intent();
 					resultIntent.putExtra("walkStepLatitude", wsl.get(position)
 							.getLocation().getLatitude());
@@ -91,6 +101,8 @@ public class WalkSteps extends ListActivity {
 											.getAddress());
 					setResult(Activity.RESULT_OK, resultIntent);
 					finish();
+				} catch (Exception e) {
+					
 				}
 			}
 		});
