@@ -21,7 +21,6 @@ public class EventsActivity extends TabActivity {
 		TabHost.TabSpec spec; //reusable Tab spec for each tab;
 		Intent intent; //reusable intent for each tab
 		
-		//tabHost.getTabWidget().setDividerDrawable(R.drawable.tab_divider);
 		
 		//create an intent to launch an activity for the tab (to be reused)
 		intent = new Intent().setClass(this, CreateNewEventActivity.class);
@@ -39,15 +38,10 @@ public class EventsActivity extends TabActivity {
 		
 		tabHost.setCurrentTab(2);
 		setTabColor(tabHost);
-		//tabHost.getCurrentTabView().setBackgroundResource(R.drawable.tab_background_selected);
 		
 		tabHost.setOnTabChangedListener(new OnTabChangeListener() {
 			//@Override
 			public void onTabChanged(String tabId){
-				//int index = tabHost.getCurrentTab();
-				//tabHost.getTabWidget().getChildTabViewAt(index).setBackgroundResource(R.drawable.tab_background_selected);
-				//tabHost.getTabWidget().getChildTabViewAt(1 - index).setBackgroundResource(R.drawable.tab_background);
-				//tabHost.getCurrentTabView().setBackgroundResource(R.drawable.tab_background_selected);
 				
 			}
 		});

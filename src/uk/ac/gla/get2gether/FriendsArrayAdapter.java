@@ -67,8 +67,6 @@ public class FriendsArrayAdapter extends ArrayAdapter<Friend> {
             rowView = vi.inflate(resourceId, null);
         }
         Friend f = friends.get(position);
-//        TextView rowTxt = (TextView) rowView.findViewById(R.id.friendsrowtext_top);
-//        rowTxt.setText(f.name);
         CheckBox cb = (CheckBox) rowView.findViewById(R.id.freindsrow_checkbox);
         cb.setText(f.name);
         cb.setFocusable(false);

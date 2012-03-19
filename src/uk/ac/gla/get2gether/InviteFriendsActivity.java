@@ -47,7 +47,6 @@ public class InviteFriendsActivity extends ListActivity {
 		String response = getIntent().getStringExtra("friendsresponse");
 		friends = new ArrayList<Friend>();
 		mAsyncRunner = Utility.getAsyncRunner();
-		// listView = (ListView) findViewById(R.id.addfriendsview);
 		listView = getListView();
 		listView.setCacheColorHint(0);
 		Log.i("InviteFriendsActivity response", response);
@@ -77,10 +76,6 @@ public class InviteFriendsActivity extends ListActivity {
 		} catch (JSONException e) {
 			Log.w("get2gether FB", "JSON Error in response");
 		}
-
-		// friendsArrayAdapter = new FriendsArrayAdapter(
-		// InviteFriendsActivity.this, R.layout.invite_friends_rowlayout,
-		// friends);
 
 		String friendNames[] = new String[friends.size()];
 		for (int i = 0; i < friends.size(); i++) {
@@ -152,30 +147,22 @@ public class InviteFriendsActivity extends ListActivity {
 									public void onMalformedURLException(
 											MalformedURLException e,
 											Object state) {
-										// TODO Auto-generated method stub
-
 									}
 
 									@Override
 									public void onIOException(IOException e,
 											Object state) {
-										// TODO Auto-generated method stub
-
 									}
 
 									@Override
 									public void onFileNotFoundException(
 											FileNotFoundException e,
 											Object state) {
-										// TODO Auto-generated method stub
-
 									}
 
 									@Override
 									public void onFacebookError(
 											FacebookError e, Object state) {
-										// TODO Auto-generated method stub
-
 									}
 
 									@Override
@@ -187,8 +174,6 @@ public class InviteFriendsActivity extends ListActivity {
 								}, null);
 					}
 
-					// SparseBooleanArray hits =
-					// listView.getCheckedItemPositions();
 				}
 				if (friendsToAdd.size() > 0) {
 					Toast.makeText(InviteFriendsActivity.this,
@@ -197,18 +182,8 @@ public class InviteFriendsActivity extends ListActivity {
 					friendIDsString += friendsToAdd.get(0).id;
 					for (int i = 0; i < friendsToAdd.size(); i++)
 						friendIDsString += "," + friendsToAdd.get(i).id;
-					// int count = listView.getAdapter().getCount();
-					// for (int i = 0; i < count; i++) {
-					// if (listView.isItemChecked(i)) {
-					// if (friendIDsString.equals(""))
-					// friendIDsString += friends.get(i).id;
-					// else
-					// friendIDsString += "," + friends.get(i).id;
-					// }
-					// }
 					Log.i("InviteFriendsActivity", "friendsIDsString: "
 							+ friendIDsString);
-					// Log.i("Friends count", "" + count);
 					addParams = new Bundle();
 					Log.i("InviteFriendsActivity", "request: " + "/" + eventID
 							+ "/invited?users=" + friendIDsString);
@@ -232,29 +207,21 @@ public class InviteFriendsActivity extends ListActivity {
 								@Override
 								public void onFacebookError(FacebookError arg0,
 										Object arg1) {
-									// TODO Auto-generated method stub
-
 								}
 
 								@Override
 								public void onFileNotFoundException(
 										FileNotFoundException arg0, Object arg1) {
-									// TODO Auto-generated method stub
-
 								}
 
 								@Override
 								public void onIOException(IOException arg0,
 										Object arg1) {
-									// TODO Auto-generated method stub
-
 								}
 
 								@Override
 								public void onMalformedURLException(
 										MalformedURLException arg0, Object arg1) {
-									// TODO Auto-generated method stub
-
 								}
 
 							}, new Object());

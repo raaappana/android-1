@@ -273,44 +273,6 @@ public class EditEventActivity extends Activity {
 			// remove the previous dialog instance in case it exists
 			removeDialog(ADDRESS_DIALOG);
 			showDialog(ADDRESS_DIALOG);
-			// AlertDialog.Builder builder = new
-			// AlertDialog.Builder(CreateEvent.this);
-			// builder.setTitle("Select Address");
-			// final ArrayList<Location> locationList = new
-			// ArrayList<Location>(OTP.geocode(locationName.getEditableText().toString()));
-			// Log.i("Search button clicked", locationList.toString());
-			// LocationArrayAdapter locationArrayAdapter = new
-			// LocationArrayAdapter(CreateEvent.this, R.layout.rowlayout,
-			// locationList);
-			// builder.setSingleChoiceItems(locationArrayAdapter, -1, new
-			// DialogInterface.OnClickListener() {
-			//
-			// @Override
-			// public void onClick(DialogInterface dialog, int which) {
-			// Log.i("Selected address", Integer.toString(which));
-			// selectedLocation = locationList.get(which);
-			// locationName.setText(selectedLocation.getAddress().toString());
-			// }
-			// });
-			// AlertDialog alert = builder.create()
-			// ;
-			// alert.show();
-
-			// LayoutInflater inflater = (LayoutInflater)
-			// CreateEvent.this.getSystemService(LAYOUT_INFLATER_SERVICE);
-			// Log.i("Search button clicked", locationList.toString());
-			// View popupView = inflater.inflate(R.layout.location_search, null,
-			// false);
-			// ListView locationsView = (ListView)
-			// popupView.findViewById(R.id.location_list);
-			// locationsView.setAdapter(locationArrayAdapter);
-			// locationArrayAdapter.notifyDataSetChanged();
-			// popup = new PopupWindow(popupView, 400, 500, true);
-			// popup.setAnimationStyle(-1);
-			// popup.setFocusable(true);
-			// popup.showAtLocation(CreateEvent.this.findViewById(R.id.create_event_layout),
-			// Gravity.CENTER, 0, 0);
-			// popup.update();
 		}
 
 	}

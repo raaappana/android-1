@@ -41,26 +41,21 @@ public class Event implements Comparable{
 		this.longitude = Double.valueOf(locationName.substring(
 				commaCursor + 2, locationName.length()));
 
-		// this.start_time = start_time;
 		this.name = name.substring(6);
-//		this.description = description;
 		int newLine = description.indexOf('\n');
 		if (newLine != -1) {
 			this.locationName = description.substring(0, newLine);
 			this.description = description.substring(newLine + 1, description.length());
-		} 
-//			this.locationName = description.substring(19); 
+		}  
 		
 
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 		try {
 			this.startTime = sdf.parse(start_time);
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
-//		this.ownerID = ownerID;
 
 	}
 	

@@ -64,7 +64,6 @@ public class EventChat {
 							e2.printStackTrace();
 						}
 						try {
-							// XMPPConnection.DEBUG_ENABLED = true;
 							xmpp.connect();
 							xmpp.login("get2gether", "malpka", facebookID);
 						} catch (XMPPException e) {

@@ -43,8 +43,6 @@ public class GetEvents extends Activity {
 
 		setContentView(R.layout.getevents);
 		mAsyncRunner = Utility.getAsyncRunner();
-		// events = new ArrayList<Event>();
-		// listView = (ListView) findViewById(R.id.geteventsview);
 
 		Typeface green_pillow = Typeface.createFromAsset(getAssets(),
 				"GREENPIL.otf");
@@ -59,27 +57,19 @@ public class GetEvents extends Activity {
 			@Override
 			public void onMalformedURLException(MalformedURLException e,
 					Object state) {
-				// TODO Auto-generated method stub
-
 			}
 
 			@Override
 			public void onIOException(IOException e, Object state) {
-				// TODO Auto-generated method stub
-
 			}
 
 			@Override
 			public void onFileNotFoundException(FileNotFoundException e,
 					Object state) {
-				// TODO Auto-generated method stub
-
 			}
 
 			@Override
 			public void onFacebookError(FacebookError e, Object state) {
-				// TODO Auto-generated method stub
-
 			}
 
 			@Override
@@ -130,29 +120,21 @@ public class GetEvents extends Activity {
 							@Override
 							public void onMalformedURLException(
 									MalformedURLException e, Object state) {
-								// TODO Auto-generated method stub
-
 							}
 
 							@Override
 							public void onIOException(IOException e,
 									Object state) {
-								// TODO Auto-generated method stub
-
 							}
 
 							@Override
 							public void onFileNotFoundException(
 									FileNotFoundException e, Object state) {
-								// TODO Auto-generated method stub
-
 							}
 
 							@Override
 							public void onFacebookError(FacebookError e,
 									Object state) {
-								// TODO Auto-generated method stub
-
 							}
 
 							@Override
@@ -166,8 +148,6 @@ public class GetEvents extends Activity {
 									@Override
 									public void run() {
 										setContentView(R.layout.getevents);
-										// mAsyncRunner =
-										// Utility.getAsyncRunner();
 										listView = (ListView) findViewById(R.id.geteventsview);
 
 										listView.setOnItemClickListener(new OnItemClickListener() {

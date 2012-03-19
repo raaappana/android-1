@@ -80,7 +80,6 @@ public class EventInfoActivity extends Activity {
 					
 					@Override
 					public void onMalformedURLException(MalformedURLException e, Object state) {
-						// TODO Auto-generated method stub
 						
 					}
 					
@@ -150,26 +149,18 @@ public class EventInfoActivity extends Activity {
 					
 					@Override
 					public void onMalformedURLException(MalformedURLException e, Object state) {
-						// TODO Auto-generated method stub
-						
 					}
 					
 					@Override
 					public void onIOException(IOException e, Object state) {
-						// TODO Auto-generated method stub
-						
 					}
 					
 					@Override
 					public void onFileNotFoundException(FileNotFoundException e, Object state) {
-						// TODO Auto-generated method stub
-						
 					}
 					
 					@Override
 					public void onFacebookError(FacebookError e, Object state) {
-						// TODO Auto-generated method stub
-						
 					}
 					
 					@Override
@@ -197,26 +188,18 @@ public class EventInfoActivity extends Activity {
 								
 								@Override
 								public void onMalformedURLException(MalformedURLException e, Object state) {
-									// TODO Auto-generated method stub
-									
 								}
 								
 								@Override
 								public void onIOException(IOException e, Object state) {
-									// TODO Auto-generated method stub
-									
 								}
 								
 								@Override
 								public void onFileNotFoundException(FileNotFoundException e, Object state) {
-									// TODO Auto-generated method stub
-									
 								}
 								
 								@Override
 								public void onFacebookError(FacebookError e, Object state) {
-									// TODO Auto-generated method stub
-									
 								}
 								
 								@Override
@@ -261,27 +244,19 @@ public class EventInfoActivity extends Activity {
 			@Override
 			public void onMalformedURLException(MalformedURLException e,
 					Object state) {
-				// TODO Auto-generated method stub
-
 			}
 
 			@Override
 			public void onIOException(IOException e, Object state) {
-				// TODO Auto-generated method stub
-
 			}
 
 			@Override
 			public void onFileNotFoundException(FileNotFoundException e,
 					Object state) {
-				// TODO Auto-generated method stub
-
 			}
 
 			@Override
 			public void onFacebookError(FacebookError e, Object state) {
-				// TODO Auto-generated method stub
-
 			}
 
 			@Override
@@ -324,9 +299,6 @@ public class EventInfoActivity extends Activity {
 						arrayAdapter.notifyDataSetChanged();
 					}
 				});
-				// friendsListView.setAdapter(new ArrayAdapter<String>(
-				// EventInfoActivity.this,
-				// android.R.layout.simple_list_item_1, invitedNames));
 			}
 		});
 

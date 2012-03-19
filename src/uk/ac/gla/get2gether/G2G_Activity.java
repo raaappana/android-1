@@ -68,7 +68,6 @@ public class G2G_Activity extends Activity {
 	private void styleButton(Button bt, Typeface tf){
 		bt.setTypeface(tf);
 		bt.setTextSize(35);
-		//bt.setTextColor(color);
 	}
 
 	@Override
@@ -83,7 +82,6 @@ public class G2G_Activity extends Activity {
 		Log.i("G2G_Activity", "Started");
 
 		
-		// XXX maybe a better way??
 		SharedPreferences settings = getSharedPreferences("get2gether", 0);
 		SharedPreferences.Editor editor = settings.edit();
 		editor.putBoolean("onEditMode", false);
@@ -119,24 +117,13 @@ public class G2G_Activity extends Activity {
 		mFacebook = Utility.getFacebook();
 		asyncRunner = Utility.getAsyncRunner();
 
-		// Login/logout button functionality
-		// if (mFacebook.isSessionValid()) {
-		// // asyncRunner = new AsyncFacebookRunner(
-		// // mFacebook);
-		// asyncRunner.logout(this.getBaseContext(),
-		// new LogoutRequestListener());
-		// } else {
-		// Toggle the button state.
-		// If coming from logout transition to login (authorize).
 		mFacebook.authorize(this, PERMISSIONS, new LoginDialogListener());
-		// }
 		btn_events.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
 				Intent i = new Intent();
 				i.setClass(getApplicationContext(), EventsActivity.class);
-				//i.setClass(G2G_Activity.this, GetEvents.class);
 				Log.i("G2G_Activity", "Starting GetEvents Activity");
 				startActivity(i);
 			}
@@ -161,7 +148,6 @@ public class G2G_Activity extends Activity {
 				 i.setClass(G2G_Activity.this, OptionsActivity.class);
 				 startActivity(i);
 				Log.i("G2G_Activity", "Not implemented");
-				// startActivity(i);
 			}
 		});
 		
@@ -177,26 +163,18 @@ public class G2G_Activity extends Activity {
 					
 					@Override
 					public void onMalformedURLException(MalformedURLException e, Object state) {
-						// TODO Auto-generated method stub
-						
 					}
 					
 					@Override
 					public void onIOException(IOException e, Object state) {
-						// TODO Auto-generated method stub
-						
 					}
 					
 					@Override
 					public void onFileNotFoundException(FileNotFoundException e, Object state) {
-						// TODO Auto-generated method stub
-						
 					}
 					
 					@Override
 					public void onFacebookError(FacebookError e, Object state) {
-						// TODO Auto-generated method stub
-						
 					}
 					
 					@Override
@@ -230,54 +208,6 @@ public class G2G_Activity extends Activity {
 				});
 			}
 		});
-
-		/**
-		 * Handling all button click events
-		 * */
-		/*
-		 * // Listening to Login button click btn_login.setOnClickListener(new
-		 * View.OnClickListener() {
-		 * 
-		 * //@Override public void onClick(View view) { // Launching News Feed
-		 * Screen Intent i = new Intent(getApplicationContext(),
-		 * NewsFeedActivity.class); startActivity(i); } });
-		 * 
-		 * // Listening Friends button click btn_friends.setOnClickListener(new
-		 * View.OnClickListener() {
-		 * 
-		 * //@Override public void onClick(View view) { // Launching News Feed
-		 * Screen Intent i = new Intent(getApplicationContext(),
-		 * FriendsActivity.class); startActivity(i); } });
-		 * 
-		 * // Listening Messages button click btn_showmap.setOnClickListener(new
-		 * View.OnClickListener() {
-		 * 
-		 * //@Override public void onClick(View view) { // Launching News Feed
-		 * Screen Intent i = new Intent(getApplicationContext(),
-		 * MessagesActivity.class); startActivity(i); } });
-		 * 
-		 * // Listening to Places button click
-		 * btn_sendreq.setOnClickListener(new View.OnClickListener() {
-		 * 
-		 * //@Override public void onClick(View view) { // Launching News Feed
-		 * Screen Intent i = new Intent(getApplicationContext(),
-		 * PlacesActivity.class); startActivity(i); } });
-		 * 
-		 * // Listening to Events button click
-		 * btn_wallpost.setOnClickListener(new View.OnClickListener() {
-		 * 
-		 * //@Override public void onClick(View view) { // Launching News Feed
-		 * Screen Intent i = new Intent(getApplicationContext(),
-		 * EventsActivity.class); startActivity(i); } });
-		 * 
-		 * // Listening to Photos button click btn_create.setOnClickListener(new
-		 * View.OnClickListener() {
-		 * 
-		 * //@Override public void onClick(View view) { // Launching News Feed
-		 * Screen Intent i = new Intent(getApplicationContext(),
-		 * PhotosActivity.class); startActivity(i); } });
-		 */
-		
 		
 	}
 
@@ -331,8 +261,6 @@ public class G2G_Activity extends Activity {
 		public void onComplete(Bundle values) {
 			// Process onComplete
 
-			// Log.i("FB ID: ", values.getString("id"));
-
 			Log.i("LoginDialogListener", "onComplete");
 
 			// Dispatch on its own thread
@@ -349,34 +277,25 @@ public class G2G_Activity extends Activity {
 				@Override
 				public void onMalformedURLException(MalformedURLException e,
 						Object state) {
-					// TODO Auto-generated method stub
-
 				}
 
 				@Override
 				public void onIOException(IOException e, Object state) {
-					// TODO Auto-generated method stub
-
 				}
 
 				@Override
 				public void onFileNotFoundException(FileNotFoundException e,
 						Object state) {
-					// TODO Auto-generated method stub
-
 				}
 
 				@Override
 				public void onFacebookError(FacebookError e, Object state) {
-					// TODO Auto-generated method stub
-
 				}
 
 				@Override
 				public void onComplete(String response, Object state) {
 					Log.i("id, first_name FB response", response);
 
-					// JSONArray jarray = new JSONA
 					try {
 						JSONObject json = new JSONObject(response);
 						String id = json.getString("id");

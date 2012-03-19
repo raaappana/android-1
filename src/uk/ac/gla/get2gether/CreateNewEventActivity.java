@@ -1,8 +1,6 @@
 package uk.ac.gla.get2gether;
 
 
-//import android.app.Activity;
-//import android.R;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -33,7 +31,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -65,14 +62,12 @@ public class CreateNewEventActivity extends G2G_Activity{
 	private String eventID;
 	private AsyncFacebookRunner mAsyncRunner;
 	private Intent intentForInviteFriends;
-	private PopupWindow popup;
 	private EditText locationName;
 	private Location selectedLocation;
 	private ArrayList<Location> locationList;
 	private TextView address;
 	private View v;
 	
-	private boolean addressSelected;
 	
 	private boolean dateSelected;
 	private boolean timeSelected;
@@ -148,21 +143,16 @@ public class CreateNewEventActivity extends G2G_Activity{
 		//Buttons
 		Button searchLocation = (Button) findViewById(R.id.search_location_button);
 		searchLocation.setTypeface(green_pillow);
-		//searchLocation.setText(Html.fromHtml("Search <br/> location"));
-		//searchLocation.getBackground().setColorFilter(Color.rgb(206, 255, 191), PorterDuff.Mode.MULTIPLY);
 		
 		Button arrangeButton = (Button) findViewById(R.id.arrange_button);
 		arrangeButton.setTypeface(green_pillow);
 		arrangeButton.setText(Html.fromHtml("Arrange a <br/> <medium>new meetup</medium>"));
-		//arrangeButton.getBackground().setColorFilter(Color.rgb(206, 255, 191), PorterDuff.Mode.MULTIPLY);
 		
 		Button dateButton =(Button) findViewById(R.id.date_button);
 		dateButton.setTypeface(green_pillow);
-		//dateButton.getBackground().setColorFilter(Color.rgb(206, 255, 191), PorterDuff.Mode.MULTIPLY);
 		
 		Button timeButton = (Button) findViewById(R.id.time_button);
 		timeButton.setTypeface(green_pillow);
-		//timeButton.getBackground().setColorFilter(Color.rgb(206, 255, 191), PorterDuff.Mode.MULTIPLY);
 		
 		//Behavior for EditMode
 		if (onEditMode) {
@@ -187,24 +177,6 @@ public class CreateNewEventActivity extends G2G_Activity{
 			selectedLocation = new Location(e.address, e.latitude, e.longitude);
 			} 
 		
-		
-		/*
-		name.setOnFocusChangeListener(new OnFocusChangeListener() {
-			boolean flag = true;
-			View v = findViewById(R.id.create_event_layout);
-			public void onFocusChange(View arg0, boolean arg1) {
-				if(flag){
-					v.setBackgroundResource(R.drawable.background);
-					flag = false;
-				}
-				else{
-					v.setBackgroundResource(R.drawable.background_alternative);
-					flag = true;
-				}
-				v.getBackground().invalidateSelf();
-			}
-		});
-		*/	
 		//Button listeners
 		searchLocation.setOnClickListener(new SearchButtonListener());
 		
@@ -416,7 +388,6 @@ public class CreateNewEventActivity extends G2G_Activity{
 								selectedLocation = locationList.get(which);
 								address.setText(selectedLocation.getAddress()
 										.toString());
-								addressSelected = true;
 								dismissDialog(ADDRESS_DIALOG);
 								removeDialog(ADDRESS_DIALOG);
 							}
